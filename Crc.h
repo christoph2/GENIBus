@@ -1,7 +1,7 @@
 /*
- * k_os (Konnex Operating-System based on the OSEK/VDX-Standard).
+ *  Grundfos GENIBus Library.
  *
- * (C) 2007-2009 by Christoph Schueler <github.com/Christoph2,
+ * (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
  *                                      cpu12.gems@googlemail.com>
  *
  * All Rights Reserved
@@ -32,9 +32,15 @@ extern "C"
 #endif  /* __cplusplus */
 
 
-void Crc_Update(uint8 data);
-void Crc_Init(uint16 data);
-uint16 Crc_Get(void);
+class Crc {
+public:
+  Crc(uint16 data = 0xffffu);
+  void init(uint16 data);
+  void update(uint8 data);
+  uint16 get(void);
+private:
+  uint16 _accum;
+};
 
 
 #if defined(__cplusplus)

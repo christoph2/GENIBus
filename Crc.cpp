@@ -69,27 +69,31 @@ static const uint16 Crc_Table16[] = {
  * Local variables.
  *
  */
-static uint16 Crc_Accum;
 
 /*
  *
  * Global functions.
  *
  */
-void Crc_Update(uint8 data)
+Crc::Crc(uint16 data)
 {
-    Crc_Accum = (Crc_Accum << 8) ^ Crc_Table16[((Crc_Accum >> 8) ^ data)];
+    init(data);
+}
+
+void Crc::update(uint8 data)
+{
+    _accum = (_accum << 8) ^ Crc_Table16[((_accum >> 8) ^ data)];
 }
 
 
-void Crc_Init(uint16 data)
+void Crc::init(uint16 data)
 {
-    Crc_Accum = data;
+    _accum = data;
 }
 
 
-uint16 Crc_Get(void)
+uint16 Crc::get(void)
 {
-    return Crc_Accum ^ ((uint16)0xffffu);
+    return _accum ^ ((uint16)0xffffu);
 }
 

@@ -67,12 +67,12 @@ uint16 ExpectedResults[] = {
 uint16 calculateCRC(uint8 const * array, uint16 len)
 {
   uint16 idx;
-  
-  Crc_Init(0xffffu);
+  Crc crc(0xffffu);
+
   for (idx = (uint16)1u; idx < len; ++idx) {
-    Crc_Update(array[idx]);
+    crc.update(array[idx]);
   }
-  return Crc_Get();
+  return crc.get();
 }
 
 void resultOK(uint16 value, uint16 expected)
@@ -111,5 +111,4 @@ void loop(void)
    result = calculateCRC(TestVector5, ARRAY_SIZE(TestVector5));
    resultOK(result, ExpectedResults[5]);    
 }
-
 
