@@ -36,9 +36,9 @@ extern "C"
 /*
 ** Start-delimiters.
 */
-#define GB_SD_REPLY     = 0x24
-#define GB_SD_MESSAGE   = 0x26
-#define GB_SD_REQUEST   = 0x27
+#define GB_SD_REPLY     ((uint8)0x24)
+#define GB_SD_MESSAGE   ((uint8)0x26)
+#define GB_SD_REQUEST   ((uint8)0x27)
 	
 
 
