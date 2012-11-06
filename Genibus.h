@@ -32,6 +32,8 @@ extern "C"
 
 #include "Crc.h"
 
+#include "Pdu.h"	
+
 
 #if defined(__cplusplus)
 }
