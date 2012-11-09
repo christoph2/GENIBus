@@ -110,6 +110,53 @@ typedef unsigned int    SizeType;
 typedef int             PtrDiffType;
 
 #define ARRAY_SIZE(a)	(sizeof((a)) / sizeof((a[0])))
+#define VOID_EXPRESSION()           ((void)0)
+
+#if !defined(UNREFERENCED_PARAMETER)
+#define UNREFERENCED_PARAMETER(p)   ((p) = (p))
+#endif
+
+#define MIN(a, b)                   (((a) > (b)) ? (b) : (a))
+#define MAX(a, b)                   (((a) > (b)) ? (a) : (b))
+
+#define BETWEEN(x, min, max)        (((x) >= (min)) && ((x) <= (max)))
+
+#define ABS(i)                      (((i) < 0) ? ((i) * -1) : ((i)))
+
+#define SWAP_INPLACE(a, b)  \
+    _BEGIN_BLOCK            \
+        (a)    = (a) ^ (b); \
+    (b)        = (a) ^ (b); \
+    (a)        = (a) ^ (b); \
+    _END_BLOCK
+
+#if !defined(LOBYTE)
+#define LOBYTE(w)                   ((uint8)((uint16)((uint16)(w) & 0x00ffU)))
+#endif
+
+#if !defined(HIBYTE)
+#define HIBYTE(w)                   ((uint8)((uint16)(((uint16)(w ) >> 8) & 0x00ffU)))
+#endif
+
+#if !defined(LOWORD)
+#define LOWORD(dw)                  ((uint16)((uint32)((uint32)(dw) & 0xffffU)))
+#endif
+
+#if !defined(HIWORD)
+#define HIWORD(dw)                  ((uint16)((uint32)(((uint32)(dw) >> 16) & 0xffffU)))
+#endif
+
+#define MAKEWORD(h, l)              ((((uint16)((h) & ((uint8)0xff))) <<  (uint16)8) | ((uint16)((l) & ((uint8)0xff))))
+#define MAKEDWORD(h, l)             ((((uint32)((h) & ((uint16)0xffffu))) << (uint32)16) | ((uint32)((l) & ((uint16)0xffffu))))
+
+#define INVERT_NIBBLE(b)            ((uint8)(((uint8) ~(b)) & ((uint8)0x0f)))
+
+#define SIZEOF_ARRAY(arr)           (sizeof((arr)) / sizeof((arr[0])))
+#define BEYOND_ARRAY(arr)           ((arr) + SIZE_OF_ARRAY((arr)))
+
+#if !defined(_countof)
+#define _countof(arr)		    SIZEOF_ARRAY(arr)
+#endif
 
 
 #if defined(__cplusplus)
