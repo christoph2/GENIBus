@@ -39,11 +39,17 @@ void setup(void)
   delay(1000); 
 }
 
+typedef enum tagRcv_State {
+    RCV_IDLE,
+    RCV_COUNTING
+} Rcv_State;
+
 void loop(void)
 {
   byte receivedByte;
   byte byteCount;
   byte idx;
+  Rcv_State state = RCV_IDLE;
   
   connectRequest(GB_MASTER_ADDRESS);
   while (Serial.available() == 0) {
@@ -54,11 +60,23 @@ void loop(void)
 
   idx = 0;
   while (Serial.available() > 0) {  /* We are not considering inter-byte delays -- reception may prematurely terminate !? */
+    // delay(1);  /* But could a small delay lead to buffer overflows??? */
+                  /* Bottom line: The 'real' receiver shall use SerialEvent()! */
     receivedByte = Serial.read();
+    if (idx == 1) { /* Length byte? */
+      byteCount =  receivedByte + 2;
+      state = RCV_COUNTING;
+    }
+
+    if (state == RCV_COUNTING) {
+      	if (--byteCount == 0) {
+		break; /* We're done. */
+	}
+    }
     ++idx;
     writeByte(receivedByte);
   }
-  
   delay(2000);
+  digitalWrite(LED_PIN, LOW);
 }
 
