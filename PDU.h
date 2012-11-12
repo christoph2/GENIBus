@@ -25,7 +25,7 @@
 #if !defined(__PDU_H)
 #define __PDU_H
 
-#include "GENIBus.h"
+#include "Genibus.h"
 
 #if defined(__cplusplus)
 extern "C"
