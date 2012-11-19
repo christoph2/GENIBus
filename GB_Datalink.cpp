@@ -63,7 +63,6 @@ void GB_Datalink::sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint
     setState(DL_IDLE);
 }
 
-// Refactored 'datalink.ino' to 'GB_Datalink'.
 
 void GB_Datalink::feed(void)
 {
