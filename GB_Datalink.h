@@ -46,8 +46,10 @@ typedef void (*Dl_Callout)(uint8 * buffer, uint8 len);
 
 class GB_Datalink {
 public:
-    GB_Datalink(HardwareSerial & port, Dl_Callout  callout = NULL) : _port(port), _crc(0xffffu),
-        _state(DL_IDLE), _callout(callout), _frameLength(0) { _port.begin(9600); };
+/* TODO: rename 'callout', add errorCallout, add checked. */
+    GB_Datalink(HardwareSerial & port, Dl_Callout callout = NULL, boolean checked = FALSE) :
+        _port(port), _crc(0xffffu), _state(DL_IDLE), _callout(callout), _checked(checked), _frameLength(0)
+        { _port.begin(9600); };
     void feed(void);
     inline uint8 const * const getBufferPointer(void) const { return (uint8 const * const )_scratchBuffer; };
     inline Dl_State getState(void) const { return _state; };
@@ -55,6 +57,7 @@ public:
     void connectRequest(uint8 sa);
 protected:
     void sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint8 len);
+    uint16 calculateCRC(uint8 leftBound, uint8 rightBound);
 private:
     HardwareSerial & _port;
     Dl_Callout _callout;
@@ -62,6 +65,7 @@ private:
     Crc _crc;
     Dl_State _state;
     uint8 _frameLength;
+    boolean _checked;
 };
 
 

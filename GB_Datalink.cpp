@@ -50,11 +50,7 @@ void GB_Datalink::sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint
         _scratchBuffer[idx + ((uint8)0x04)] = data[idx];
     }
 
-    _crc.init(0xffff);
-    for (idx = ((uint8)0x01); idx < (len + ((uint8)0x04)); ++idx) {
-        _crc.update(_scratchBuffer[idx]);
-    }
-    calculatedCrc = _crc.get();
+    calculatedCrc = calculateCRC(1, len + 4);
     _scratchBuffer[idx] = HIBYTE(calculatedCrc);
     _scratchBuffer[idx + 1] = LOBYTE(calculatedCrc);
 
@@ -63,26 +59,43 @@ void GB_Datalink::sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint
     setState(DL_IDLE);
 }
 
+/*!
+ *  TODO: Callback 'onError(code)'.
+ */
+
+typedef enum tagDl_Error {
+    DL_ERROR_NONE,
+    DL_ERROR_TIMEOUT,
+    DL_ERROR_CHECKSUM
+};
 
 void GB_Datalink::feed(void)
 {
     static uint8 idx = 0;
     static uint8 byteCount;
     uint8 receivedByte;
+    uint16 calculatedCrc;
 
     while (Serial.available() > 0) {
         receivedByte = Serial.read();
         _scratchBuffer[idx] = receivedByte;
-        if (idx == 1) { /* Length byte? */
+        if (idx == 1) {
             byteCount =  receivedByte + 2;
             _frameLength = byteCount + 1;
             setState(DL_RECEIVING);
         }
         if (getState() == DL_RECEIVING) {
             if (--byteCount == 0) {
-                if (_callout != NULL) {
-                    _callout(_scratchBuffer, _frameLength);
+                calculatedCrc = calculateCRC(1, _frameLength - 2);
+                #if 0
+                if (verifyCRC(_scratchBuffer, 1, _frameLength)) {
+                    if (_callout != NULL) {
+                        _callout(_scratchBuffer, _frameLength);
+                    }
+                } else {
+                    /* todo: Errorhandling! */
                 }
+                #endif
                 setState(DL_IDLE);
                 idx = 0;
                 break; /* We're done. */
@@ -97,3 +110,27 @@ void GB_Datalink::connectRequest(uint8 sa)
    sendPDU(0x27, 0xfe, sa, connectReqPayload, ARRAY_SIZE(connectReqPayload));
 }
 
+uint16  GB_Datalink::calculateCRC(uint8 leftBound, uint8 rightBound)
+{
+    uint8 idx;
+
+     _crc.init(0xffff);
+
+    for (idx = leftBound; idx < rightBound; ++idx) {
+        _crc.update(_scratchBuffer[idx]);
+    }
+
+    return _crc.get();
+}
+
+#if 0
+bool GB_Datalink::verifyCRC(uint8 * buffer, uint8 leftBound, uint8 rightBound)
+{
+    if (_checked) {
+
+    } else {
+        return TRUE;
+    }
+}
+
+#endif
