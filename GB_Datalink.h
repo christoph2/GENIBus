@@ -58,6 +58,7 @@ public:
 protected:
     void sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint8 len);
     uint16 calculateCRC(uint8 leftBound, uint8 rightBound);
+    bool verifyCRC(uint8 leftBound, uint8 rightBound);
 private:
     HardwareSerial & _port;
     Dl_Callout _callout;

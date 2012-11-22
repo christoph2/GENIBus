@@ -86,16 +86,13 @@ void GB_Datalink::feed(void)
         }
         if (getState() == DL_RECEIVING) {
             if (--byteCount == 0) {
-                calculatedCrc = calculateCRC(1, _frameLength - 2);
-                #if 0
-                if (verifyCRC(_scratchBuffer, 1, _frameLength)) {
+                if (verifyCRC(1, _frameLength - 2)) {
                     if (_callout != NULL) {
                         _callout(_scratchBuffer, _frameLength);
                     }
                 } else {
                     /* todo: Errorhandling! */
                 }
-                #endif
                 setState(DL_IDLE);
                 idx = 0;
                 break; /* We're done. */
@@ -123,14 +120,15 @@ uint16  GB_Datalink::calculateCRC(uint8 leftBound, uint8 rightBound)
     return _crc.get();
 }
 
-#if 0
-bool GB_Datalink::verifyCRC(uint8 * buffer, uint8 leftBound, uint8 rightBound)
+bool GB_Datalink::verifyCRC(uint8 leftBound, uint8 rightBound)
 {
-    if (_checked) {
+    uint16 calculatedCrc;
+    uint16 receivedCrc;
 
-    } else {
-        return TRUE;
-    }
+    receivedCrc = MAKEWORD(_scratchBuffer[rightBound + 1], _scratchBuffer[rightBound + 2]);
+    calculatedCrc = calculateCRC(leftBound, rightBound);
+
+    return receivedCrc == calculatedCrc;
 }
 
-#endif
+
