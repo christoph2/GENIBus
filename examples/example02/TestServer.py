@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+## 
 import asyncore
 import socket
 import sys
-
+##import pdb
 PORT = 6734
-ADDR = (socket.gethostname(), PORT)
+##pdb.set_trace()
+
+##ADDR = (socket.gethostname(), PORT)
+ADDR = (socket.gethostbyname(socket.gethostname()), PORT)  ##display the numeric IP address
 
 class EchoHandler(asyncore.dispatcher_with_send):
 

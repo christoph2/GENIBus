@@ -7,14 +7,14 @@
 
 #define GB_MASTER_ADDRESS  0x01
 
-byte macAddress[] = { 0xde, 0xad, 0xaf, 0xfe, 0xaa, 0x55  };
+byte macAddress[] = { 0x90, 0xA2, 0xDA, 0x00, 0x69, 0x4B  };//MAC address on my arduino ethernet
 IPAddress subnet = (255, 255, 255, 0);
 #define LOCAL_PORT  6734
 
 /* TODO: The IP-configuration has to be adjusted to your needs!!! */
-IPAddress myIP(192, 168, 100, 20);
-IPAddress serverIP(192, 168, 100, 10);
-IPAddress gateway = (192, 168, 100, 1);
+IPAddress myIP(192, 168, 1, 3);        // for Linux users: adjust the two first line on the file /etc/hosts:
+IPAddress serverIP(192, 168, 1, 2);    // IP address of "localhost" must be the same as "IPAddress serverIP", for example "192.168.1.2	localhost" 
+//IPAddress gateway = (192,168, 1, 1);    // and, 2nd line, "192.168.1.2   'my computer name'" 
 
 #define LED_PIN  9  /* Pin 13 has an LED connected on most Arduino boards, otherwise this should be changed. */
                     /* Pin 9: led connected on Arduino Ethernet board*/
