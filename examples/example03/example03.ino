@@ -30,6 +30,7 @@ void setup(void)
   } else {
   }
   
+  Serial.begin(9600);
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
 }
@@ -61,4 +62,6 @@ void writeToServer(byte const * data, byte len)
     }
 }
 
+unsigned long time;
+ time = millis();
 
