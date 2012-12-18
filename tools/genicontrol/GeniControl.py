@@ -108,7 +108,6 @@ class GBFrame(wx.Frame):
         wx.Frame.__init__(self, parent, -1, "GeniControl", size=(800,600))
         self.initStatusBar()
         self.createMenuBar()
-
         self.locale = None
         self.updateLanguage(wx.LANGUAGE_ITALIAN)
 
