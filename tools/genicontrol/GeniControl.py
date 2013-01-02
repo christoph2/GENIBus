@@ -209,8 +209,9 @@ def main():
     config = Config()
     config.loadConfiguration()
     size = wx.Size(config.sizeX, config.sizeY)
+    pos = wx.Point(config.posX, config.posY)
     app = GeniControlApp()
-    frame = GBFrame(None, size)
+    frame = GBFrame(None, size, pos)
 
     controller = GUIController(NullModel, frame)
 

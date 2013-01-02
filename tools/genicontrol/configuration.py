@@ -56,22 +56,21 @@ class Config(object):
             config.add_section('window')
             config.set('window', 'sizeX', '800')
             config.set('window', 'sizeY', '600')
-            config.set('window', 'posX', 'None')
-            config.set('window', 'posY', 'None')
-        print config.sections()
-        #self.posX = config.getint('window', 'posX')
-        #self.posY = config.getint('window', 'posY')
-        self.sizeX = config.getint('window', 'sizeX')
-        self.sizeY = config.getint('window', 'sizeY')
+            config.set('window', 'posX', 0)
+            config.set('window', 'posY', 0)
+        self.posX = config.getint('window', 'posx')
+        self.posY = config.getint('window', 'posy')
+        self.sizeX = config.getint('window', 'sizex')
+        self.sizeY = config.getint('window', 'sizey')
 
     def saveConfiguration(self):
         print "Saving configuration..."
         config = self.config
         with open(CFG_FILE_NAME, 'w') as fout:
-            config.set('window', 'sizeX', str(self.sizeX))
-            config.set('window', 'sizeY', str(self.sizeY))
-            config.set('window', 'posX', str(self.posX))
-            config.set('window', 'posY', str(self.posY))
+            config.set('window', 'sizex', str(self.sizeX))
+            config.set('window', 'sizey', str(self.sizeY))
+            config.set('window', 'posx', str(self.posX))
+            config.set('window', 'posy', str(self.posY))
             config.write(fout)
 
 
