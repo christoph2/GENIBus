@@ -30,9 +30,11 @@ import genicontrol.dataitems as dataitems
 #import genicontrol.view
 from genicontrol.view.mcpanel import MCPanel
 from genicontrol.view.refpanel import RefPanel
-import genicontrol.model.NullModel as NullModel
+from genicontrol.model.NullModel import NullModel
 from genicontrol.model.config import DataitemConfiguration
+from genicontrol.controller.GUIController import GUIController
 import genicontrol.controlids as controlids
+from genicontrol.configuration import Config as Config
 from genicontrol.view.GridControl import GridControl
 
 TR = wx.GetTranslation
@@ -86,16 +88,8 @@ class InfoPanel(wx.Panel):
 
 class TestNB(wx.Notebook):
     def __init__(self, parent, id):
-        wx.Notebook.__init__(self, parent, id, size=(21,21), style=
-                             wx.BK_DEFAULT | wx.BK_BOTTOM
-                             #wx.BK_TOP
-                             #wx.BK_BOTTOM
-                             #wx.BK_LEFT
-                             #wx.BK_RIGHT
-                             # | wx.NB_MULTILINE
-                             )
+        wx.Notebook.__init__(self, parent, id, size = (21, 21), style = wx.BK_DEFAULT | wx.BK_BOTTOM)
         tabOne = TabPanel(self)
-        #tabOne.SetBackgroundColour("Gray")
         self.AddPage(MCPanel(self), "Measurement + Control")
         self.AddPage(tabOne, "Busmonitor")
         self.AddPage(RefPanel(self), "References")
@@ -104,12 +98,12 @@ class TestNB(wx.Notebook):
 
 
 class GBFrame(wx.Frame):
-    def __init__(self, parent):
-        wx.Frame.__init__(self, parent, -1, "GeniControl", size=(800,600))
+    def __init__(self, parent, size = None, pos = None):
+        wx.Frame.__init__(self, parent, -1, "GeniControl", size = size, pos = pos)
         self.initStatusBar()
         self.createMenuBar()
         self.locale = None
-        self.updateLanguage(wx.LANGUAGE_ITALIAN)
+        #self.updateLanguage(wx.LANGUAGE_ITALIAN)
 
         self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
 
@@ -127,6 +121,8 @@ class GBFrame(wx.Frame):
         #wx.Log_SetTraceMask(wx.TraceMessages
 
         self.notebook = TestNB(self, wx.NewId())
+        if not pos:
+            self.Center()
         wx.LogMessage("Started...")
 
     def updateLanguage(self, lang):
@@ -192,29 +188,35 @@ class GBFrame(wx.Frame):
     def OnCloseWindow(self, event):
         wx.LogMessage("Exiting...")
         wx.LogMessage("%s %s" % (self.GetSize(), self.GetPosition()))
-        # TODO: Save config!
-
+        self.saveConfiguration()
         self.Destroy()
 
+    def saveConfiguration(self):
+        size = self.Size
+        pos = self.Position
+        config = Config()
+        config.posX = pos.x
+        config.posY = pos.y
+        config.sizeX = size.x
+        config.sizeY = size.y
 
-def loadConfiguration():
-    pass
-
-def saveConfiguration():
-    pass
 
 class GeniControlApp(wx.PySimpleApp):
-    def __init__(self, model, controller):
+    def __init__(self):
         super(GeniControlApp, self).__init__()
-        self.model = model
-        self.controller = controller
 
 def main():
-    app = GeniControlApp(NullModel, None)
-    frame = GBFrame(None)
+    config = Config()
+    config.loadConfiguration()
+    size = wx.Size(config.sizeX, config.sizeY)
+    app = GeniControlApp()
+    frame = GBFrame(None, size)
+
+    controller = GUIController(NullModel, frame)
 
     frame.Show(True)
     app.MainLoop()
+    config.saveConfiguration()
 
 if __name__ == '__main__':
     main()

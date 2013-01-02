@@ -28,14 +28,20 @@
 
 #import genicontrol.model.ModelIf
 import ModelIf
+from genicontrol.model.config import DataitemConfiguration
+import genicontrol.dataitems as dataitems
 
-from wx.lib.pubsub import Publisher as Publisher
+#from wx.lib.pubsub import Publisher as Publisher
 
 class NullModel(ModelIf.IModel):
 
     def initialize(self):
-        self.sendMessage('Measurements', ModelIf.DATA_NOT_AVAILABLE)
+        for idx, item in enumerate(DataitemConfiguration['MeasurementValues']):
+            key, displayName, unit, controlID = item
+            ditem =  dataitems.MEASUREMENT_VALUES[key]
+            self.sendMessage('Measurements.%s' % key, ModelIf.DATA_NOT_AVAILABLE)
         self.sendMessage('References', ModelIf.DATA_NOT_AVAILABLE)
+        self.dataAvailable = False
 
     def connect(self, *parameters):
         pass
@@ -69,17 +75,22 @@ class NullModel(ModelIf.IModel):
 #        self.notifyObservers()
 
 
-nm = NullModel()
-#nm.beatEvent()
-class Observer(object):
-    def __init__(self, model):
-        self._model = model
-        #model.subscribe('Measurements', self.onChange())
-
-    def onChange(self, *args, **kwargs):
-        print args
-        print kwargs
-
-
-obs = Observer(nm)
+##
+##nm = NullModel()
+###nm.beatEvent()
+##class Observer(object):
+##    def __init__(self, model):
+##        self._model = model
+##        model.subscribe('Measurements', self.onChange)
+##        model.subscribe('References', self.onChange)
+##
+##    def onChange(self, msg):
+##        print msg.topic, msg.data
+##        print str(msg)
+##
+##
+##obs = Observer(nm)
+##nm.sendMessage('Measurements', ModelIf.DATA_NOT_AVAILABLE)
+##nm.sendMessage('References', ModelIf.DATA_NOT_AVAILABLE)
+##
 

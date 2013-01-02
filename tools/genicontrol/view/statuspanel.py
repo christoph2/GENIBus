@@ -51,8 +51,10 @@ class StatusPanel(wx.Panel):
     def addValues(self):
         sizer = wx.GridBagSizer(5, 45)
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues']):
-            key, displayName, unit = item
+            key, displayName, unit, controlID = item
             ditem =  dataitems.MEASUREMENT_VALUES[key]
+            if key == 'f_act':
+                continue
 
             ctrl = wx.StaticText(self, wx.ID_ANY, displayName, style = wx.ALIGN_RIGHT)
             ctrl.SetToolTip(wx.ToolTip(ditem.note))

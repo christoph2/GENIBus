@@ -31,19 +31,21 @@ __all__ = ['DataitemConfiguration']
 import wx
 import genicontrol.controlids as controlids
 
+
 MEAS_VALUES = (
-    (u'speed',       u'Speed',       u'rpm'),
-    (u'h',           u'Head',        u'm'),
-    #(u'q',           u'Flowrate',    u'm³/h'),
-    (u'p',           u'Power' ,      u'W'),
-    (u'energy_hi',   u'Energy',      u'kWh'),
-    (u't_2hour_hi',  u'Hours',       u'h'),
+    (u'speed',          u'Speed',           u'rpm',     controlids.ID_MEAS_SPEED),
+    (u'h',              u'Head',            u'm',       controlids.ID_MEAS_HEAD),
+    (u'q',              u'Flowrate',        u'm3/h',    controlids.ID_MEAS_FLOW),  ## ³
+    (u'p',              u'Power' ,          u'W',       controlids.ID_MEAS_POWER),
+    (u'energy_hi',      u'Energy',          u'kWh',     controlids.ID_MEAS_ENERGY),
+    (u't_2hour_hi',     u'Hours',           u'h',       controlids.ID_MEAS_HOURS),
+    (u'f_act',          u'Performance',     u'%',       controlids.ID_MEAS_PERFORMACE),
 )
 
 REF_VALUES = (
-    (u"ref_rem",     u'GENIBus ref.',    u'%'),
-    (u'ref_ir',      u'GENIlink ref.',   u''),
-    (u'ref_att_rem', u'Ext. Analogue',   u'%'),
+    (u"ref_rem",        u'GENIBus ref.',    u'%'),
+    (u'ref_ir',         u'GENIlink ref.',   u''),
+    (u'ref_att_rem',    u'Ext. Analogue',   u'%'),
 )
 
 STRING_VALUES = (
@@ -123,8 +125,9 @@ INFO_VALUES = (
 )
 
 DataitemConfiguration = {
-    "MeasurementValues": MEAS_VALUES,
-    "ReferenceValues":  REF_VALUES,
-    "StringValues":     STRING_VALUES,
-    "InfoValues":       INFO_VALUES
+    "MeasurementValues":    MEAS_VALUES,
+    "ReferenceValues":      REF_VALUES,
+    "StringValues":         STRING_VALUES,
+    "InfoValues":           INFO_VALUES
 }
+

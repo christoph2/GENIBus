@@ -28,10 +28,9 @@
 
 
 import abc
-#import genicontrol.observer as observer
 from wx.lib.pubsub import Publisher as Publisher
 
-DATA_NOT_AVAILABLE = 0xff
+DATA_NOT_AVAILABLE = None
 
 class IModel(object):
     __metaclass__ = abc.ABCMeta
@@ -42,7 +41,7 @@ class IModel(object):
         self.initialize()
 
     def sendMessage(self, topic, data):
-        self._pub.sendMessage(topic,data)
+        self._pub.sendMessage(topic, data)
 
     def subscribe(self, topic, callback):
         self._pub.subscribe(topic = topic, listener = callback)
@@ -89,4 +88,6 @@ class IModel(object):
     def sendCommand(self, command):
         pass
 
+    def dissectResponse(self, resp):
+        pass
 
