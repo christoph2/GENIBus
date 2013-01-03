@@ -27,4 +27,12 @@
 ##
 ##
 
+START_DELIMITER     = 0
+LENGTH              = 1
+DESTINATION_ADRESS  = 2
+SOURCE_ADDRESS      = 3
+PDU_START           = 4
+
+CRC_HIGH            = -2
+CRC_LOW             = -1
 

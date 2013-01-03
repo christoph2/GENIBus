@@ -33,6 +33,7 @@
 import unittest
 from genicontrol.crc import Crc, checkCrc
 import genicontrol.utils as utils
+import genicontrol.defs as defs
 
 ## DATA Req/Resp
 DATA_REQ = (
@@ -243,28 +244,19 @@ CONF_RESP = (
 
 ALL_TELEGRAMS = (DATA_REQ, DATA_RESP, INFO_REQ, INFO_RESP, REF_REQ, REF_RESP, CONF_REQ, CONF_RESP)
 
-START_DELIMITER     = 0
-LENGTH              = 1
-DESTINATION_ADRESS  = 2
-SOURCE_ADDRESS      = 3
-PDU_START           = 4
-
-CRC_HIGH            = -2
-CRC_LOW             = -1
-
 
 def dissectResponse(frame):
     buf = utils.makeBuffer(frame)
     arr =  utils.makeArray(buf)
 
-    sd = arr[START_DELIMITER]
-    length = arr[LENGTH]
-    da = arr[DESTINATION_ADRESS]
-    sa = arr[SOURCE_ADDRESS]
+    sd = arr[defs.START_DELIMITER]
+    length = arr[defs.LENGTH]
+    da = arr[defs.DESTINATION_ADRESS]
+    sa = arr[defs.SOURCE_ADDRESS]
 
     assert(length == len(arr) - 4)
     assert(frame == arr)
-    for idx in range(PDU_START, length + 2):
+    for idx in range(defs.PDU_START, length + 2):
         pass
 
 class TestCrc(unittest.TestCase):
@@ -277,7 +269,7 @@ class TestCrc(unittest.TestCase):
 
     @staticmethod
     def expectedCrc(frame):
-        return utils.makeWord(frame[-2], frame[-1])
+        return utils.makeWord(frame[defs.CRC_HIGH], frame[defs.CRC_LOW])
 
     def testDataReq(self):
         self.assertEquals(self.check(DATA_REQ), self.expectedCrc(DATA_REQ))
