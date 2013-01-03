@@ -71,7 +71,7 @@ class Crc(object):
 
     def update(self, data):
         data &= 0xff
-        self._accum = ((self._accum << 8) & 0xffff) ^ Crc_Table16[((self._accum >> 8) ^ data) & 0xffff]
+        self._accum = (((self._accum << 8) & 0xffff) ^ Crc_Table16[((self._accum >> 8) ^ data) & 0xff]) & 0xffff
 
     def init(self, data):
         self._accum = data
