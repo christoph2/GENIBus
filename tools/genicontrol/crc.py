@@ -26,8 +26,6 @@
 ##
 ##
 
-#import unittest
-#import genicontrol.simu.Simulator as Simulator
 
 Crc_Table16 = (
     0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
@@ -80,13 +78,11 @@ class Crc(object):
         return (self._accum ^ (0xffff)) & 0xffff
 
 
-def main():
-    crc = Crc(0x0000)
-    for i in range(11):
-        crc.update(i)
-    print hex(crc.get())
+def checkCrc(frame):
+    crc = Crc(0xffff)
+    for idx in range(1, len(frame) - 2):
+        crc.update(frame[idx])
+    return crc.get()
 
-if __name__ == '__main__':
-    main()
 
 

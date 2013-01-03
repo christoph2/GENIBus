@@ -32,7 +32,7 @@
 
 import array
 import unittest
-from genicontrol.crc import Crc
+from genicontrol.crc import Crc, checkCrc
 
 ## DATA Req/Resp
 DATA_REQ = (
@@ -268,19 +268,15 @@ def dissectResponse(frame):
     assert(frame == arr)
     for idx in range(PDU_START, length + 2):
         pass
-        #print hex(arr[idx]),
 
 def makeWord(bh, bl):
     return (bh <<8) | bl
 
-def checkCrc(frame):
-    crc = Crc(0xffff)
-    for idx in range(1, len(frame) - 2):
-        crc.update(frame[idx])
-    return crc.get()
-
 
 class TestCrc(unittest.TestCase):
+    """
+        Test if Crc works as expected.
+    """
     @staticmethod
     def check(frame):
         return checkCrc(frame)
