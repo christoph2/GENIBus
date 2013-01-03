@@ -27,3 +27,14 @@
 ##
 
 
+import array
+
+
+def makeWord(bh, bl):
+    return (bh <<8) | bl
+
+def makeBuffer(arr):
+    return buffer(array.array('B', arr))
+
+def makeArray(buf):
+    return tuple([ord(x) for x in str(buf)])

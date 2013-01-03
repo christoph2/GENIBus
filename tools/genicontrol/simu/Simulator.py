@@ -30,9 +30,9 @@
 ## Some known-good telegrams from spec.
 ##
 
-import array
 import unittest
 from genicontrol.crc import Crc, checkCrc
+import genicontrol.utils as utils
 
 ## DATA Req/Resp
 DATA_REQ = (
@@ -249,15 +249,10 @@ DESTINATION_ADRESS  = 2
 SOURCE_ADDRESS      = 3
 PDU_START           = 4
 
-def makeBuffer(arr):
-    return buffer(array.array('B', arr))
-
-def makeArray(buf):
-    return tuple([ord(x) for x in str(buf)])
 
 def dissectResponse(frame):
-    buf = makeBuffer(frame)
-    arr =  makeArray(buf)
+    buf = utils.makeBuffer(frame)
+    arr =  utils.makeArray(buf)
 
     sd = arr[START_DELIMITER]
     length = arr[LENGTH]
@@ -269,10 +264,6 @@ def dissectResponse(frame):
     for idx in range(PDU_START, length + 2):
         pass
 
-def makeWord(bh, bl):
-    return (bh <<8) | bl
-
-
 class TestCrc(unittest.TestCase):
     """
         Test if Crc works as expected.
@@ -283,7 +274,7 @@ class TestCrc(unittest.TestCase):
 
     @staticmethod
     def expectedCrc(frame):
-        return makeWord(frame[-2], frame[-1])
+        return utils.makeWord(frame[-2], frame[-1])
 
     def testDataReq(self):
         self.assertEquals(self.check(DATA_REQ), self.expectedCrc(DATA_REQ))
@@ -314,6 +305,6 @@ def main():
     dissectResponse(DATA_RESP)
 
 if __name__ == '__main__':
-    unittest.main()
     main()
+    unittest.main()
 
