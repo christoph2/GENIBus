@@ -62,3 +62,11 @@ OS_GET  = 0
 OS_SET  = 2
 OS_INFO = 3
 
+##
+## Acknowledges.
+##
+ACK_OK                  = 0
+ACK_CLASS_UNKNOWN       = 1
+ACK_ID_UNKNOWN          = 2
+ACK_OPERATION_ILLEGAL   = 3
+
