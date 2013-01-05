@@ -27,6 +27,16 @@
 ##
 ##
 
+import os
+
+##
+## Common constants.
+##
+HOME_DIRECTORY = os.path.abspath(os.path.expanduser('~/'))
+
+##
+## GeniBus constants.
+##
 START_DELIMITER     = 0
 LENGTH              = 1
 DESTINATION_ADRESS  = 2
