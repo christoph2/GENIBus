@@ -65,6 +65,8 @@ def dissectResponse(frame):
         crc.update(ch)
         if dissectingState == APDU_HEADER0:
             klass = ch & 0x0f
+            if klass not in defs.SUPPORTED_CLASSES:
+                raise ADPUClassNotSupportedError("APDU class '%u' not supported by GeniControl." % klass)
             dissectingState = APDU_HEADER1
         elif dissectingState == APDU_HEADER1:
             numberOfDataBytes = ch & 0x3F

@@ -29,6 +29,7 @@
 
 import locale
 from gettext import ugettext as _TR
+#_ = gettext.translation(my_program_name).ugettext
 import gettext
 
 

@@ -37,9 +37,13 @@ def getDeviceFileName(family, type_, version):
     return "GeniBus-%s.%s.%s.info" % (family, type_, version)
 
 def deviceInfoExists(family, type_, version):
-    fl = absConfigurationFilename(getDeviceFileName(family, type_, version))
-    print fl
-    return os.access(fl, os.F_OK)
+    return os.access(absConfigurationFilename(getDeviceFileName(family, type_, version)), os.F_OK)
+
+def loadDeviceInfo(family, type_, version):
+    pass
+
+def saveDeviceInfo(family, type_, version, info):
+    pass
 
 def main():
     print deviceInfoExists(0x03, 0x01, 0x42)
