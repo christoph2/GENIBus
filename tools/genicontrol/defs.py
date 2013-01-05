@@ -36,3 +36,23 @@ PDU_START           = 4
 CRC_HIGH            = -2
 CRC_LOW             = -1
 
+##
+## ADPU classes.
+##
+class ADPUClass:
+    PROTOCOL_DATA                       = 0
+    BUS_DATA                            = 1
+    MEASURERED_DATA                     = 2
+    COMMANDS                            = 3
+    CONFIGURATION_PARAMETERS            = 4
+    REFERENCE_VALUES                    = 5
+    TEST_DATA                           = 6
+    ASCII_STRINGS                       = 7
+    MEMORY_BLOCKS                       = 8
+    EMBEDDED_PUDS                       = 9
+    DATA_OBJECTS                        = 10
+    SIXTEENBIT_MEASURERED_DATA          = 11
+    SIXTEENBIT_CONFIGURATION_PARAMETERS = 12
+    SIXTEENBIT_REFERENCE_VALUES         = 13
+
+
