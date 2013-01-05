@@ -304,7 +304,8 @@ def createMeasurementPDU(datapoints):
 print createMeasurementPDU(dataReqValues)
 
 def main():
-    dissectResponse(INFO_RESP)
+    #dissectResponse(INFO_RESP)
+    dissectResponse(CONF_RESP)
 
 if __name__ == '__main__':
     main()

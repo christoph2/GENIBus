@@ -67,13 +67,16 @@ def dissectResponse(frame):
             klass = ch & 0x0f
             dissectingState = APDU_HEADER1
         elif dissectingState == APDU_HEADER1:
-            dissectingState = APDU_DATA
             numberOfDataBytes = ch & 0x3F
             opAck = (ch & 0xC0) >> 6
             byteCount = numberOfDataBytes
+            if byteCount:
+                dissectingState = APDU_DATA
+            else:
+                dissectingState = APDU_HEADER0
         elif dissectingState == APDU_DATA:
             byteCount -= 1
-            if byteCount == 0:
+            if byteCount <= 0:
                 dissectingState = APDU_HEADER0
     frameCrc = utils.makeWord(arr[defs.CRC_HIGH], arr[defs.CRC_LOW])
     if crc.get() != frameCrc:
