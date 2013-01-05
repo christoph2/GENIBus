@@ -55,4 +55,10 @@ class ADPUClass:
     SIXTEENBIT_CONFIGURATION_PARAMETERS = 12
     SIXTEENBIT_REFERENCE_VALUES         = 13
 
+##
+## Operation specifiers.
+##
+OS_GET  = 0
+OS_SET  = 2
+OS_INFO = 3
 
