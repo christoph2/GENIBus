@@ -30,10 +30,14 @@
 ## Some known-good telegrams from spec.
 ##
 
+from collections import namedtuple
 import unittest
 from genicontrol.crc import Crc, checkCrc
 import genicontrol.utils as utils
 import genicontrol.defs as defs
+import genicontrol.dataitems as dataitems
+from genicontrol.dissect import dissectResponse
+
 
 ## DATA Req/Resp
 DATA_REQ = (
@@ -56,8 +60,8 @@ DATA_REQ = (
     0x27,   ##  q = ID 39
     0x2C,   ##  h_max = ID 44
     0x2B,   ##  q_max = ID 43
-    0x18,   ##  2hour_hi = ID 24
-    0x19,   ##  2hour_lo = ID 25
+    0x18,   ##  t_2hour_hi = ID 24
+    0x19,   ##  t_2hour_lo = ID 25
     0x5A,   ##  contr_source = ID 90
     0x57,   ##  ref_steps = ID 87
     0x22,   ##  p = ID 34
@@ -244,21 +248,6 @@ CONF_RESP = (
 
 ALL_TELEGRAMS = (DATA_REQ, DATA_RESP, INFO_REQ, INFO_RESP, REF_REQ, REF_RESP, CONF_REQ, CONF_RESP)
 
-
-def dissectResponse(frame):
-    buf = utils.makeBuffer(frame)
-    arr =  utils.makeArray(buf)
-
-    sd = arr[defs.START_DELIMITER]
-    length = arr[defs.LENGTH]
-    da = arr[defs.DESTINATION_ADRESS]
-    sa = arr[defs.SOURCE_ADDRESS]
-
-    assert(length == len(arr) - 4)
-    assert(frame == arr)
-    for idx in range(defs.PDU_START, length + 2):
-        pass
-
 class TestCrc(unittest.TestCase):
     """
         Test if Crc works as expected.
@@ -296,8 +285,28 @@ class TestCrc(unittest.TestCase):
         self.assertEquals(self.check(CONF_RESP), self.expectedCrc(CONF_RESP))
 
 
+
+dataReqValues = (
+    "act_mode1", "act_mode2", "act_mode3", "led_contr", "ref_act", "ref_inf", "ref_att_loc", "sys_ref", "h", "q",
+    "h_max", "q_max", "t_2hour_hi", "t_2hour_lo", "contr_source", "p", "energy_hi", "energy_lo", "speed",
+    "curve_no_ref", "alarm_code", "alarm_log_1", "alarm_log_2", "alarm_log_3", "alarm_log_4", "alarm_log_5"
+)
+
+
+class ADPUClassNotSupportedError(Exception): pass
+
+def createMeasurementPDU(datapoints):
+    mv = dataitems.MEASUREMENT_VALUES
+    result = []
+    for dp in datapoints:
+        item = mv[dp]
+        result.append(item.id)
+    return result
+
+print createMeasurementPDU(dataReqValues)
+
 def main():
-    dissectResponse(DATA_RESP)
+    dissectResponse(INFO_RESP)
 
 if __name__ == '__main__':
     main()
