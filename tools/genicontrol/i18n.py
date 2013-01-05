@@ -28,7 +28,7 @@
 
 
 import locale
-from gettext import gettext as _TR
+from gettext import ugettext as _TR
 import gettext
 
 
