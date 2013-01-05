@@ -80,3 +80,22 @@ ACK_CLASS_UNKNOWN       = 1
 ACK_ID_UNKNOWN          = 2
 ACK_OPERATION_ILLEGAL   = 3
 
+##
+## Valid operations for ADPU classes.
+##
+CLASS_CAPABILITIES = {
+    ADPUClass.PROTOCOL_DATA                       : (OS_GET, ),
+    ADPUClass.BUS_DATA                            : (OS_GET, ),
+    ADPUClass.MEASURERED_DATA                     : (OS_GET, OS_INFO),
+    ADPUClass.COMMANDS                            : (OS_SET, OS_INFO),
+    ADPUClass.CONFIGURATION_PARAMETERS            : (OS_GET, OS_SET, OS_INFO),
+    ADPUClass.REFERENCE_VALUES                    : (OS_GET, OS_SET, OS_INFO),
+    ADPUClass.TEST_DATA                           : (OS_GET, OS_SET, ),
+    ADPUClass.ASCII_STRINGS                       : (OS_GET, ),
+    ADPUClass.MEMORY_BLOCKS                       : (OS_GET, OS_SET, ),
+    ADPUClass.EMBEDDED_PUDS                       : (OS_GET, ),
+    ADPUClass.DATA_OBJECTS                        : (OS_GET, OS_SET, ),
+    ADPUClass.SIXTEENBIT_MEASURERED_DATA          : (OS_GET, OS_INFO),
+    ADPUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS : (OS_GET, OS_SET, OS_INFO),
+    ADPUClass.SIXTEENBIT_REFERENCE_VALUES         : (OS_GET, OS_SET, OS_INFO),
+}
