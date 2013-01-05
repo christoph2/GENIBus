@@ -33,6 +33,7 @@ import os
 ## Common constants.
 ##
 HOME_DIRECTORY = os.path.abspath(os.path.expanduser('~/'))
+CONFIGURATION_DIRECTORY = os.path.join(HOME_DIRECTORY, 'GeniControl')
 
 ##
 ## GeniBus constants.
@@ -99,3 +100,4 @@ CLASS_CAPABILITIES = {
     ADPUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS : (OS_GET, OS_SET, OS_INFO),
     ADPUClass.SIXTEENBIT_REFERENCE_VALUES         : (OS_GET, OS_SET, OS_INFO),
 }
+
