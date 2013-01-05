@@ -28,7 +28,7 @@
 
 import genicontrol.utils as utils
 import genicontrol.defs as defs
-from genicontrol.crc import Crc
+from genicontrol.crc import Crc, CrcError
 
 ## dissecting states.
 APDU_HEADER0    = 0
@@ -37,6 +37,7 @@ APDU_DATA       = 2
 
 
 class ADPUClassNotSupportedError(Exception): pass
+class FramingError(Exception): pass
 
 def dissectResponse(frame):
     buf = utils.makeBuffer(frame)
@@ -56,7 +57,8 @@ def dissectResponse(frame):
     numberOfDataBytes = 0
     byteCount = 0
 
-    assert(length == len(arr) - 4)
+    if not (length == len(arr) - 4):
+        raise FramingError("Frame length doesn't match length byte.")
     assert(frame == arr)
     for idx in range(defs.PDU_START, length + 2):
         ch = arr[idx]
@@ -73,7 +75,9 @@ def dissectResponse(frame):
             byteCount -= 1
             if byteCount == 0:
                 dissectingState = APDU_HEADER0
-    print hex(crc.get()), hex(utils.makeWord(arr[defs.CRC_HIGH], arr[defs.CRC_LOW]))
+    frameCrc = utils.makeWord(arr[defs.CRC_HIGH], arr[defs.CRC_LOW])
+    if crc.get() != frameCrc:
+        raise CrcError("Frame CRC doesn't match calculated CRC.")
 
 
 def main():
