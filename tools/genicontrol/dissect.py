@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -31,6 +30,14 @@ import genicontrol.utils as utils
 import genicontrol.defs as defs
 from genicontrol.crc import Crc
 
+## dissecting states.
+APDU_HEADER0    = 0
+APDU_HEADER1    = 1
+APDU_DATA       = 2
+
+
+class ADPUClassNotSupportedError(Exception): pass
+
 def dissectResponse(frame):
     buf = utils.makeBuffer(frame)
     arr =  utils.makeArray(buf)
@@ -45,11 +52,27 @@ def dissectResponse(frame):
     crc.update(da)
     crc.update(sa)
 
+    dissectingState = APDU_HEADER0
+    numberOfDataBytes = 0
+    byteCount = 0
+
     assert(length == len(arr) - 4)
     assert(frame == arr)
     for idx in range(defs.PDU_START, length + 2):
         ch = arr[idx]
         crc.update(ch)
+        if dissectingState == APDU_HEADER0:
+            klass = ch & 0x0f
+            dissectingState = APDU_HEADER1
+        elif dissectingState == APDU_HEADER1:
+            dissectingState = APDU_DATA
+            numberOfDataBytes = ch & 0x3F
+            opAck = (ch & 0xC0) >> 6
+            byteCount = numberOfDataBytes
+        elif dissectingState == APDU_DATA:
+            byteCount -= 1
+            if byteCount == 0:
+                dissectingState = APDU_HEADER0
     print hex(crc.get()), hex(utils.makeWord(arr[defs.CRC_HIGH], arr[defs.CRC_LOW]))
 
 

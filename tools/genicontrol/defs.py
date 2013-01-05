@@ -66,6 +66,8 @@ class ADPUClass:
     SIXTEENBIT_CONFIGURATION_PARAMETERS = 12
     SIXTEENBIT_REFERENCE_VALUES         = 13
 
+## TODO: Supported classes (by GeniControl)!
+
 ##
 ## Operation specifiers.
 ##

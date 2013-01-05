@@ -293,8 +293,6 @@ dataReqValues = (
 )
 
 
-class ADPUClassNotSupportedError(Exception): pass
-
 def createMeasurementPDU(datapoints):
     mv = dataitems.MEASUREMENT_VALUES
     result = []
