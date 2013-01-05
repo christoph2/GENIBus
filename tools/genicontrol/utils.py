@@ -28,6 +28,8 @@
 
 
 import array
+import os
+from genicontrol.defs import CONFIGURATION_DIRECTORY
 
 
 def makeWord(bh, bl):
@@ -38,3 +40,7 @@ def makeBuffer(arr):
 
 def makeArray(buf):
     return tuple([ord(x) for x in str(buf)])
+
+def absConfigurationFilename(fname):
+    return os.path.join(CONFIGURATION_DIRECTORY, fname)
+
