@@ -26,28 +26,19 @@
 ##
 ##
 
+def convertForward8(x, zero, range, unit):
+    return (zero + ((x & 0xff) * (range / 254.0))) * unit
 
-from collections import namedtuple
-from genicontrol.units import UnitTable
-from genicontrol.conversion import convertForward8, convertForward16
 
-InfoTuple = namedtuple('InfoTuple', 'header unit range zero')
-ScalingTuple = namedtuple('ScalingTuple', 'physEntity factor unit valueInterpretation byteOrder scaleInformationFormat signOfZero')
+def convertReverse8(x, zero, range, unit):
+    return (254.0 / (range * unit)) * ((-zero * unit) + x)
 
-class MalformedScalingInformationError(Exception): pass
 
-def getScalingInfo(infoTuple):
-    header = infoTuple.header
-    unit = infoTuple.unit
-    if (header & 0xc0) != 0x80:
-        raise MalformedScalingInformationError()
-    else:
-        valueInterpretation = (header & 0x20) >> 5
-        byteOrder = (header & 0x10) >> 6
-        scaleInformationFormat = (header & 0x03)
-        signOfZero = (unit & 0x80) >> 7
-        unit &= 0x7f
-        ut = UnitTable[unit]
-        return ScalingTuple(ut.physEntity, ut.factor, ut.unit, valueInterpretation, byteOrder, scaleInformationFormat, signOfZero)
+def convertForward16(x, zero, range, unit):
+    return (zero + ((x & 0xffff) * (range / (254.0 * 256.0)))) * unit
+
+
+def convertReverse16(x, zero, range, unit):
+    return ((254.0 * 256.0)/ (range * unit)) * ((-zero * unit) + x)
 
 
