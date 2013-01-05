@@ -29,6 +29,7 @@
 ## GENIBus device database.
 ##
 
+import csv
 import os
 from genicontrol.utils import absConfigurationFilename
 

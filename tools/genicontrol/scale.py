@@ -26,67 +26,16 @@
 ##
 ##
 
-
-from collections import namedtuple
-import doctest
-import fractions
 import os
-import unittest
-import string
 import sys
 from genicontrol.units import UnitTable
-
-ValueTuple = namedtuple('ValueTuple', 'header unit range zero value')
+from genicontrol.scaling import convertForward8, convertForward16, getScalingInfo, InfoTuple
 
 TestValues = (
-    ValueTuple(0x82, 0x3e, 0x39, 0x00, 0x7a),     # i_rst
-    ValueTuple(0x82, 0x15, 0x64, 0x00, 0x42),     # t_mo
-    ValueTuple(0x82, 0x09, 0xfa, 0x00, 0x3980)    # p_hi / p_lo
+    (InfoTuple(0x82, 0x3e, 0x39, 0x00), 0x7a),     # i_rst
+    (InfoTuple(0x82, 0x15, 0x64, 0x00), 0x42),     # t_mo
+    (InfoTuple(0x82, 0x09, 0xfa, 0x00), 0x3980)    # p_hi / p_lo
 )
-
-
-def analyze(valueTuple):
-    header = valueTuple.header
-    unit = valueTuple.unit
-    if (header & 0xc0) != 0x80:
-        print "shit"
-    else:
-        valueInterpretation = (header & 0x20) >> 5
-        byteOrder = (header & 0x10) >> 6
-        scaleInformationFormat = (header & 0x03)
-        signOfZero = (unit & 0x80) >> 7
-        unit &= 0x7f
-        ut = UnitTable[unit]
-        print "vi: %u bo: %u sif: %u sz: %u" % (valueInterpretation, byteOrder,
-            scaleInformationFormat, signOfZero),
-        print "Unit:", ut
-        unitFactor = ut.factor
-
-        # 'header unit range zero value'
-        if valueTuple.value > 0xff:
-            print "Value:", ConvertForward16(valueTuple.value, valueTuple.zero, valueTuple.range, unitFactor)
-        else:
-            print "Value:", ConvertForward8(valueTuple.value, valueTuple.zero, valueTuple.range, unitFactor)
-
-
-        #return valueInterpretation, byteOrder, scaleInformationFormat, signOfZero, unit
-
-
-def ConvertForward8(x, zero, range, unit):
-    return (zero + ((x & 0xff) * (range / 254.0))) * unit
-
-
-def ConvertReverse8(x, zero, range, unit):
-    return (254.0 / (range * unit)) * ((-zero * unit) + x)
-
-
-def ConvertForward16(x, zero, range, unit):
-    return (zero + ((x & 0xffff) * (range / (254.0 * 256.0)))) * unit
-
-
-def ConvertReverse16(x, zero, range, unit):
-    return ((254.0 * 256.0)/ (range * unit)) * ((-zero * unit) + x)
-
 
 
 USAGE = """usage: %s header unit range zero value
@@ -110,8 +59,8 @@ print USAGE
 u21 = UnitTable[21]
 u44 = UnitTable[44]
 
-print ConvertForward8(163, 10, 90, 1)
-print ConvertForward16(0x10d6, 0, 120, 1)
+print convertForward8(163, 10, 90, 1)
+print convertForward16(0x10d6, 0, 120, 1)
 
 
 def argumentsToLower():
@@ -119,8 +68,13 @@ def argumentsToLower():
 
 
 def main():
-    for tpl in TestValues:
-        analyze(tpl)
+    for info, value in TestValues:
+        scaling = getScalingInfo(info)
+        print scaling
+        if value > 0xff:
+            print convertForward16(value, info.zero, info.range, scaling.factor)
+        else:
+            print convertForward8(value, info.zero, info.range, scaling.factor)
 
 if __name__ == '__main__':
     main()
