@@ -113,5 +113,5 @@ CLASS_CAPABILITIES = {
     ADPUClass.SIXTEENBIT_REFERENCE_VALUES         : (OS_GET, OS_SET, OS_INFO),
 }
 
-class IllegalOperationError(Exception): pass:
+class IllegalOperationError(Exception): pass
 
