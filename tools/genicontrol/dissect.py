@@ -26,6 +26,7 @@
 ##
 ##
 
+from collections import namedtuple
 import logging
 
 import genicontrol.utils as utils
@@ -39,6 +40,8 @@ APDU_HEADER0    = 0
 APDU_HEADER1    = 1
 APDU_DATA       = 2
 
+APDU = namedtuple('APDU', 'klass ack data')
+DissectionResult = namedtuple('DissectionResult', 'sd da sa APDUs')
 
 class ADPUClassNotSupportedError(Exception): pass
 class FramingError(Exception): pass
@@ -60,6 +63,7 @@ def dissectResponse(frame):
     dissectingState = APDU_HEADER0
     numberOfDataBytes = 0
     byteCount = 0
+    result = []
 
     if not (length == len(arr) - 4):
         raise FramingError("Frame length doesn't match length byte.")
@@ -73,6 +77,7 @@ def dissectResponse(frame):
                 # Well, to be precise, these classes are not really documented by the GENIBus spec...
                 raise ADPUClassNotSupportedError("APDU class '%u' not supported by GeniControl." % klass)
             dissectingState = APDU_HEADER1
+            data = []
         elif dissectingState == APDU_HEADER1:
             numberOfDataBytes = ch & 0x3F
             opAck = (ch & 0xC0) >> 6
@@ -81,13 +86,18 @@ def dissectResponse(frame):
                 dissectingState = APDU_DATA
             else:
                 dissectingState = APDU_HEADER0
+                result.append(APDU(klass, opAck, data))
         elif dissectingState == APDU_DATA:
             byteCount -= 1
             if byteCount <= 0:
                 dissectingState = APDU_HEADER0
+                result.append(APDU(klass, opAck, data))
+            else:
+                data.append(ch)
     frameCrc = utils.makeWord(arr[defs.CRC_HIGH], arr[defs.CRC_LOW])
     if crc.get() != frameCrc:
         raise CrcError("Frame CRC doesn't match calculated CRC.")
+    return DissectionResult(sd, da, sa, result)
 
 
 def main():
