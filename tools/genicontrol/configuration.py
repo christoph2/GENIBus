@@ -34,8 +34,9 @@ except ImportError:
 import logging
 import os
 import threading
+from genicontrol.utils import absConfigurationFilename
 
-CFG_FILE_NAME = os.path.abspath(os.path.expanduser('~/.GeniControl.cfg'))
+CFG_FILE_NAME = absConfigurationFilename('.GeniControl.cfg')
 
 class Config(object):
     _lock = threading.Lock()
