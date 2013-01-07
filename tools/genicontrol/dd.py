@@ -30,8 +30,11 @@
 ##
 
 import csv
+import logging
 import os
 from genicontrol.utils import absConfigurationFilename
+
+logger = logging.getLogger("genicontrol")
 
 def getDeviceFileName(family, type_, version):
     return "GeniBus-%s.%s.%s.info" % (family, type_, version)

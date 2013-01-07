@@ -28,12 +28,14 @@
 
 
 import abc
+import logging
 from wx.lib.pubsub import Publisher as Publisher
 
 DATA_NOT_AVAILABLE = None
 
 class IModel(object):
     __metaclass__ = abc.ABCMeta
+    logger = logging.getLogger("genicontrol")
 
     def __init__(self):
         #super(IModel, self).__init__(self)

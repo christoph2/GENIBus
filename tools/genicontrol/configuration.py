@@ -31,6 +31,7 @@ try:
 except ImportError:
     import configparser # Python 3.x
 
+import logging
 import os
 import threading
 
@@ -38,6 +39,7 @@ CFG_FILE_NAME = os.path.abspath(os.path.expanduser('~/.GeniControl.cfg'))
 
 class Config(object):
     _lock = threading.Lock()
+    logger = logging.getLogger("genicontrol")
 
     def __new__(cls):
         try:

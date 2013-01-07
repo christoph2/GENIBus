@@ -26,9 +26,13 @@
 ##
 ##
 
+import logging
+
 import genicontrol.utils as utils
 import genicontrol.defs as defs
 from genicontrol.crc import Crc, CrcError
+
+logger = logging.getLogger("genicontrol")
 
 ## dissecting states.
 APDU_HEADER0    = 0
@@ -66,6 +70,7 @@ def dissectResponse(frame):
         if dissectingState == APDU_HEADER0:
             klass = ch & 0x0f
             if klass not in defs.SUPPORTED_CLASSES:
+                # Well, to be precise, these classes are not really documented by the GENIBus spec...
                 raise ADPUClassNotSupportedError("APDU class '%u' not supported by GeniControl." % klass)
             dissectingState = APDU_HEADER1
         elif dissectingState == APDU_HEADER1:

@@ -25,6 +25,7 @@
 ##
 ##
 
+import logging
 import wx
 import genicontrol.dataitems as dataitems
 #import genicontrol.view
@@ -206,6 +207,7 @@ class GeniControlApp(wx.PySimpleApp):
         super(GeniControlApp, self).__init__()
 
 def main():
+    logger = logging.getLogger("genicontrol")
     config = Config()
     config.loadConfiguration()
     size = wx.Size(config.sizeX, config.sizeY)

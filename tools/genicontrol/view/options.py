@@ -45,11 +45,13 @@ class Options(wx.Dialog):
         gridsizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         addr = ipaddrctrl.IpAddrCtrl(self, id = ID_IPADDR)
         gridsizer.Add(addr, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+        ## TODO: Subnet-mask
         st = wx.StaticText(self, label = 'Server-port')
         gridsizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         tc = TextCtrl(self, mask = '#####')
         gridsizer.Add(tc, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         sizer.Add(gridsizer, 1, wx.ALL, 5)
+        # TODO: Query/Polling interval
         line = wx.StaticLine(self, style = wx.LI_HORIZONTAL)
         sizer.Add(line, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
         btnsizer = wx.StdDialogButtonSizer()

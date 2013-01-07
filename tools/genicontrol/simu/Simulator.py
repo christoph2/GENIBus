@@ -31,12 +31,15 @@
 ##
 
 from collections import namedtuple
+import logging
 import unittest
 from genicontrol.crc import Crc, checkCrc
 import genicontrol.utils as utils
 import genicontrol.defs as defs
 import genicontrol.dataitems as dataitems
 from genicontrol.dissect import dissectResponse
+
+logger = logging.getLogger("genicontrol")
 
 
 ## DATA Req/Resp

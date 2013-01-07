@@ -26,6 +26,9 @@
 ##
 ##
 
+import logging
+logger = logging.getLogger("genicontrol")
+
 def convertForward8(x, zero, range, unit):
     return (zero + ((x & 0xff) * (range / 254.0))) * unit
 

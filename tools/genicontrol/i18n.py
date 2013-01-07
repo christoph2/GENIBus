@@ -28,10 +28,13 @@
 
 
 import locale
+import logging
 from gettext import ugettext as _TR
 #_ = gettext.translation(my_program_name).ugettext
 import gettext
 
+
+logger = logging.getLogger("genicontrol")
 
 ##t = gettext.translation('spam', '/usr/share/locale')
 ##_ = t.ugettext

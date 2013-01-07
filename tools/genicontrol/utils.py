@@ -28,9 +28,11 @@
 
 
 import array
+import logging
 import os
 from genicontrol.defs import CONFIGURATION_DIRECTORY
 
+logger = logging.getLogger("genicontrol")
 
 def makeWord(bh, bl):
     return (bh <<8) | bl

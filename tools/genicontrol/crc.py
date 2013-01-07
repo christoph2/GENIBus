@@ -26,6 +26,8 @@
 ##
 ##
 
+import logging
+
 class CrcError(Exception): pass
 
 Crc_Table16 = (
@@ -65,6 +67,8 @@ Crc_Table16 = (
 
 
 class Crc(object):
+    logger = logging.getLogger("genicontrol")
+
     def __init__(self, data):
         self.init(data)
 

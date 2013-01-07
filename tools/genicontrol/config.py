@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -31,11 +31,13 @@ try:
 except ImportError:
     import configparser # Python 3.x
 
+import logging
 import threading
 
 
 class Config(object):
     _lock = threading.Lock()
+    logger = logging.getLogger("genicontrol")
 
     def __new__(cls):
         try:

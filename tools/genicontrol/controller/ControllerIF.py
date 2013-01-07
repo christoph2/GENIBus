@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -27,12 +27,14 @@
 ##
 
 import abc
+import logging
 from wx.lib.pubsub import Publisher as Publisher
 
 DATA_NOT_AVAILABLE = 0xff
 
 class IController(object):
     __metaclass__ = abc.ABCMeta
+    logger = logging.getLogger("genicontrol")
 
     def __init__(self, model, viewClass):
         self._pub = Publisher()

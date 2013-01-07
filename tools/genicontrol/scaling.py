@@ -28,8 +28,11 @@
 
 
 from collections import namedtuple
+import logging
 from genicontrol.units import UnitTable
 from genicontrol.conversion import convertForward8, convertForward16
+
+logger = logging.getLogger("genicontrol")
 
 InfoTuple = namedtuple('InfoTuple', 'header unit range zero')
 ScalingTuple = namedtuple('ScalingTuple', 'physEntity factor unit valueInterpretation byteOrder scaleInformationFormat signOfZero')
