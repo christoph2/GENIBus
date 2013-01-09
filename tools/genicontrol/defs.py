@@ -34,6 +34,9 @@ import os
 ##
 HOME_DIRECTORY = os.path.abspath(os.path.expanduser('~/'))
 CONFIGURATION_DIRECTORY = os.path.join(HOME_DIRECTORY, 'GeniControl')
+if not os.access(CONFIGURATION_DIRECTORY, os.F_OK):
+    os.mkdir(CONFIGURATION_DIRECTORY)
+
 
 ##
 ## GeniBus constants.

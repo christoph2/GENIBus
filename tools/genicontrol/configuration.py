@@ -55,6 +55,18 @@ class Config(object):
         self.config = configparser.ConfigParser()
         config = self.config
         config.read([CFG_FILE_NAME])
+        if not config.has_section('general'):
+            config.add_section('general')
+            config.set('general', 'pollingInterval', '2')
+        self.pollingInterval = config.getint('general', 'pollingInterval')
+        if not config.has_section('network'):
+            config.add_section('network')
+            config.set('network', 'serverIP', '192.168.100.10')
+            config.set('network', 'subnetMask', '255.255.255.0')
+            config.set('network', 'serverPort', '6734')
+        self.serverIP = config.get('network', 'serverIP')
+        self.serverPort = config.get('network', 'serverPort')
+        self.subnetMask = config.get('network', 'subnetMask')
         if not config.has_section('window'):
             config.add_section('window')
             config.set('window', 'sizeX', '800')
@@ -74,6 +86,10 @@ class Config(object):
             config.set('window', 'sizey', str(self.sizeY))
             config.set('window', 'posx', str(self.posX))
             config.set('window', 'posy', str(self.posY))
+            config.set('general', 'pollingInterval', str(self.pollingInterval))
+            config.set('network', 'serverIP', str(self.serverIP))
+            config.set('network', 'subnetMask', str(self.subnetMask))
+            config.set('network', 'serverPort', str(self.serverPort))
             config.write(fout)
 
 

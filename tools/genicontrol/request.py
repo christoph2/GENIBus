@@ -57,6 +57,14 @@ class WorkerThread(threading.Thread):
         print "Exiting %s." % name
 
 
+class RequestorThread(threading.Thread):
+    def __init__(self):
+        super(RequestorThread, self).__init__()
+
+    def run(self):
+        pass
+
+
 class Requestor(object):
     IDLE    = 0
     PENDING = 1

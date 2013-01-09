@@ -37,6 +37,7 @@ from genicontrol.controller.GUIController import GUIController
 import genicontrol.controlids as controlids
 from genicontrol.configuration import Config as Config
 from genicontrol.view.GridControl import GridControl
+from genicontrol.view.options import showOptionsDialogue
 
 TR = wx.GetTranslation
 
@@ -106,7 +107,7 @@ class GBFrame(wx.Frame):
         self.locale = None
         #self.updateLanguage(wx.LANGUAGE_ITALIAN)
 
-        self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
+        self.Bind(wx.EVT_CLOSE, self.onCloseWindow)
 
 ##
 ##        self.log = wx.TextCtrl(self, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
@@ -150,8 +151,8 @@ class GBFrame(wx.Frame):
                     ("Save &info", "Save parameter scaling information to a file.", self.onSaveInfo),
                     ("&Load paramter", "", self.onLoadParamter),
                     ("", "", ""),
-                    ("&Exit", "Exit GeniControl", self.OnCloseWindow)))
-
+                    ("&Exit", "Exit GeniControl", self.onCloseWindow))),
+                ("&Extras", (("&Options", "", self.onOptions),),),
                 ]
 
     def createMenuBar(self):
@@ -186,7 +187,10 @@ class GBFrame(wx.Frame):
     def onSaveInfo(self, event): pass
     def onLoadParamter(self, event): pass
 
-    def OnCloseWindow(self, event):
+    def onOptions(self, event):
+        showOptionsDialogue(self)
+
+    def onCloseWindow(self, event):
         wx.LogMessage("Exiting...")
         wx.LogMessage("%s %s" % (self.GetSize(), self.GetPosition()))
         self.saveConfiguration()

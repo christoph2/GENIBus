@@ -30,28 +30,39 @@
 import wx
 from wx.lib.masked import ipaddrctrl
 from wx.lib.masked import TextCtrl
-from genicontrol.config import Config
+from genicontrol.configuration import Config
 
 ID_IPADDR   = wx.NewId()
+ID_SUBNET   = wx.NewId()
 ID_PORT     = wx.NewId()
+ID_POLL     = wx.NewId()
+
 
 class Options(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, wx.ID_ANY, u'Options')
+        config = Config()
+        #config.loadConfiguration()
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-        gridsizer = wx.FlexGridSizer(2,2)
+        gridsizer = wx.FlexGridSizer(4,2)
         st = wx.StaticText(self, label = 'Server IP-address')
         gridsizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         addr = ipaddrctrl.IpAddrCtrl(self, id = ID_IPADDR)
         gridsizer.Add(addr, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
-        ## TODO: Subnet-mask
+        st = wx.StaticText(self, label = 'Subnet-mask')
+        gridsizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        mask = ipaddrctrl.IpAddrCtrl(self, id = ID_SUBNET)
+        gridsizer.Add(mask, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         st = wx.StaticText(self, label = 'Server-port')
         gridsizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
-        tc = TextCtrl(self, mask = '#####')
-        gridsizer.Add(tc, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+        port = TextCtrl(self, id = ID_PORT, mask = '#####')
+        gridsizer.Add(port, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         sizer.Add(gridsizer, 1, wx.ALL, 5)
-        # TODO: Query/Polling interval
+        st = wx.StaticText(self, label = 'Polling interval')
+        gridsizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        poll = TextCtrl(self, id = ID_POLL, mask = '#####')
+        gridsizer.Add(poll, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         line = wx.StaticLine(self, style = wx.LI_HORIZONTAL)
         sizer.Add(line, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
         btnsizer = wx.StdDialogButtonSizer()
@@ -65,13 +76,21 @@ class Options(wx.Dialog):
         self.SetSizer(sizer)
         sizer.Fit(self)
 
+        addr.SetValue(config.serverIP)
+        mask.SetValue(config.subnetMask)
+        port.SetValue(config.serverPort)
+        poll.SetValue(str(config.pollingInterval))
+
         addr.SetFocus()
         #self.SetValues()
         self.Centre()
         retval = self.ShowModal()
         retval = wx.ID_OK
         if retval == wx.ID_OK:
-            pass # TODO: Save Config!!!
+            config.serverIP = addr.GetValue()
+            config.subnetMaskP = mask.GetValue()
+            config.serverPortP = port.GetValue()
+            config.pollingInterval = poll.GetValue()
         self.Destroy()
 
 
