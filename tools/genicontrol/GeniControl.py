@@ -4,7 +4,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -28,7 +28,6 @@
 import logging
 import wx
 import genicontrol.dataitems as dataitems
-#import genicontrol.view
 from genicontrol.view.mcpanel import MCPanel
 from genicontrol.view.infopanel import InfoPanel
 from genicontrol.view.refpanel import RefPanel

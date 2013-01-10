@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -37,8 +37,12 @@ ToggleButton = namedtuple('ToggleButton', 'id, labelOn, labelOff attrName')
 
 def createToggleButton(parent, buttonDesc, sizer):
     btn = wx.ToggleButton(parent, label = buttonDesc.labelOn, id = buttonDesc.id)
+    btn.labelOn = buttonDesc.labelOn
+    btn.labelOff = buttonDesc.labelOff
+    btn.bgColor = btn.GetBackgroundColour()
     sizer.Add(btn, 1, wx.ALL, 5)
     setattr(parent, buttonDesc.attrName, btn)
+    btn.Bind(wx.EVT_TOGGLEBUTTON, parent.toggledbutton)
     return btn
 
 class Controls(wx.Panel):
@@ -68,20 +72,20 @@ class Controls(wx.Panel):
         btn = wx.Button(self, label = 'Max', id = controlids.ID_CMD_MAX)
         sizer2.Add(btn, 1, wx.ALL, 5)
 
-        sizer1.Add(sizer2) # , 1, wx.ALL, 5)
+        sizer1.Add(sizer2)
         self.SetSizer(sizer1)
 
         self.enableControls((controlids.ID_CMD_MAX, controlids.ID_CMD_MIN))
 
     def toggledbutton(self, event):
         # Active State
-        if self.btn.GetValue() == True:
-            self.btn.SetLabel('Stop')
-            self.btn.SetBackgroundColour(wx.Color(0, 255, 0))
+        if event.EventObject.GetValue() == True:
+            event.EventObject.SetLabel(event.EventObject.labelOff)
+            event.EventObject.SetBackgroundColour(wx.Color(0, 255, 0))
         # Inactive State
-        if self.btn.GetValue() == False:
-            self.btn.SetLabel('Start')
-            self.btn.SetBackgroundColour(wx.Color(255, 0, 0))
+        if event.EventObject.GetValue() == False:
+            event.EventObject.SetLabel(event.EventObject.labelOn)
+            event.EventObject.SetBackgroundColour(event.EventObject.bgColor)
 
     def setRemoteMode(self):
         pass
