@@ -32,7 +32,7 @@ __all__ = [
 ]
 
 from collections import namedtuple
-
+import genicontrol.defs as defs
 
 ACC_RO  = 0x01
 ACC_WO  = 0x02
@@ -182,6 +182,13 @@ for item in DATAITEMS:
     elif item.klass == 7:
         addToDict(STRINGS, item.name, item)
 
+DATAITEMS_FOR_CLASS = {
+    defs.ADPUClass.MEASURERED_DATA:             MEASUREMENT_VALUES,
+    defs.ADPUClass.COMMANDS:                    COMMANDS,
+    defs.ADPUClass.CONFIGURATION_PARAMETERS:    PARAMETER,
+    defs.ADPUClass.REFERENCE_VALUES:            REFERENCES,
+    defs.ADPUClass.ASCII_STRINGS:               STRINGS
+}
 
 #print MEASUREMENT_VALUES
 """
