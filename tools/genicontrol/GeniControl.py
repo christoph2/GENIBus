@@ -40,11 +40,6 @@ from genicontrol.view.options import showOptionsDialogue
 
 TR = wx.GetTranslation
 
-CONTROL_MODE_AUTOMATIC              = 0
-CONTROL_MODE_CONSTANT_PRESSURE      = 1
-CONTROL_MODE_PROPORTIONAL_PRESSURE  = 2
-CONTROL_MODE_CONSTANT_FREQUENCY     = 3
-
 import led
 
 class TabPanel(wx.Panel):
