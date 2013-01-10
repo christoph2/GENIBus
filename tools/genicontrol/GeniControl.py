@@ -50,9 +50,7 @@ import led
 
 class TabPanel(wx.Panel):
     def __init__(self, parent):
-        """"""
-
-        wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY)
+        wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         txtOne = wx.TextCtrl(self, wx.ID_ANY, "")
@@ -65,12 +63,21 @@ class TabPanel(wx.Panel):
         self.SetSizer(sizer)
 
 
+class BusmonitorPanel(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
+        sizer = wx.BoxSizer()
+        tc = wx.TextCtrl(self, wx.NewId(), style = wx.TE_MULTILINE | wx.HSCROLL | wx.TE_RICH2 | wx.TE_NOHIDESEL | wx.TE_READONLY)
+        sizer.Add(tc, 1, wx.EXPAND | wx.GROW)
+        self.SetSizer(sizer)
+        sizer.Fit(self)
+
 class TestNB(wx.Notebook):
     def __init__(self, parent, id):
         wx.Notebook.__init__(self, parent, id, size = (21, 21), style = wx.BK_DEFAULT | wx.BK_BOTTOM)
         tabOne = TabPanel(self)
         self.AddPage(MCPanel(self), "Measurement + Control")
-        self.AddPage(tabOne, "Busmonitor")
+        self.AddPage(BusmonitorPanel(self), "Busmonitor")
         self.AddPage(RefPanel(self), "References")
         self.AddPage(tabOne, "Parameters")
         self.AddPage(InfoPanel(self), "Info")
