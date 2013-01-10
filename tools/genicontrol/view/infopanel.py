@@ -40,7 +40,7 @@ class InfoPanel(wx.Panel):
         sizer = self.addValues(DataitemConfiguration['StringValues'])
         grid = GridControl(self, DataitemConfiguration['InfoValues'], dataitems.DATAITEMS)
         sizer.Add(grid, 1, wx.ALL, 5)
-        self.SetSizer(sizer)
+        self.SetSizerAndFit(sizer)
         ctl = self.FindWindowById(controlids.ID_STR_PRODUCT_NAME)
         ctl.SetValue('GenBus Simulation')
         ctl = self.FindWindowById(controlids.ID_STR_SOFTWARE_NAME1)

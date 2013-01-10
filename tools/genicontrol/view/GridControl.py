@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -44,19 +44,23 @@ class GridControl(gridlib.Grid, mixins.GridAutoEditMixin):
         self.Bind(gridlib.EVT_GRID_ROW_SIZE, self.OnRowSize)
         self.Bind(gridlib.EVT_GRID_COL_SIZE, self.OnColSize)
 
-        self.CreateGrid(len(values), 8)
+        self.CreateGrid(len(values), 6)
 
         fnt = self.GetFont()
-        self.SetColLabelValue(0, "Dataitem")
-        self.SetColLabelValue(1, "Unit")
-        self.SetColLabelValue(2, "Zero")
-        self.SetColLabelValue(3, "Range")
+        self.SetColLabelValue(0, "item")
+	self.SetColLabelValue(1, "phys. entity")
+	self.SetColLabelValue(2, "factor")
+        self.SetColLabelValue(3, "unit")
+        self.SetColLabelValue(4, "zero")
+        self.SetColLabelValue(5, "range")
 
         for i in range((len(values))):
             self.SetCellValue(i, 0, values[i])
             self.SetCellValue(i, 1, 'n/a')
             self.SetCellValue(i, 2, 'n/a')
             self.SetCellValue(i, 3, 'n/a')
+	    self.SetCellValue(i, 4, 'n/a')
+	    self.SetCellValue(i, 5, 'n/a')
 ##            self.AutoSizeColumn(i)
 ##            self.SetCellValue(0, i, '')
 ##
