@@ -69,8 +69,7 @@ class BusmonitorPanel(wx.Panel):
         sizer = wx.BoxSizer()
         tc = wx.TextCtrl(self, wx.NewId(), style = wx.TE_MULTILINE | wx.HSCROLL | wx.TE_RICH2 | wx.TE_NOHIDESEL | wx.TE_READONLY)
         sizer.Add(tc, 1, wx.EXPAND | wx.GROW)
-        self.SetSizer(sizer)
-        sizer.Fit(self)
+        self.SetSizerAndFit(sizer)
 
 class TestNB(wx.Notebook):
     def __init__(self, parent, id):

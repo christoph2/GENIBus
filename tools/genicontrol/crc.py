@@ -89,5 +89,3 @@ def checkCrc(frame):
         crc.update(frame[idx])
     return crc.get()
 
-
-
