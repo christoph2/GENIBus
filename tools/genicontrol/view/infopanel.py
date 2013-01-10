@@ -25,6 +25,7 @@
 ##
 ##
 
+import datetime
 import logging
 import wx
 import genicontrol.dataitems as dataitems
@@ -40,6 +41,18 @@ class InfoPanel(wx.Panel):
         grid = GridControl(self, DataitemConfiguration['InfoValues'], dataitems.DATAITEMS)
         sizer.Add(grid, 1, wx.ALL, 5)
         self.SetSizer(sizer)
+        ctl = self.FindWindowById(controlids.ID_STR_PRODUCT_NAME)
+        ctl.SetValue('GenBus Simulation')
+        ctl = self.FindWindowById(controlids.ID_STR_SOFTWARE_NAME1)
+        ctl.SetValue('GeniControl')
+        ctl = self.FindWindowById(controlids.ID_STR_COMPILE_DATE1)
+        ctl.SetValue('%s' % str(datetime.date.today()))
+        ctl = self.FindWindowById(controlids.ID_STR_PROTOCOL_CODE)
+        ctl.SetValue('GB')
+        ctl = self.FindWindowById(controlids.ID_STR_DEVELOPERS)
+        ctl.SetValue('CS')
+        ctl = self.FindWindowById(controlids.ID_STR_RTOS_CODE)
+        ctl.SetValue('RT')
 
     def addValues(self, values):
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -47,7 +60,7 @@ class InfoPanel(wx.Panel):
             hsizer = wx.BoxSizer(wx.HORIZONTAL)
             st = wx.StaticText(self, label = displayName)
             hsizer.Add(st, 1, wx.ALL, 5)
-            tc = wx.TextCtrl(self, idCode, "n/a", style = wx.ALIGN_RIGHT)
+            tc = wx.TextCtrl(self, idCode, "n/a", style = wx.ALIGN_LEFT)
             tc.Enable(False)
             hsizer.Add(tc, 1, wx.ALL, 5)
             sizer.Add(hsizer) # , 1, wx.ALL, 5)
