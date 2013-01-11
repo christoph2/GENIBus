@@ -35,6 +35,7 @@ import logging
 import unittest
 from genicontrol.crc import Crc, checkCrc
 import genicontrol.utils as utils
+import genicontrol.apdu as apdu
 import genicontrol.defs as defs
 import genicontrol.dataitems as dataitems
 from genicontrol.dissect import dissectResponse
@@ -45,12 +46,12 @@ logger = logging.getLogger("genicontrol")
 ## DATA Req/Resp
 DATA_REQ = (
     0x27,   ##  Start Delimiter
-    0x1F,   ##  Length
+    0x1E,   ##  Length
     0x20,   ##  Destination Address
     0x04,   ##  Source Address
             ##
     0x02,   ##  Class 2: Measured Data
-    0x1B,   ##  OS=0 (GET),  Length=27
+    0x1A,   ##  OS=0 (GET),  Length=26
     0x51,   ##  act_mode1 = ID 81
     0x52,   ##  act_mode2 = ID 82
     0x53,   ##  act_mode3 = ID 83
@@ -66,7 +67,7 @@ DATA_REQ = (
     0x18,   ##  t_2hour_hi = ID 24
     0x19,   ##  t_2hour_lo = ID 25
     0x5A,   ##  contr_source = ID 90
-    0x57,   ##  ref_steps = ID 87
+#    0x57,   ##  ref_steps = ID 87
     0x22,   ##  p = ID 34
     0x98,   ##  energy_hi = ID 152
     0x99,   ##  energy_lo = ID 153
@@ -78,20 +79,20 @@ DATA_REQ = (
     0xA1,   ##  alarm_log3 = ID 161
     0xA2,   ##  alarm_log4 = ID 162
     0xA3,   ##  alarm_log5 = ID 163
-            ##
-    0x4B,   ##  CRC high
-    0x8D,   ##  CRC low
+
+    0x11,#0x4B,   ##  CRC high
+    0x76#0x8D,   ##  CRC low
 )
 
 
 DATA_RESP = (
     0x24,   ##  Start Delimiter
-    0x1F,   ##  Length
+    0x1E,   ##  Length
     0x04,   ##  Destination Address
     0x20,   ##  Source Address
             ##
     0x02,   ##  Class 2: Measured Data
-    0x1B,   ##  Ack.=0 (OK),  Length=27
+    0x1A,   ##  Ack.=0 (OK),  Length=26
     0x10,   ##  value example of act_mode1
     0x00,   ##  value example of act_mode2
     0x00,   ##  value example of act_mode3
@@ -107,7 +108,7 @@ DATA_RESP = (
     0x0B,   ##  value example of 2hour_hi
     0x80,   ##  value example of 2hour_lo
     0x22,   ##  value example of contr_source
-    0x13,   ##  value example of ref_steps
+#    0x13,   ##  value example of ref_steps
     0xE9,   ##  value example of p
     0x0C,   ##  value example of energy_cons_hi
     0xE7,   ##  value example of energy_cons_lo
@@ -119,9 +120,9 @@ DATA_RESP = (
     0x30,   ##  value example of alarm_log3
     0x40,   ##  value example of alarm_log4
     0x00,   ##  value example of alarm_log5
-            ##
-    0x19,   ##  CRC high
-    0x6D,   ##  CRC low
+
+    0xec, #0x19,   ##  CRC high
+    0x8b#0x6D,   ##  CRC low
 )
 
 ## INFO req/resp
@@ -295,19 +296,24 @@ dataReqValues = (
     "curve_no_ref", "alarm_code", "alarm_log_1", "alarm_log_2", "alarm_log_3", "alarm_log_4", "alarm_log_5"
 )
 
+infoReqValues = (
+    "h", "q", "p", "speed", "energy_hi"
+)
 
-def createMeasurementPDU(datapoints):
-    mv = dataitems.MEASUREMENT_VALUES
-    result = []
-    for dp in datapoints:
-        item = mv[dp]
-        result.append(item.id)
-    return result
+refSetValues = (
+    ("ref_rem", 0xa5, ),
+)
 
-print createMeasurementPDU(dataReqValues)
+def dumpHex(arr):
+    return [hex(x) for x in arr]
+
+print dumpHex(apdu.createGetMeasuredDataAPDU(dataReqValues))
 
 def main():
     #res = dissectResponse(INFO_RESP)
+    print dumpHex(apdu.createGetInfoAPDU(defs.ADPUClass.MEASURERED_DATA, infoReqValues))
+    res = dissectResponse(DATA_RESP)
+    print hex(checkCrc(DATA_REQ)), hex(checkCrc(DATA_RESP))
     res = dissectResponse(CONF_RESP)
     print res
 
