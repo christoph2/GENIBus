@@ -86,6 +86,10 @@ def createSetParametersAPDU(datapoints):
     result = createAPDU(defs.ADPUClass.CONFIGURATION_PARAMETERS, defs.OS_SET, datapoints)
     return result
 
+def createGetProtocolDataAPDU(datapoints):
+    result = createAPDUNoData(defs.ADPUClass.PROTOCOL_DATA, defs.OS_GET, datapoints)
+    return result
+
 class APDUBuilder(object):
     def __init__(self):
         pass
