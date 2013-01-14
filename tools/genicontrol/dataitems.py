@@ -160,7 +160,6 @@ DATAITEMS = (
     Dataitem(u"rtos_code",                          7,  12, ACC_RO,   u""                                                         ),
 )
 
-
 def addToDict(d, k, v):
     d[k] = v
 
@@ -176,7 +175,7 @@ STRINGS = dict()
 for item in DATAITEMS:
     if item.klass == 0:
         addToDict(PROTOCOL_DATA, item.name, item)
-    if item.klass == 2:
+    elif item.klass == 2:
         addToDict(MEASUREMENT_VALUES, item.name, item)
     elif item.klass == 3:
         addToDict(COMMANDS, item.name, item)

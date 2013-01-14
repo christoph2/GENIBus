@@ -313,48 +313,57 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item("unit_bus_mode", 0x0e, None)
     },
     defs.ADPUClass.MEASURERED_DATA: {
-        Item("i_rst", 0x7a, Info(0x82, 0x3e, 0x00, 0x39)),
-        Item("t_mo", 0x42, Info(0x82, 0x15, 0x00, 0x64)),
-        Item("p_hi", 0x39, Info(0x82, 0x09, 0x00, 0xfa)),
-        Item("p_lo", 0x80, None),
+        Item("i_mo", 0x7a, Info(0x82, 0x3e, 0x00, 0x39)),
+        #Item("t_mo", 0x42, Info(0x82, 0x15, 0x00, 0x64)),
+        #Item("p_hi", 0x39, Info(0x82, 0x09, 0x00, 0xfa)),
+        #Item("p_lo", 0x80, None),
 
-        Item("act_mode1", 0x10),
-        Item("act_mode2", 0x00),
-        Item("act_mode3", 0x00),
-        Item("led_contr", 0x01),
-        Item("ref_act", 0xa5),
-        Item("ref_inf", 0xfe),
-        Item("ref_att_loc", 0xfe),
-        Item("sys_ref", 0x94),
-        Item("h", 0x7b),
-        Item("q", 0x23),
-        Item("h_max", 0xcd),
-        Item("q_max", 0xb4),
-        Item("hour2_hi", 0x0b),
-        Item("hour2_lo", 0x80),
-        Item("contr_source", 0x22),
-        Item("p", 0xe9),
-        Item("energy_hi", 0x0c),
-        Item("energy_lo", 0xe7),
-        Item("speed", 0xa5),
-        Item("curve_no_ref", 0x0e),
-        Item("alarm_code", 0x00),
-        Item("alarm_log_1", 0x20),
-        Item("alarm_log_2", 0x39),
-        Item("alarm_log_3", 0x30),
-        Item("alarm_log_4", 0x40),
-        Item("alarm_log_5", 0x00),
+        Item("act_mode1", 0x10, None),
+        Item("act_mode2", 0x00, None),
+        Item("act_mode3", 0x00, None),
+        Item("led_contr", 0x01, None),
+        Item("ref_act", 0xa5, None),
+        Item("ref_inf", 0xfe, None),
+        Item("ref_att_loc", 0xfe, None),
+        Item("sys_ref", 0x94, None),
+        Item("h", 0x7b, None),
+        Item("q", 0x23, None),
+        Item("h_max", 0xcd, None),
+        Item("q_max", 0xb4, None),
+        Item("t_2hour_hi", 0x0b, None),
+        Item("t_2hour_lo", 0x80, None),
+        Item("contr_source", 0x22, None),
+        Item("p", 0xe9, None),
+        Item("energy_hi", 0x0c, None),
+        Item("energy_lo", 0xe7, None),
+        Item("speed", 0xa5, None),
+        Item("curve_no_ref", 0x0e, None),
+        Item("alarm_code", 0x00, None),
+        Item("alarm_log_1", 0x20, None),
+        Item("alarm_log_2", 0x39, None),
+        Item("alarm_log_3", 0x30, None),
+        Item("alarm_log_4", 0x40, None),
+        Item("alarm_log_5", 0x00, None),
     },
     defs.ADPUClass.COMMANDS: {},
     defs.ADPUClass.CONFIGURATION_PARAMETERS: {
-        Item("t_mo_stop", 0xb5, None),
-        Item("i_rst_max_stop", 0xc8, None),
+        #Item("t_mo_stop", 0xb5, None),
+        #Item("i_rst_max_stop", 0xc8, None),
         Item("unit_addr", 0x20, None),
         Item("group_addr", 0xf7, None),
     },
     defs.ADPUClass.REFERENCE_VALUES: {},
     defs.ADPUClass.ASCII_STRINGS: {},
 }
+
+class TestDataPool(unittest.TestCase):
+    dick = dataitems.DATAITEMS_FOR_CLASS
+    def testCorrectnessOfKeys(self):
+        for klass, values in DATA_POOL.items():
+            di = dataitems.DATAITEMS_FOR_CLASS[klass]
+            for value in values:
+                if not value.name in di:
+                    raise KeyError('invalid datapoint "%s"' % value.name)
 
 def dumpHex(arr):
     return [hex(x) for x in arr]
