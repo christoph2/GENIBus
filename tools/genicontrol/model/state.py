@@ -72,6 +72,14 @@ TWIN_PUMP_MODE_TWIN_PUMP_MASTER_SPARE       = 2
 TWIN_PUMP_MODE_TWIN_PUMP_MASTER_SYNCHRONOUS = 3
 TWIN_PUMP_MODE_TWIN_PUMP_MASTER_ALTERNATING = 4
 
+LED_GREEN_OFF                       = 0
+LED_GREEN_ON                        = 1
+LED_GREEN_BLINKING                  = 2
+
+LED_RED_OFF                         = 0 << 2
+LED_RED_ON                          = 1 << 2
+LED_RED_BLINKING                    = 2 << 2
+
 
 class PumpState(object):
     _lock = threading.Lock()
@@ -96,4 +104,5 @@ class PumpState(object):
         self.pendingAlarm = None
         self.sourceMode = None
         self.twinPumpMode = None
+        self.ledState = None
 
