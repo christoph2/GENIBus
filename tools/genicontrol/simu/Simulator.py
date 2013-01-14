@@ -326,17 +326,17 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item("ref_inf", 0xfe, None),
         Item("ref_att_loc", 0xfe, None),
         Item("sys_ref", 0x94, None),
-        Item("h", 0x7b, None),
-        Item("q", 0x23, None),
+        Item("h", 0x7b, None, Info(0x82, 0x19, 0x00, 0x0c)),
+        Item("q", 0x23, None, Info(0x82, 0x17, 0x00, 0x20)),
         Item("h_max", 0xcd, None),
         Item("q_max", 0xb4, None),
         Item("t_2hour_hi", 0x0b, None),
         Item("t_2hour_lo", 0x80, None),
         Item("contr_source", 0x22, None),
-        Item("p", 0xe9, None),
-        Item("energy_hi", 0x0c, None),
+        Item("p", 0xe9, None, Info(0x82, 0x09, 0x00, 0x28)),
+        Item("energy_hi", 0x0c, None, Info(0x82, 0x2f, 0x00, 0xfe)),
         Item("energy_lo", 0xe7, None),
-        Item("speed", 0xa5, None),
+        Item("speed", 0xa5, None, Info(0x82, 0x13, 0x00, 0x24)),
         Item("curve_no_ref", 0x0e, None),
         Item("alarm_code", 0x00, None),
         Item("alarm_log_1", 0x20, None),
@@ -357,7 +357,6 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
 }
 
 class TestDataPool(unittest.TestCase):
-    dick = dataitems.DATAITEMS_FOR_CLASS
     def testCorrectnessOfKeys(self):
         for klass, values in DATA_POOL.items():
             di = dataitems.DATAITEMS_FOR_CLASS[klass]
