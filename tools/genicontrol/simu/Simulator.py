@@ -304,6 +304,31 @@ refSetValues = (
     ("ref_rem", 0xa5, ),
 )
 
+Item = namedtuple('Item', 'name value info')
+Info = namedtuple('Info', 'head unit zero range')
+
+DATA_POOL = { # This dictionary is used to 'simulate' communication.
+    defs.ADPUClass.PROTOCOL_DATA: {
+        Item("df_buf_len", 0x46, None),
+        Item("unit_bus_mode", 0x0e, None)
+    },
+    defs.ADPUClass.MEASURERED_DATA: {
+        Item("i_rst", 0x7a, Info(0x82, 0x3e, 0x00, 0x39)),
+        Item("t_mo", 0x42, Info(0x82, 0x15, 0x00, 0x64)),
+        Item("p_hi", 0x39, Info(0x82, 0x09, 0x00, 0xfa)),
+        Item("p_lo", 0x80, None),
+    },
+    defs.ADPUClass.COMMANDS: {},
+    defs.ADPUClass.CONFIGURATION_PARAMETERS: {
+        Item("t_mo_stop", 0xb5, None),
+        Item("i_rst_max_stop", 0xc8, None),
+        Item("unit_addr", 0x20, None),
+        Item("group_addr", 0xf7, None),
+    },
+    defs.ADPUClass.REFERENCE_VALUES: {},
+    defs.ADPUClass.ASCII_STRINGS: {},
+}
+
 def dumpHex(arr):
     return [hex(x) for x in arr]
 
