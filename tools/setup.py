@@ -11,12 +11,12 @@ setup(
     description= "GENIBus library",
     author = 'Christoph Schueler',
     author_email = 'cpu12.gems@googlemail.com',
-    url = 'http://www.github.com/Christoph/2vm-2cb',
+    url = 'https://github.com/christoph2/GENIBus-Arduino',
     packages = ['genicontrol', 'genicontrol/model', 'genicontrol/view', 'genicontrol/controller'],
     entry_points = {
 	'console_scripts': [
 		'GeniControl = genicontrol.GeniControl:main',
         ],
     },
-    #install_requires = ['wxpython<2.9', 'mako']	# pyserial
+    install_requires = ['mako']	# pyserial
 )
