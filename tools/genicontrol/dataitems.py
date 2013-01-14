@@ -41,6 +41,8 @@ ACC_WR  = 0x03
 Dataitem = namedtuple('Dataitem', 'name klass id access note')
 
 DATAITEMS = (
+    Dataitem(u"df_buf_len",                         0,   2, ACC_RO,   u""),
+    Dataitem(u"unit_bus_mode",                      0,   3, ACC_RO,   u""),
     Dataitem(u"t_2hour_hi",                         2,  24, ACC_RO,   u"Two hour counter"                                         ),
     Dataitem(u"t_2hour_lo",                         2,  25, ACC_RO,   u"Two hour counter"                                         ),
     Dataitem(u"i_dc",                               2,  26, ACC_RO,   u"Frequency converter DC link current"                      ),
@@ -163,6 +165,7 @@ def addToDict(d, k, v):
     d[k] = v
 
 
+PROTOCOL_DATA = dict()
 COMMANDS = dict()
 MEASUREMENT_VALUES = dict()
 REFERENCES = dict()
@@ -171,6 +174,8 @@ STRINGS = dict()
 
 
 for item in DATAITEMS:
+    if item.klass == 0:
+        addToDict(PROTOCOL_DATA, item.name, item)
     if item.klass == 2:
         addToDict(MEASUREMENT_VALUES, item.name, item)
     elif item.klass == 3:
@@ -183,6 +188,7 @@ for item in DATAITEMS:
         addToDict(STRINGS, item.name, item)
 
 DATAITEMS_FOR_CLASS = {
+    defs.ADPUClass.PROTOCOL_DATA:               PROTOCOL_DATA,
     defs.ADPUClass.MEASURERED_DATA:             MEASUREMENT_VALUES,
     defs.ADPUClass.COMMANDS:                    COMMANDS,
     defs.ADPUClass.CONFIGURATION_PARAMETERS:    PARAMETER,

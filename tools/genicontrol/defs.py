@@ -73,6 +73,7 @@ class ADPUClass:
 ## Supported classes (by GeniControl).
 ##
 SUPPORTED_CLASSES = (
+    ADPUClass.PROTOCOL_DATA,
     ADPUClass.MEASURERED_DATA,
     ADPUClass.COMMANDS,
     ADPUClass.CONFIGURATION_PARAMETERS,
