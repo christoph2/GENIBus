@@ -97,7 +97,7 @@ class RefPanel(wx.Panel):
             sizer.Add(ctrl, (idx, 1), wx.DefaultSpan, wx.ALL, 5)
 
             ctrl = wx.StaticText(self, wx.ID_ANY, unit, style = wx.ALIGN_LEFT)
-            sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
+            sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_LEFT, 5)
         return sizer
 
     def getButtonForMode(self, mode):

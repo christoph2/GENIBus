@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -29,6 +29,7 @@
 
 import wx
 from genicontrol.model.config import DataitemConfiguration
+import genicontrol.controlids as controlids
 import genicontrol.dataitems as dataitems
 
 class StatusPanel(wx.Panel):
@@ -73,4 +74,41 @@ class StatusPanel(wx.Panel):
             ctrl = wx.StaticText(self, wx.ID_ANY, unit, style = wx.ALIGN_RIGHT)
             sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
         return sizer
+
+
+ALARM_LOGS =(
+    (controlids.ID_ALARM_LOG1, "alarm_log_1", "Alarm Log No. 1"),
+    (controlids.ID_ALARM_LOG2, "alarm_log_2", "Alarm Log No. 2"),
+    (controlids.ID_ALARM_LOG3, "alarm_log_3", "Alarm Log No. 3"),
+    (controlids.ID_ALARM_LOG4, "alarm_log_4", "Alarm Log No. 4"),
+    (controlids.ID_ALARM_LOG5, "alarm_log_5", "Alarm Log No. 5"),
+)
+
+
+class AlarmPanel(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
+
+        staticBox = wx.StaticBox(self, label = 'Alarm Status')
+        groupSizer = wx.StaticBoxSizer(staticBox)
+
+        sizer = wx.FlexGridSizer(rows = 6, cols = 2, hgap = 5, vgap = 5)
+
+        st = wx.StaticText(self, wx.ID_ANY, label = "Actual Alarm")
+        sizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        ctrl = wx.TextCtrl(self, controlids.ID_ALARM_ACTUAL, "n/a", style = wx.ALIGN_LEFT)
+        ctrl.Enable(False)
+        sizer.Add(ctrl, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+
+        for controlId, name, label in ALARM_LOGS:
+            ditem =  dataitems.MEASUREMENT_VALUES[name]
+            st = wx.StaticText(self, wx.ID_ANY, label = label)
+            sizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+
+            ctrl = wx.TextCtrl(self, controlId, "n/a", style = wx.ALIGN_LEFT)
+            ctrl.Enable(False)
+            ctrl.SetToolTip(wx.ToolTip(ditem.note))
+            sizer.Add(ctrl, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        groupSizer.Add(sizer)
+        self.SetSizerAndFit(groupSizer)
 

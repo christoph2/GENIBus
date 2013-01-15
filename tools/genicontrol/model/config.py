@@ -44,7 +44,7 @@ MEAS_VALUES = (
 
 REF_VALUES = (
     (u"ref_rem",        u'GENIBus ref.',    u'%'),
-    (u'ref_ir',         u'GENIlink ref.',   u''),
+    (u'ref_ir',         u'GENIlink ref.',   u'%'),
     (u'ref_att_rem',    u'Ext. Analogue',   u'%'),
 )
 

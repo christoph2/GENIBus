@@ -31,7 +31,7 @@ import wx
 import genicontrol.controlids as controlids
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.dataitems as dataitems
-from genicontrol.view.statuspanel import StatusPanel
+from genicontrol.view.statuspanel import StatusPanel, AlarmPanel
 
 ToggleButton = namedtuple('ToggleButton', 'id, labelOn, labelOff attrName')
 
@@ -73,7 +73,8 @@ class Controls(wx.Panel):
         sizer2.Add(btn, 1, wx.ALL, 5)
 
         sizer1.Add(sizer2)
-        self.SetSizer(sizer1)
+
+        self.SetSizerAndFit(sizer1)
 
         self.enableControls((controlids.ID_CMD_MAX, controlids.ID_CMD_MIN))
 
@@ -113,13 +114,14 @@ class MCPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
 
-        sizer = wx.BoxSizer(wx.VERTICAL)
-
+    	sizer = wx.FlexGridSizer(rows = 2, cols = 2, hgap = 5, vgap = 5)
         statusPanel = StatusPanel(self)
-        sizer.Add(statusPanel) # , wx.GROW | wx.ALL, 5)
+        sizer.Add(statusPanel, 1, wx.ALIGN_LEFT | wx.ALIGN_TOP | wx.EXPAND, 5)
+    	sizer.Add(AlarmPanel(self), 1, wx.ALIGN_RIGHT | wx.ALIGN_TOP | wx.EXPAND | wx.ALL, 5)
         controlsPanel = Controls(self)
-        sizer.Add(controlsPanel) #, 1, wx.ALL | wx.GROW, 5)
+        sizer.Add(controlsPanel, 1, wx.ALIGN_LEFT | wx.ALIGN_BOTTOM | wx.EXPAND, 5)
 
-        self.SetSizer(sizer)
+        self.SetSizerAndFit(sizer)
         sizer.Layout()
-        sizer.Fit(self)
+
+
