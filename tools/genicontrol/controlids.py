@@ -47,6 +47,8 @@ ID_CMD_NIGHT_REDUCE_E       = wx.NewId()
 ID_CMD_NIGHT_REDUCE_D       = wx.NewId()
 ID_CMD_LOCK_KEYS            = wx.NewId()
 ID_CMD_UNLOAD_KEYS          = wx.NewId()
+ID_CMD_RESET_ALARM          = wx.NewId()
+ID_CMD_RESET_ALARM_LOG      = wx.NewId()
 
 ID_MEAS_SPEED               = wx.NewId()
 ID_MEAS_HEAD                = wx.NewId()

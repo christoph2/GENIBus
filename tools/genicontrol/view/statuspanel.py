@@ -92,13 +92,17 @@ class AlarmPanel(wx.Panel):
         staticBox = wx.StaticBox(self, label = 'Alarm Status')
         groupSizer = wx.StaticBoxSizer(staticBox)
 
-        sizer = wx.FlexGridSizer(rows = 6, cols = 2, hgap = 5, vgap = 5)
+        sizer = wx.FlexGridSizer(rows = 8, cols = 2, hgap = 5, vgap = 5)
 
         st = wx.StaticText(self, wx.ID_ANY, label = "Actual Alarm")
         sizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         ctrl = wx.TextCtrl(self, controlids.ID_ALARM_ACTUAL, "n/a", style = wx.ALIGN_LEFT)
         ctrl.Enable(False)
         sizer.Add(ctrl, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+
+        sizer.Add(wx.StaticText(self, label = ''), 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        btn = wx.Button(self, controlids.ID_CMD_RESET_ALARM, "Reset Alarm")
+        sizer.Add(btn, 1, wx.ALL | wx.ALIGN_LEFT, 5)
 
         for controlId, name, label in ALARM_LOGS:
             ditem =  dataitems.MEASUREMENT_VALUES[name]
@@ -109,6 +113,9 @@ class AlarmPanel(wx.Panel):
             ctrl.Enable(False)
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        sizer.Add(wx.StaticText(self, label = ''), 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        btn = wx.Button(self, controlids.ID_CMD_RESET_ALARM_LOG, "Reset Alarm Log")
+        sizer.Add(btn, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         groupSizer.Add(sizer)
         self.SetSizerAndFit(groupSizer)
 
