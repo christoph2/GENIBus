@@ -34,6 +34,10 @@ import genicontrol.dataitems as dataitems
 class StatusPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
+
+        staticBox = wx.StaticBox(self, label = 'Pump status')
+        groupSizer = wx.StaticBoxSizer(staticBox)
+
         sizer = self.addValues()
         ctrl = wx.StaticText(self, wx.ID_ANY, 'Performance', style = wx.ALIGN_RIGHT)
         sizer.Add(ctrl, (6, 0), wx.DefaultSpan, wx.ALL, 5)
@@ -46,7 +50,8 @@ class StatusPanel(wx.Panel):
         ctrl = wx.StaticText(self, wx.ID_ANY, '%', style = wx.ALIGN_RIGHT)
         sizer.Add(ctrl, (6, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
 
-        self.SetSizer(sizer)
+        groupSizer.Add(sizer)
+        self.SetSizerAndFit(groupSizer)
 
     def addValues(self):
         sizer = wx.GridBagSizer(5, 45)
