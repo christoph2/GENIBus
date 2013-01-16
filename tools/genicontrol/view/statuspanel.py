@@ -31,6 +31,7 @@ import wx
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.controlids as controlids
 import genicontrol.dataitems as dataitems
+import genicontrol.leds as leds
 
 class StatusPanel(wx.Panel):
     def __init__(self, parent):
@@ -124,7 +125,23 @@ class LEDPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
 
-        self.Bind(wx.EVT_PAINT, self.onPaint)
+        self.leds = {
+            'red': leds.ledRed.getBitmap(),
+            'green': leds.ledGreen.getBitmap(),
+            'grey': leds.ledGrey.getBitmap()
+        }
+        self.ledRedOn = False
+        self.ledGreenOn = False
+        #self.Bind(wx.EVT_PAINT, self.onPaint)
+        self.Layout()
+
+    def switch(self, num, on):
+        if num ==  0:
+            self.ledGreenOn = on
+            self.Update()
+        elif num == 1:
+            self.ledRedOn = on
+            self.Update()
 
     def onPaint(self, evt):
         dc = wx.PaintDC(self)
@@ -135,3 +152,12 @@ class LEDPanel(wx.Panel):
             img.ConvertAlphaToMask(220)
             bmp = img.ConvertToBitmap()
         dc.DrawBitmap(bmp, 25, 100, True)
+
+    def GetBestSize(self, *args, **kwargs):
+        pass
+
+    def GetBestFittingSize(self, *args, **kwargs):
+        pass
+
+    def GetBestSizeTuple(self, *args, **kwargs):
+        pass
