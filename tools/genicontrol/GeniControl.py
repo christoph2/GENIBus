@@ -1,5 +1,6 @@
 ﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 ##
 ##
 ## Grundfos GENIBus Library for Arduino.

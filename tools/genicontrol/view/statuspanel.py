@@ -130,34 +130,36 @@ class LEDPanel(wx.Panel):
             'green': leds.ledGreen.getBitmap(),
             'grey': leds.ledGrey.getBitmap()
         }
+
+        size = wx.Size(1, 0)
+        for led in self.leds.values():
+            size = max(size, led.GetSize())
+
+        self.ledSize = size
+        panelSize = wx.Size(((size.width * 2) + (3 * 5)), (size.height + (2 * 5)))
+        self.SetMinSize(panelSize)
+
         self.ledRedOn = False
         self.ledGreenOn = False
-        #self.Bind(wx.EVT_PAINT, self.onPaint)
+        self.Bind(wx.EVT_PAINT, self.onPaint)
         self.Layout()
 
     def switch(self, num, on):
         if num ==  0:
             self.ledGreenOn = on
-            self.Update()
+            self.Refresh()
         elif num == 1:
             self.ledRedOn = on
-            self.Update()
+            self.Refresh()
 
     def onPaint(self, evt):
         dc = wx.PaintDC(self)
+        #dc.SetBackground(wx.Brush("WHITE"))
         dc.Clear()
-        bmp = led_circle_green.getBitmap()
         if "gtk1" in wx.PlatformInfo:
             img = bmp.ConvertToImage()
             img.ConvertAlphaToMask(220)
             bmp = img.ConvertToBitmap()
-        dc.DrawBitmap(bmp, 25, 100, True)
+        dc.DrawBitmap(self.leds['green'], 5, 5, True)
+        dc.DrawBitmap(self.leds['red'], self.ledSize.width + (2 * 5), 5, True)
 
-    def GetBestSize(self, *args, **kwargs):
-        pass
-
-    def GetBestFittingSize(self, *args, **kwargs):
-        pass
-
-    def GetBestSizeTuple(self, *args, **kwargs):
-        pass
