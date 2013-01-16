@@ -119,3 +119,19 @@ class AlarmPanel(wx.Panel):
         groupSizer.Add(sizer)
         self.SetSizerAndFit(groupSizer)
 
+
+class LEDPanel(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
+
+        self.Bind(wx.EVT_PAINT, self.onPaint)
+
+    def onPaint(self, evt):
+        dc = wx.PaintDC(self)
+        dc.Clear()
+        bmp = led_circle_green.getBitmap()
+        if "gtk1" in wx.PlatformInfo:
+            img = bmp.ConvertToImage()
+            img.ConvertAlphaToMask(220)
+            bmp = img.ConvertToBitmap()
+        dc.DrawBitmap(bmp, 25, 100, True)

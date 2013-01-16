@@ -40,7 +40,6 @@ from genicontrol.view.options import showOptionsDialogue
 
 TR = wx.GetTranslation
 
-import led
 
 class TabPanel(wx.Panel):
     def __init__(self, parent):
@@ -54,6 +53,8 @@ class TabPanel(wx.Panel):
         sizer.Add(txtOne, 0, wx.ALL, 5)
         sizer.Add(txtTwo, 0, wx.ALL, 5)
 
+        #sizer.Add(bmp, 0, wx.ALL, 5)
+
         self.SetSizer(sizer)
 
 
@@ -64,6 +65,7 @@ class BusmonitorPanel(wx.Panel):
         tc = wx.TextCtrl(self, wx.NewId(), style = wx.TE_MULTILINE | wx.HSCROLL | wx.TE_RICH2 | wx.TE_NOHIDESEL | wx.TE_READONLY)
         sizer.Add(tc, 1, wx.EXPAND | wx.GROW)
         self.SetSizerAndFit(sizer)
+
 
 class TestNB(wx.Notebook):
     def __init__(self, parent, id):
