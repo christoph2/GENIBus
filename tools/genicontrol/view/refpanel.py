@@ -27,6 +27,7 @@
 ##
 
 import wx
+from wx.lib.scrolledpanel import ScrolledPanel
 import genicontrol.dataitems as dataitems
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.controlids as controlids
@@ -43,9 +44,9 @@ CONTROL_MODE_MAP = {
     CONTROL_MODE_CONSTANT_FREQUENCY:    controlids.ID_CMD_CONST_FREQ
 }
 
-class RefPanel(wx.Panel):
+class RefPanel(ScrolledPanel):
     def __init__(self, parent):
-        wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
+        ScrolledPanel.__init__(self, parent = parent, id = wx.ID_ANY)
 
         sizer = self.addValues()
         self.btnSetRefValues = wx.Button(self, label = "Set Reference Values", id = controlids.ID_SET_REFERENCE_VALUES)
@@ -77,6 +78,7 @@ class RefPanel(wx.Panel):
         sizer.Add(self.btnSetRefValues, ((len(DataitemConfiguration['ReferenceValues']) + 1), 0), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
 
         self.SetSizerAndFit(sizer)
+	self.SetupScrolling()
 
     def choiceButton(self, event):
         self.setControlMode(event.EventObject.controlMode)

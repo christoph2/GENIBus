@@ -28,15 +28,16 @@
 import datetime
 import logging
 import wx
+from wx.lib.scrolledpanel import ScrolledPanel
 import genicontrol.dataitems as dataitems
 import genicontrol.controlids as controlids
 from genicontrol.model.config import DataitemConfiguration
 from genicontrol.view.GridControl import GridControl
 
 
-class InfoPanel(wx.Panel):
+class InfoPanel(ScrolledPanel):
     def __init__(self, parent):
-        wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
+        ScrolledPanel.__init__(self, parent = parent, id = wx.ID_ANY)
         sizer = self.addValues(DataitemConfiguration['StringValues'])
         grid = GridControl(self, DataitemConfiguration['InfoValues'], dataitems.DATAITEMS)
         sizer.Add(grid, 1, wx.ALL, 5)
@@ -53,6 +54,7 @@ class InfoPanel(wx.Panel):
         ctl.SetValue('CS')
         ctl = self.FindWindowById(controlids.ID_STR_RTOS_CODE)
         ctl.SetValue('RT')
+	self.SetupScrolling()
 
     def addValues(self, values):
         sizer = wx.BoxSizer(wx.VERTICAL)

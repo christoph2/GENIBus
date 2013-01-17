@@ -28,6 +28,7 @@
 
 from collections import namedtuple
 import wx
+from wx.lib.scrolledpanel import ScrolledPanel
 import genicontrol.controlids as controlids
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.dataitems as dataitems
@@ -110,9 +111,9 @@ class Controls(wx.Panel):
             control = self.FindWindowById(controlID)
             control.Enable(False)
 
-class MCPanel(wx.Panel):
+class MCPanel(ScrolledPanel):
     def __init__(self, parent):
-        wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
+        ScrolledPanel.__init__(self, parent = parent, id = wx.ID_ANY)
 
         sizer = wx.FlexGridSizer(rows = 2, cols = 3, hgap = 5, vgap = 5)
 ##
@@ -132,6 +133,7 @@ class MCPanel(wx.Panel):
         #sizer.Add(LEDPanel(self), 1, wx.ALIGN_RIGHT | wx.ALIGN_TOP | wx.EXPAND | wx.ALL, 5)
 
         self.SetSizerAndFit(sizer)
+        self.SetupScrolling()
         sizer.Layout()
 
 
