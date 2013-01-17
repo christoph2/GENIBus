@@ -37,6 +37,7 @@ import threading
 from genicontrol.utils import absConfigurationFilename
 
 CFG_FILE_NAME = absConfigurationFilename('.GeniControl.cfg')
+print "CONFIGURATION FILE: %s" % CFG_FILE_NAME
 
 class Config(object):
     _lock = threading.Lock()
