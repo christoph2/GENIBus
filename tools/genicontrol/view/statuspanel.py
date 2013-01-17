@@ -42,22 +42,26 @@ class StatusPanel(wx.Panel):
 
         sizer = self.addValues()
         ctrl = wx.StaticText(self, wx.ID_ANY, 'Performance', style = wx.ALIGN_RIGHT)
-        sizer.Add(ctrl, (6, 0), wx.DefaultSpan, wx.ALL, 5)
+        sizer.Add(ctrl, (7, 0), wx.DefaultSpan, wx.ALL, 5)
 
         gauge = wx.Gauge(parent = self, range = 100)
         gauge.SetToolTip(wx.ToolTip('n/a'))
         gauge.SetValue(0)
-        sizer.Add(gauge, (6, 1), (1, 1), wx.ALL, 5)
+        sizer.Add(gauge, (7, 1), (1, 1), wx.ALL, 5)
 
         ctrl = wx.StaticText(self, wx.ID_ANY, '%', style = wx.ALIGN_RIGHT)
-        sizer.Add(ctrl, (6, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
+        sizer.Add(ctrl, (7, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
 
         groupSizer.Add(sizer)
         self.SetSizerAndFit(groupSizer)
 
     def addValues(self):
         sizer = wx.GridBagSizer(5, 45)
-        for idx, item in enumerate(DataitemConfiguration['MeasurementValues']):
+
+        self.ledControl = LEDPanel(self)
+        sizer.Add(self.ledControl, (0, 0), wx.DefaultSpan, wx.ALL, 5)
+
+        for idx, item in enumerate(DataitemConfiguration['MeasurementValues'], 1):
             key, displayName, unit, controlID = item
             ditem =  dataitems.MEASUREMENT_VALUES[key]
             if key == 'f_act':
@@ -67,7 +71,7 @@ class StatusPanel(wx.Panel):
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 0), wx.DefaultSpan, wx.ALL, 5)
 
-            ctrl = wx.TextCtrl(self, wx.ID_ANY, "n/a", style = wx.ALIGN_RIGHT)
+            ctrl = wx.TextCtrl(self, controlID, "n/a", style = wx.ALIGN_RIGHT)
             ctrl.Enable(False)
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 1), wx.DefaultSpan, wx.ALL, 5)
@@ -160,6 +164,51 @@ class LEDPanel(wx.Panel):
             img = bmp.ConvertToImage()
             img.ConvertAlphaToMask(220)
             bmp = img.ConvertToBitmap()
-        dc.DrawBitmap(self.leds['green'], 5, 5, True)
-        dc.DrawBitmap(self.leds['red'], self.ledSize.width + (2 * 5), 5, True)
+        if self.ledGreenOn:
+            dc.DrawBitmap(self.leds['green'], 5, 5, True)
+        else:
+            dc.DrawBitmap(self.leds['grey'], 5, 5, True)
+        if self.ledRedOn:
+            dc.DrawBitmap(self.leds['red'], self.ledSize.width + (2 * 5), 5, True)
+        else:
+            dc.DrawBitmap(self.leds['grey'], self.ledSize.width + (2 * 5), 5, True)
 
+
+class PumpOperationPanel(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
+        self.items = (
+            ("Operation Mode", "", controlids.ID_OPERATION_MODE),
+            ("Control Source", "", controlids.ID_CONTROL_SOURCE),
+
+            ("Ext. Analogue", "%", controlids.ID_EXT_ANALOGUE),
+            ("Total Influence", "%", controlids.ID_TOTAL_INFLUENCE),
+
+            ("Setpoint", "m", controlids.ID_SETPOINT),
+            ("Acual Setpoint", "m", controlids.ID_ACTUAL_SETPOINT),
+        )
+        staticBox = wx.StaticBox(self, label = 'Pump operation')
+        groupSizer = wx.StaticBoxSizer(staticBox)
+
+        sizer = self.addValues()
+
+        groupSizer.Add(sizer)
+        self.SetSizerAndFit(groupSizer)
+
+    def addValues(self):
+        sizer = wx.GridBagSizer(5, 45)
+        for idx, item in enumerate(self.items):
+            displayName, unit, controlID = item
+
+            ctrl = wx.StaticText(self, wx.ID_ANY, displayName, style = wx.ALIGN_RIGHT)
+            #ctrl.SetToolTip(wx.ToolTip(ditem.note))
+            sizer.Add(ctrl, (idx, 0), wx.DefaultSpan, wx.ALL, 5)
+
+            ctrl = wx.TextCtrl(self, controlID, "n/a", style = wx.ALIGN_RIGHT)
+            ctrl.Enable(False)
+            #ctrl.SetToolTip(wx.ToolTip(ditem.note))
+            sizer.Add(ctrl, (idx, 1), wx.DefaultSpan, wx.ALL, 5)
+
+            ctrl = wx.StaticText(self, wx.ID_ANY, unit, style = wx.ALIGN_RIGHT)
+            sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
+        return sizer

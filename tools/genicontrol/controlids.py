@@ -58,6 +58,13 @@ ID_MEAS_ENERGY              = wx.NewId()
 ID_MEAS_HOURS               = wx.NewId()
 ID_MEAS_PERFORMACE          = wx.NewId()
 
+ID_OPERATION_MODE           = wx.NewId()
+ID_CONTROL_SOURCE           = wx.NewId()
+ID_EXT_ANALOGUE             = wx.NewId()
+ID_TOTAL_INFLUENCE          = wx.NewId()
+ID_SETPOINT                 = wx.NewId()
+ID_ACTUAL_SETPOINT          = wx.NewId()
+
 ID_ALARM_ACTUAL             = wx.NewId()
 ID_ALARM_LOG1               = wx.NewId()
 ID_ALARM_LOG2               = wx.NewId()

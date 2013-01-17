@@ -31,7 +31,7 @@ import wx
 import genicontrol.controlids as controlids
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.dataitems as dataitems
-from genicontrol.view.statuspanel import StatusPanel, AlarmPanel, LEDPanel
+from genicontrol.view.statuspanel import StatusPanel, AlarmPanel, LEDPanel, PumpOperationPanel
 
 ToggleButton = namedtuple('ToggleButton', 'id, labelOn, labelOff attrName')
 
@@ -114,14 +114,22 @@ class MCPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
 
-        sizer = wx.FlexGridSizer(rows = 2, cols = 2, hgap = 5, vgap = 5)
+        sizer = wx.FlexGridSizer(rows = 2, cols = 3, hgap = 5, vgap = 5)
+##
+##        sizer.AddGrowableRow(0, 1)
+##        sizer.AddGrowableRow(1, 1)
+##        sizer.AddGrowableCol(0, 1)
+##        sizer.AddGrowableCol(1, 1)
+##
+        #sizer.SetFlexibleDirection(wx.BOTH)
         statusPanel = StatusPanel(self)
         sizer.Add(statusPanel, 1, wx.ALIGN_LEFT | wx.ALIGN_TOP | wx.EXPAND, 5)
+        sizer.Add(PumpOperationPanel(self), 1, wx.ALIGN_RIGHT | wx.ALIGN_TOP | wx.EXPAND | wx.ALL, 5)
         sizer.Add(AlarmPanel(self), 1, wx.ALIGN_RIGHT | wx.ALIGN_TOP | wx.EXPAND | wx.ALL, 5)
         controlsPanel = Controls(self)
         sizer.Add(controlsPanel, 1, wx.ALIGN_LEFT | wx.ALIGN_BOTTOM | wx.EXPAND, 5)
 
-        sizer.Add(LEDPanel(self), 1, wx.ALIGN_RIGHT | wx.ALIGN_TOP | wx.EXPAND | wx.ALL, 5)
+        #sizer.Add(LEDPanel(self), 1, wx.ALIGN_RIGHT | wx.ALIGN_TOP | wx.EXPAND | wx.ALL, 5)
 
         self.SetSizerAndFit(sizer)
         sizer.Layout()
