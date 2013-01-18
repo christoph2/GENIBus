@@ -43,6 +43,53 @@ from genicontrol.dissect import dissectResponse
 logger = logging.getLogger("genicontrol")
 
 
+## Connect Req/Resp
+CONNECT_REQ = (
+    0x27,
+    0x0e,
+    0xfe,
+    0x01,
+
+    0x00,
+    0x02,
+    0x02,
+    0x03,
+    0x04,
+    0x02,
+    0x2e,
+    0x2f,
+    0x02,
+    0x02,
+    0x94,
+    0x95,
+
+    0xa2,
+    0xaa
+)
+
+CONNECT_RESP = (
+    0x24,   ##  Start Delimiter
+    0x0e,   ##  Length
+    0x01,   ##  Destination Address
+    0x20,   ##  Source Address
+            ##
+    0x00,
+    0x02,
+    0x46,
+    0x0e,
+    0x04,
+    0x02,
+    0x20,
+    0xf7,
+    0x02,
+    0x02,
+    0x03,
+    0x01,
+
+    0x00,   ##  CRC high
+    0x04    ##  CRC low
+)
+
 ## DATA Req/Resp
 DATA_REQ = (
     0x27,   ##  Start Delimiter
@@ -250,7 +297,7 @@ CONF_RESP = (
     0x19,   ##  CRC low
 )
 
-ALL_TELEGRAMS = (DATA_REQ, DATA_RESP, INFO_REQ, INFO_RESP, REF_REQ, REF_RESP, CONF_REQ, CONF_RESP)
+ALL_TELEGRAMS = (CONNECT_REQ, CONNECT_RESP, DATA_REQ, DATA_RESP, INFO_REQ, INFO_RESP, REF_REQ, REF_RESP, CONF_REQ, CONF_RESP)
 
 class TestCrc(unittest.TestCase):
     """
@@ -263,6 +310,12 @@ class TestCrc(unittest.TestCase):
     @staticmethod
     def expectedCrc(frame):
         return utils.makeWord(frame[defs.CRC_HIGH], frame[defs.CRC_LOW])
+
+    def testConnReq(self):
+        self.assertEquals(self.check(CONNECT_REQ), self.expectedCrc(CONNECT_REQ))
+
+    def testConnResp(self):
+        self.assertEquals(self.check(CONNECT_RESP), self.expectedCrc(CONNECT_RESP))
 
     def testDataReq(self):
         self.assertEquals(self.check(DATA_REQ), self.expectedCrc(DATA_REQ))
@@ -326,17 +379,17 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item("ref_inf", 0xfe, None),
         Item("ref_att_loc", 0xfe, None),
         Item("sys_ref", 0x94, None),
-        Item("h", 0x7b, None, Info(0x82, 0x19, 0x00, 0x0c)),
-        Item("q", 0x23, None, Info(0x82, 0x17, 0x00, 0x20)),
+        Item("h", 0x7b, Info(0x82, 0x19, 0x00, 0x0c)),
+        Item("q", 0x23, Info(0x82, 0x17, 0x00, 0x20)),
         Item("h_max", 0xcd, None),
         Item("q_max", 0xb4, None),
         Item("t_2hour_hi", 0x0b, None),
         Item("t_2hour_lo", 0x80, None),
         Item("contr_source", 0x22, None),
-        Item("p", 0xe9, None, Info(0x82, 0x09, 0x00, 0x28)),
-        Item("energy_hi", 0x0c, None, Info(0x82, 0x2f, 0x00, 0xfe)),
+        Item("p", 0xe9, Info(0x82, 0x09, 0x00, 0x28)),
+        Item("energy_hi", 0x0c, Info(0x82, 0x2f, 0x00, 0xfe)),
         Item("energy_lo", 0xe7, None),
-        Item("speed", 0xa5, None, Info(0x82, 0x13, 0x00, 0x24)),
+        Item("speed", 0xa5, Info(0x82, 0x13, 0x00, 0x24)),
         Item("curve_no_ref", 0x0e, None),
         Item("alarm_code", 0x00, None),
         Item("alarm_log_1", 0x20, None),
@@ -368,6 +421,7 @@ def dumpHex(arr):
     return [hex(x) for x in arr]
 
 print dumpHex(apdu.createGetMeasuredDataAPDU(dataReqValues))
+
 
 def main():
     #res = dissectResponse(INFO_RESP)
