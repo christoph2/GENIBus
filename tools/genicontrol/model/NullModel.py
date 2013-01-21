@@ -27,6 +27,8 @@
 ##
 
 #import genicontrol.model.ModelIf
+import threading
+import logging
 import ModelIf
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.dataitems as dataitems
@@ -34,6 +36,7 @@ import genicontrol.dataitems as dataitems
 #from wx.lib.pubsub import Publisher as Publisher
 
 class NullModel(ModelIf.IModel):
+    logger = logging.getLogger("genicontrol")
 
     def initialize(self, quitEvent):
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues']):
@@ -43,7 +46,13 @@ class NullModel(ModelIf.IModel):
         self.sendMessage('References', ModelIf.DATA_NOT_AVAILABLE)
         self.dataAvailable = False
         self._quitEvent = quitEvent
-        return None
+        self._modelThread = ModelThread(quitEvent)
+        self._modelThread.start()
+        return self._modelThread
+
+    def quit(self):
+        self._quitEvent.set()
+        self._modelThread.join()
 
     def connect(self, *parameters):
         pass
@@ -72,10 +81,23 @@ class NullModel(ModelIf.IModel):
     def sendCommand(self, command):
         pass
 
-#    def beatEvent(self):
 
-#        self.notifyObservers()
+class ModelThread(threading.Thread):
+    logger = logging.getLogger("genicontrol")
 
+    def __init__(self, quitEvent):
+        super(ModelThread, self).__init__()
+        self.quitEvent = quitEvent
+        self.setName(self.__class__.__name__)
+
+
+    def run(self):
+        name = self.getName()
+        print "Starting %s." % name
+        while True:
+            if self.quitEvent.wait(0.5):
+                break
+        print "Exiting %s." % name
 
 ##
 ##nm = NullModel()

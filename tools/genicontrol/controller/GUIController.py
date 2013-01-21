@@ -53,7 +53,12 @@ class GUIController(IController):
         print "GROUP: '%s' ITEM: '%s' DATA: '%s'" % (group, item, msg.data)
 
     def onQuit(self, msg):
-        self._view.shutdownView()
+        self.quitApplication()
 
     def onCloseApplication(self, event):
+        self.quitApplication()
+
+    def quitApplication(self):
         self._view.shutdownView()
+        self._model.quit()
+
