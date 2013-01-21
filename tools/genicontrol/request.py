@@ -44,17 +44,17 @@ class WorkerThread(threading.Thread):
         self._response = resp
         self._respQueue = respQueue
         self._cancelEvent = cancelEvent
+        self.setName(self.__class__.__name__)
 
     def run(self):
         name = self.getName()
-        print "Starting %s." % name
+        #print "Starting %s." % name
         while True:
-            if self._cancelEvent.isSet():
+            if self._cancelEvent.wait(1.0):
                 break
-            time.sleep(0.1)
-        self._respQueue.put([])
-        self._cancelEvent.wait(2.0)
-        print "Exiting %s." % name
+        #self._respQueue.put([])
+        #self._cancelEvent.wait(2.0)
+        #print "Exiting %s." % name
 
 
 class RequestorThread(threading.Thread):
@@ -82,21 +82,24 @@ class RequestorThread(threading.Thread):
     def __init__(self, evt):
         super(RequestorThread, self).__init__()
         self.evt = evt
+        self.setName(self.__class__.__name__)
 
     def run(self):
+        name = self.getName()
+        print "Starting %s." % name
         while True:
             res = self.evt.wait(1.0)
             if res:
-                print "Exiting RequestorThread"
+                print "Exiting %s." % name
                 RequestorThread._cancelEvent.set()
                 self.worker.join()
                 break
-            print "Running requestorThread."
-            if RequestorThread._state == Requestor.IDLE:
+            #print "Running %s." % name
+            if RequestorThread._state == RequestorThread.IDLE:
                 self.request([])
 
     def request(self, req):
-        RequestorThread._state = Requestor.PENDING
+        RequestorThread._state = RequestorThread.PENDING
         RequestorThread._currentRequest = req
         self.worker = WorkerThread(req, RequestorThread._currentResponse, RequestorThread._respQueue, RequestorThread._cancelEvent)
         self.worker.start()
@@ -106,13 +109,13 @@ class RequestorThread(threading.Thread):
         except Queue.Empty:
             success = False
         if not success:
-            print "Cancelling %s." % self.worker.getName()
+            #print "Cancelling %s." % self.worker.getName()
             RequestorThread._cancelEvent.set()
             self.worker.join()
             RequestorThread._cancelEvent.clear()
         else:
             print "Processing Response."
-        RequestorThread._state = Requestor.IDLE
+        RequestorThread._state = RequestorThread.IDLE
 
 def buildLPDU():
     pass

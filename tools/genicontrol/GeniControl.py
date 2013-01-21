@@ -44,7 +44,6 @@ from genicontrol.view.options import showOptionsDialogue
 
 TR = wx.GetTranslation
 
-
 class TabPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
@@ -110,7 +109,6 @@ class GBFrame(wx.Frame):
         self.notebook = TestNB(self, wx.NewId())
         if not pos:
             self.Center()
-        wx.LogMessage("Started...")
 
     def initialize(self, model, quitEvent):
         self._model = model
@@ -191,7 +189,6 @@ class GBFrame(wx.Frame):
         Publisher().sendMessage('QUIT')
 
     def shutdownView(self):
-        wx.LogMessage("Exiting...")
         self.quit()
         self.saveConfiguration()
         self.Destroy()

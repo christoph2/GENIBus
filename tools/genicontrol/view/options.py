@@ -75,7 +75,6 @@ class Options(wx.Dialog):
         sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
         self.SetSizer(sizer)
         sizer.Fit(self)
-
         addr.SetValue(config.serverIP)
         mask.SetValue(config.subnetMask)
         port.SetValue(config.serverPort)

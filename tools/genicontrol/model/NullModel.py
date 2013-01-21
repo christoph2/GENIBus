@@ -31,6 +31,7 @@ import threading
 import logging
 import ModelIf
 from genicontrol.model.config import DataitemConfiguration
+from genicontrol.request import RequestorThread
 import genicontrol.dataitems as dataitems
 
 #from wx.lib.pubsub import Publisher as Publisher
@@ -46,7 +47,7 @@ class NullModel(ModelIf.IModel):
         self.sendMessage('References', ModelIf.DATA_NOT_AVAILABLE)
         self.dataAvailable = False
         self._quitEvent = quitEvent
-        self._modelThread = ModelThread(quitEvent)
+        self._modelThread = RequestorThread(quitEvent)
         self._modelThread.start()
         return self._modelThread
 
@@ -81,40 +82,4 @@ class NullModel(ModelIf.IModel):
     def sendCommand(self, command):
         pass
 
-
-class ModelThread(threading.Thread):
-    logger = logging.getLogger("genicontrol")
-
-    def __init__(self, quitEvent):
-        super(ModelThread, self).__init__()
-        self.quitEvent = quitEvent
-        self.setName(self.__class__.__name__)
-
-
-    def run(self):
-        name = self.getName()
-        print "Starting %s." % name
-        while True:
-            if self.quitEvent.wait(0.5):
-                break
-        print "Exiting %s." % name
-
-##
-##nm = NullModel()
-###nm.beatEvent()
-##class Observer(object):
-##    def __init__(self, model):
-##        self._model = model
-##        model.subscribe('Measurements', self.onChange)
-##        model.subscribe('References', self.onChange)
-##
-##    def onChange(self, msg):
-##        print msg.topic, msg.data
-##        print str(msg)
-##
-##
-##obs = Observer(nm)
-##nm.sendMessage('Measurements', ModelIf.DATA_NOT_AVAILABLE)
-##nm.sendMessage('References', ModelIf.DATA_NOT_AVAILABLE)
-##
 
