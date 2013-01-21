@@ -54,6 +54,9 @@ class StatusPanel(wx.Panel):
 
         groupSizer.Add(sizer)
         self.SetSizerAndFit(groupSizer)
+        self.itemDict = dict([(x[0], x[1:]) for x in DataitemConfiguration['MeasurementValues']])
+
+        self.setValue('speed', 47.15)
 
     def addValues(self):
         sizer = wx.GridBagSizer(5, 45)
@@ -62,7 +65,7 @@ class StatusPanel(wx.Panel):
         sizer.Add(self.ledControl, (0, 0), wx.DefaultSpan, wx.ALL, 5)
 
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues'], 1):
-            key, displayName, unit, controlID = item
+            key, displayName, unit, controlIdValue, controlIdUnit = item
             ditem =  dataitems.MEASUREMENT_VALUES[key]
             if key == 'f_act':
                 continue
@@ -71,14 +74,24 @@ class StatusPanel(wx.Panel):
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 0), wx.DefaultSpan, wx.ALL, 5)
 
-            ctrl = wx.TextCtrl(self, controlID, "n/a", style = wx.ALIGN_RIGHT)
+            ctrl = wx.TextCtrl(self, controlIdValue, "n/a", style = wx.ALIGN_RIGHT)
             ctrl.Enable(False)
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 1), wx.DefaultSpan, wx.ALL, 5)
 
-            ctrl = wx.StaticText(self, wx.ID_ANY, unit, style = wx.ALIGN_RIGHT)
+            ctrl = wx.StaticText(self, controlIdUnit, unit, style = wx.ALIGN_RIGHT)
             sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
         return sizer
+
+    def setValue(self, key, value):
+        _, _, controlID, _ =  self.itemDict[key]
+        control = self.FindWindowById(controlID)
+        control.SetValue(str(value))
+
+    def setUnit(self, key, unit):
+        _, _, _, controlID =  self.itemDict[key]
+        control = self.FindWindowById(controlID)
+        control.SetValue(str(unit))
 
 
 ALARM_LOGS =(

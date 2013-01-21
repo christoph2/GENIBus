@@ -33,13 +33,13 @@ import genicontrol.controlids as controlids
 
 
 MEAS_VALUES = (
-    (u'speed',          u'Speed',           u'rpm',     controlids.ID_MEAS_SPEED),
-    (u'h',              u'Head',            u'm',       controlids.ID_MEAS_HEAD),
-    (u'q',              u'Flowrate',        u'm3/h',    controlids.ID_MEAS_FLOW),  ## ³
-    (u'p',              u'Power' ,          u'W',       controlids.ID_MEAS_POWER),
-    (u'energy_hi',      u'Energy',          u'kWh',     controlids.ID_MEAS_ENERGY),
-    (u't_2hour_hi',     u'Hours',           u'h',       controlids.ID_MEAS_HOURS),
-    (u'f_act',          u'Performance',     u'%',       controlids.ID_MEAS_PERFORMACE),
+    (u'speed',          u'Speed',           u'rpm',     controlids.ID_MEAS_SPEED, controlids.ID_MEAS_SPEED_UNIT),
+    (u'h',              u'Head',            u'm',       controlids.ID_MEAS_HEAD, controlids.ID_MEAS_HEAD_UNIT),
+    (u'q',              u'Flowrate',        u'm3/h',    controlids.ID_MEAS_FLOW, controlids.ID_MEAS_FLOW_UNIT),  ## ³
+    (u'p',              u'Power' ,          u'W',       controlids.ID_MEAS_POWER, controlids.ID_MEAS_POWER_UNIT),
+    (u'energy_hi',      u'Energy',          u'kWh',     controlids.ID_MEAS_ENERGY, controlids.ID_MEAS_ENERGY_UNIT),
+    (u't_2hour_hi',     u'Hours',           u'h',       controlids.ID_MEAS_HOURS, controlids.ID_MEAS_HOURS_UNIT),
+    (u'f_act',          u'Performance',     u'%',       controlids.ID_MEAS_PERFORMACE, controlids.ID_MEAS_PERFORMACE_UNIT),
 )
 
 REF_VALUES = (

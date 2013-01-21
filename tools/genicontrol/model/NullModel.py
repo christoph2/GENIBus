@@ -37,13 +37,13 @@ class NullModel(ModelIf.IModel):
 
     def initialize(self, quitEvent):
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues']):
-            key, displayName, unit, controlID = item
+            key, displayName, unit, controlIdValue, controlIdUnit = item
             ditem =  dataitems.MEASUREMENT_VALUES[key]
             self.sendMessage('Measurements.%s' % key, ModelIf.DATA_NOT_AVAILABLE)
         self.sendMessage('References', ModelIf.DATA_NOT_AVAILABLE)
         self.dataAvailable = False
-	self._quitEvent = quitEvent
-	return None
+        self._quitEvent = quitEvent
+        return None
 
     def connect(self, *parameters):
         pass
