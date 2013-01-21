@@ -34,14 +34,15 @@ from wx.lib.pubsub import Publisher as Publisher
 class GUIController(IController):
 
     def __init__(self, modelCls, view):
-        super(GUIController, self).__init__(modelCls, view)
-        self._view = view
-
-        self._view.Bind(wx.EVT_CLOSE, self.onCloseApplication)
-
         Publisher().subscribe(self.onChange, 'Measurements')
         Publisher().subscribe(self.onChange, 'References')
         Publisher().subscribe(self.onQuit, 'QUIT')
+
+        super(GUIController, self).__init__(modelCls, view)
+
+        self._view = view
+        self._view.Bind(wx.EVT_CLOSE, self.onCloseApplication)
+
 
 
     def onChange(self, msg):
