@@ -117,7 +117,7 @@ class GBFrame(wx.Frame):
         self._model = model
         self.notebook.mcPanel.setLEDState(0, True)
         self._quitEvent = quitEvent
-        self._guiThread = GUIThread(model, self._quitEvent)
+        self._guiThread = GUIThread(model, self, self._quitEvent)
         self._guiThread.start()
         return self._guiThread
 
@@ -208,9 +208,10 @@ class GBFrame(wx.Frame):
 class GUIThread(threading.Thread):
     logger = logging.getLogger("genicontrol")
 
-    def __init__(self, model, quitEvent):
+    def __init__(self, model, view, quitEvent):
         super(GUIThread, self).__init__()
         self._model = model
+        self._view = view
         self.quitEvent = quitEvent
         self.setName(self.__class__.__name__)
 
@@ -219,10 +220,9 @@ class GUIThread(threading.Thread):
         name = self.getName()
         print "Starting %s." % name
         while True:
-            if self.quitEvent.isSet():
+            if self.quitEvent.wait(0.5):
                 break
-            time.sleep(0.1)
-        self.quitEvent.wait(0.5)
+            self._view.notebook.mcPanel.setLEDState(0, not self._view.notebook.mcPanel.getLEDState(0))
         print "Exiting %s." % name
 
 
