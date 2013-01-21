@@ -28,6 +28,8 @@
 
 import logging
 import wx
+import time
+import threading
 import genicontrol.dataitems as dataitems
 from genicontrol.view.mcpanel import MCPanel
 from genicontrol.view.infopanel import InfoPanel
@@ -109,7 +111,13 @@ class GBFrame(wx.Frame):
 
     def initialize(self, quitEvent):
         self._quitEvent = quitEvent
-        return None
+        self._guiThread = GUIThread(None, self._quitEvent)
+        self._guiThread.start()
+        return self._guiThread
+
+    def quit(self):
+        self._quitEvent.set()
+        self._guiThread.join()
 
     def updateLanguage(self, lang):
         if self.locale:
@@ -177,6 +185,7 @@ class GBFrame(wx.Frame):
     def onCloseWindow(self, event):
         wx.LogMessage("Exiting...")
         wx.LogMessage("%s %s" % (self.GetSize(), self.GetPosition()))
+        self.quit()
         self.saveConfiguration()
         self.Destroy()
 
@@ -188,6 +197,25 @@ class GBFrame(wx.Frame):
         config.posY = pos.y
         config.sizeX = size.x
         config.sizeY = size.y
+
+
+class GUIThread(threading.Thread):
+    logger = logging.getLogger("genicontrol")
+
+    def __init__(self, model, quitEvent):
+        super(GUIThread, self).__init__()
+        self._model = model
+        self.quitEvent = quitEvent
+
+    def run(self):
+        name = self.getName()
+        print "Starting %s." % name
+        while True:
+            if self.quitEvent.isSet():
+                break
+            time.sleep(0.1)
+        self.quitEvent.wait(0.5)
+        print "Exiting %s." % name
 
 
 class GeniControlApp(wx.PySimpleApp):
