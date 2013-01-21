@@ -26,8 +26,14 @@
 ##
 ##
 
+import locale
 import logging
 logger = logging.getLogger("genicontrol")
+
+locale.setlocale(locale.LC_ALL, '')
+
+def asLocaleString(value):
+    return locale.format("%0.2f", value, True)
 
 def convertForward8(x, zero, range, unit):
     return (zero + ((x & 0xff) * (range / 254.0))) * unit
