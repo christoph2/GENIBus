@@ -109,9 +109,10 @@ class GBFrame(wx.Frame):
             self.Center()
         wx.LogMessage("Started...")
 
-    def initialize(self, quitEvent):
+    def initialize(self, model, quitEvent):
+        self._model = model
         self._quitEvent = quitEvent
-        self._guiThread = GUIThread(None, self._quitEvent)
+        self._guiThread = GUIThread(model, self._quitEvent)
         self._guiThread.start()
         return self._guiThread
 

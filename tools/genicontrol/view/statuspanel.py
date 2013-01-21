@@ -148,13 +148,19 @@ class LEDPanel(wx.Panel):
         self.Bind(wx.EVT_PAINT, self.onPaint)
         self.Layout()
 
-    def switch(self, num, on):
+    def setState(self, num, on):
         if num ==  0:
             self.ledGreenOn = on
             self.Refresh()
         elif num == 1:
             self.ledRedOn = on
             self.Refresh()
+
+    def getState(self, num):
+        if num == 0:
+            return self.ledGreenOn
+        elif num == 1:
+            return self.ledRedOn
 
     def onPaint(self, evt):
         dc = wx.PaintDC(self)
