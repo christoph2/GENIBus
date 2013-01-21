@@ -42,8 +42,8 @@ class IController(object):
     def __init__(self, modelCls, viewClass):
         self._pub = Publisher()
         self._view = viewClass  # (self, model)
-        self._viewThread = self._view.initialize(IController.quitViewEvent)
         self._model = modelCls()
+        self._viewThread = self._view.initialize(self._model, IController.quitViewEvent)
         # TODO: Create and disable controls.
         self._modelThread = self._model.initialize(IController.quitModelEvent)
 

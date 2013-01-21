@@ -32,7 +32,7 @@ from wx.lib.scrolledpanel import ScrolledPanel
 import genicontrol.controlids as controlids
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.dataitems as dataitems
-from genicontrol.view.statuspanel import StatusPanel, AlarmPanel, LEDPanel, PumpOperationPanel
+from genicontrol.view.statuspanel import StatusPanel, AlarmPanel, PumpOperationPanel
 
 ToggleButton = namedtuple('ToggleButton', 'id, labelOn, labelOff attrName')
 
@@ -123,17 +123,21 @@ class MCPanel(ScrolledPanel):
 ##        sizer.AddGrowableCol(1, 1)
 ##
         #sizer.SetFlexibleDirection(wx.BOTH)
-        statusPanel = StatusPanel(self)
-        sizer.Add(statusPanel, 1, wx.ALIGN_LEFT | wx.ALIGN_TOP | wx.EXPAND, 5)
-        sizer.Add(PumpOperationPanel(self), 1, wx.ALIGN_RIGHT | wx.ALIGN_TOP | wx.EXPAND | wx.ALL, 5)
-        sizer.Add(AlarmPanel(self), 1, wx.ALIGN_RIGHT | wx.ALIGN_TOP | wx.EXPAND | wx.ALL, 5)
-        controlsPanel = Controls(self)
-        sizer.Add(controlsPanel, 1, wx.ALIGN_LEFT | wx.ALIGN_BOTTOM | wx.EXPAND, 5)
-
-        #sizer.Add(LEDPanel(self), 1, wx.ALIGN_RIGHT | wx.ALIGN_TOP | wx.EXPAND | wx.ALL, 5)
+        self.statusPanel = StatusPanel(self)
+        sizer.Add(self.statusPanel, 1, wx.ALIGN_LEFT | wx.ALIGN_TOP | wx.EXPAND, 5)
+        self.pumpOperationPanel = PumpOperationPanel(self)
+        sizer.Add(self.pumpOperationPanel, 1, wx.ALIGN_RIGHT | wx.ALIGN_TOP | wx.EXPAND | wx.ALL, 5)
+        self.alarmPanel = AlarmPanel(self)
+        sizer.Add(self.alarmPanel, 1, wx.ALIGN_RIGHT | wx.ALIGN_TOP | wx.EXPAND | wx.ALL, 5)
+        self.controlsPanel = Controls(self)
+        sizer.Add(self.controlsPanel, 1, wx.ALIGN_LEFT | wx.ALIGN_BOTTOM | wx.EXPAND, 5)
 
         self.SetSizerAndFit(sizer)
         self.SetupScrolling()
         sizer.Layout()
 
+    def setLEDState(self, num ,on):
+        self.statusPanel.ledControl.setState(num, on)
 
+    def getLEDState(self, num):
+        return self.statusPanel.ledControl.getState(num)

@@ -74,11 +74,15 @@ class TestNB(wx.Notebook):
     def __init__(self, parent, id):
         wx.Notebook.__init__(self, parent, id, size = (21, 21), style = wx.BK_DEFAULT | wx.BK_BOTTOM)
         tabOne = TabPanel(self)
-        self.AddPage(MCPanel(self), "Measurement + Control")
-        self.AddPage(BusmonitorPanel(self), "Busmonitor")
-        self.AddPage(RefPanel(self), "References")
+        self.mcPanel = MCPanel(self)
+        self.AddPage(self.mcPanel, "Measurement + Control")
+        self.bmPanel = BusmonitorPanel(self)
+        self.AddPage(self.bmPanel, "Busmonitor")
+        self.refPanel = RefPanel(self)
+        self.AddPage(self.refPanel, "References")
         self.AddPage(tabOne, "Parameters")
-        self.AddPage(InfoPanel(self), "Info")
+        self.infoPanel = InfoPanel(self)
+        self.AddPage(self.infoPanel, "Info")
 
 
 class GBFrame(wx.Frame):
@@ -111,6 +115,7 @@ class GBFrame(wx.Frame):
 
     def initialize(self, model, quitEvent):
         self._model = model
+        self.notebook.mcPanel.setLEDState(0, True)
         self._quitEvent = quitEvent
         self._guiThread = GUIThread(model, self._quitEvent)
         self._guiThread.start()
