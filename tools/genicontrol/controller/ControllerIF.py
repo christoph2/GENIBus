@@ -28,19 +28,23 @@
 
 import abc
 import logging
+import threading
 from wx.lib.pubsub import Publisher as Publisher
 
-DATA_NOT_AVAILABLE = 0xff
+DATA_NOT_AVAILABLE = None
 
 class IController(object):
     __metaclass__ = abc.ABCMeta
     logger = logging.getLogger("genicontrol")
+    quitViewEvent = threading.Event()
+    quitModelEvent = threading.Event()
 
-    def __init__(self, model, viewClass):
+    def __init__(self, modelCls, viewClass):
         self._pub = Publisher()
-        self._model = model
-        self._view = viewClass(self, model)
+        self._view = viewClass  # (self, model)
+        self._viewThread = self._view.initialize(IController.quitViewEvent)
+        self._model = modelCls()
         # TODO: Create and disable controls.
-        self._model.initialize()
+        self._modelThread = self._model.initialize(IController.quitModelEvent)
 
 

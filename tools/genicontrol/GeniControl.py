@@ -107,6 +107,10 @@ class GBFrame(wx.Frame):
             self.Center()
         wx.LogMessage("Started...")
 
+    def initialize(self, quitEvent):
+        self._quitEvent = quitEvent
+        return None
+
     def updateLanguage(self, lang):
         if self.locale:
             assert sys.getrefcount(self.locale) <= 2

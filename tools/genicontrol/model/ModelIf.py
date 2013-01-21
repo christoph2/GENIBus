@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -40,7 +40,7 @@ class IModel(object):
     def __init__(self):
         #super(IModel, self).__init__(self)
         self._pub = Publisher()
-        self.initialize()
+        #self.initialize()
 
     def sendMessage(self, topic, data):
         self._pub.sendMessage(topic, data)

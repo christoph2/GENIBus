@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -35,13 +35,15 @@ import genicontrol.dataitems as dataitems
 
 class NullModel(ModelIf.IModel):
 
-    def initialize(self):
+    def initialize(self, quitEvent):
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues']):
             key, displayName, unit, controlID = item
             ditem =  dataitems.MEASUREMENT_VALUES[key]
             self.sendMessage('Measurements.%s' % key, ModelIf.DATA_NOT_AVAILABLE)
         self.sendMessage('References', ModelIf.DATA_NOT_AVAILABLE)
         self.dataAvailable = False
+	self._quitEvent = quitEvent
+	return None
 
     def connect(self, *parameters):
         pass

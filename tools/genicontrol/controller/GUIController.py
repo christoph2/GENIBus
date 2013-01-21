@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -34,12 +34,13 @@ from wx.lib.pubsub import Publisher as Publisher
 class GUIController(IController):
 
     def __init__(self, modelCls, view):
+        super(GUIController, self).__init__(modelCls, view)
         self._view = view
 
         Publisher().subscribe(self.onChange, 'Measurements')
         Publisher().subscribe( self.onChange, 'References')
 
-        self._model = modelCls()
+        #self._model = modelCls()
 
     def onChange(self, msg):
         if len(msg.topic) == 1:
