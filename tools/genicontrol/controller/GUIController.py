@@ -26,10 +26,10 @@
 ##
 ##
 
+import wx
 from genicontrol.model.config import DataitemConfiguration
 from genicontrol.controller.ControllerIF import IController
 from wx.lib.pubsub import Publisher as Publisher
-#DATA_NOT_AVAILABLE = 0xff
 
 class GUIController(IController):
 
@@ -37,10 +37,12 @@ class GUIController(IController):
         super(GUIController, self).__init__(modelCls, view)
         self._view = view
 
-        Publisher().subscribe(self.onChange, 'Measurements')
-        Publisher().subscribe( self.onChange, 'References')
+        self._view.Bind(wx.EVT_CLOSE, self.onCloseApplication)
 
-        #self._model = modelCls()
+        Publisher().subscribe(self.onChange, 'Measurements')
+        Publisher().subscribe(self.onChange, 'References')
+        Publisher().subscribe(self.onQuit, 'QUIT')
+
 
     def onChange(self, msg):
         if len(msg.topic) == 1:
@@ -49,5 +51,9 @@ class GUIController(IController):
         else:
             group, item = msg.topic
         print "GROUP: '%s' ITEM: '%s' DATA: '%s'" % (group, item, msg.data)
-        #print str(msg)
 
+    def onQuit(self, msg):
+        self._view.shutdownView()
+
+    def onCloseApplication(self, event):
+        self._view.shutdownView()

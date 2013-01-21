@@ -28,6 +28,7 @@
 
 import logging
 import wx
+from wx.lib.pubsub import Publisher as Publisher
 import time
 import threading
 import genicontrol.dataitems as dataitems
@@ -92,8 +93,6 @@ class GBFrame(wx.Frame):
         self.createMenuBar()
         self.locale = None
         #self.updateLanguage(wx.LANGUAGE_ITALIAN)
-
-        self.Bind(wx.EVT_CLOSE, self.onCloseWindow)
 
 ##
 ##        self.log = wx.TextCtrl(self, -1, style = wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
@@ -189,8 +188,10 @@ class GBFrame(wx.Frame):
         showOptionsDialogue(self)
 
     def onCloseWindow(self, event):
+        Publisher().sendMessage('QUIT')
+
+    def shutdownView(self):
         wx.LogMessage("Exiting...")
-        wx.LogMessage("%s %s" % (self.GetSize(), self.GetPosition()))
         self.quit()
         self.saveConfiguration()
         self.Destroy()
