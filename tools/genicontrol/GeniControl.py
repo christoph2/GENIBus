@@ -206,6 +206,8 @@ class GUIThread(threading.Thread):
         super(GUIThread, self).__init__()
         self._model = model
         self.quitEvent = quitEvent
+        self.setName(self.__class__.__name__)
+
 
     def run(self):
         name = self.getName()
