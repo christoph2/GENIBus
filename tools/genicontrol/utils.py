@@ -55,3 +55,5 @@ def makeArray(buf):
 def absConfigurationFilename(fname):
     return os.path.join(CONFIGURATION_DIRECTORY, fname)
 
+def dumpHex(arr):
+    return [hex(x) for x in arr]
