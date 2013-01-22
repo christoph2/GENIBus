@@ -41,7 +41,7 @@ def createAPDUHeader(apdu, klass, operationSpecifier, length):
 def createAPDU(klass, op, datapoints):
     di = dataitems.DATAITEMS_FOR_CLASS[klass]
     result = []
-    createAPDUHeader(result, klass, op, len(datapoints))
+    createAPDUHeader(result, klass, op, len(datapoints) * 2)
     for dp, value in datapoints:
         item = di[dp]
         result.append(item.id)
@@ -153,6 +153,37 @@ def createGetValuesPDU(header, protocolData = [], measurements = [], parameter =
     return arr
 
 
+def createSetValuesPDU(header, parameter = [], references = []):
+    if not isinstance(header, Header):
+        raise TypeError('Parameter "header" must be of type "Header".')
+
+    length = 2
+    pdu = []
+
+    if parameter:
+        parameterAPDU = createSetParametersAPDU(parameter)
+        length += len(parameterAPDU)
+
+    if references:
+        referencesAPDU = createSetReferencesAPDU(references)
+        length += len(referencesAPDU)
+
+    pdu.extend([header.startDelimiter, length, header.destAddr, header.sourceAddr])
+
+    if parameter:
+        pdu.extend(parameterAPDU)
+
+    if references:
+        pdu.extend(referencesAPDU)
+
+    crc = calcuteCrc(pdu)
+    pdu.extend(bytes(crc))
+
+    arr = array.array('B', pdu)
+    # TODO: arr.tostring() for I/O!
+    return arr
+
+
 def createGetInfoPDU(header, measurements = [], parameter = [], references = []):
     if not isinstance(header, Header):
         raise TypeError('Parameter "header" must be of type "Header".')
@@ -227,6 +258,8 @@ if __name__ == '__main__':
     print dumpHex(createConnectRequestPDU(0x01))
 
     print dumpHex(createSetCommandsPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x04), ['REMOTE', 'START']))
+
+    print dumpHex(createSetValuesPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x04), references = [('ref_rem', 0xa5, )]))
 
     print dumpHex(createGetInfoPDU(
         Header(defs.SD_DATA_REQUEST, 0x20, 0x04),
