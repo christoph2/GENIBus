@@ -89,3 +89,10 @@ def checkCrc(frame):
         crc.update(frame[idx])
     return crc.get()
 
+def calcuteCrc(frame):
+    crc = Crc(0xffff)
+    for idx in range(1, len(frame)):
+        crc.update(frame[idx])
+    return crc.get()
+
+
