@@ -4,7 +4,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -30,7 +30,7 @@ import logging
 import genicontrol.dataitems as dataitems
 import genicontrol.defs as defs
 from genicontrol.crc import calcuteCrc
-from genicontrol.utils import bytes
+from genicontrol.utils import bytes, dumpHex
 
 logger = logging.getLogger("genicontrol")
 
@@ -201,9 +201,9 @@ def createConnectRequestPDU(sourceAddr):
 
 
 if __name__ == '__main__':
-    print [hex(x) for x in createConnectRequestPDU(0x01)]
+    print dumpHex(createConnectRequestPDU(0x01))
 
-    print [hex(x) for x in createGetInfoPDU(
+    print dumpHex(createGetInfoPDU(
         Header(defs.SD_DATA_REQUEST, 0x20, 0x04),
         measurements = ['h', 'q', 'p', 'speed', 'energy_hi'])
-    ]
+    )

@@ -37,6 +37,7 @@ from genicontrol.crc import Crc, checkCrc
 import genicontrol.utils as utils
 import genicontrol.apdu as apdu
 import genicontrol.defs as defs
+from genicontrol.utils import dumpHex
 import genicontrol.dataitems as dataitems
 from genicontrol.dissect import dissectResponse
 
@@ -371,9 +372,9 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         #Item("p_hi", 0x39, Info(0x82, 0x09, 0x00, 0xfa)),
         #Item("p_lo", 0x80, None),
 
-        Item("act_mode1", 0x10, None),
-        Item("act_mode2", 0x00, None),
-        Item("act_mode3", 0x00, None),
+        Item("act_mode1", 0x10, Info(0x81, None, None, None)),
+        Item("act_mode2", 0x00, Info(0x81, None, None, None)),
+        Item("act_mode3", 0x00, Info(0x81, None, None, None)),
         Item("led_contr", 0x01, None),
         Item("ref_act", 0xa5, None),
         Item("ref_inf", 0xfe, None),
@@ -383,6 +384,7 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item("q", 0x23, Info(0x82, 0x17, 0x00, 0x20)),
         Item("h_max", 0xcd, None),
         Item("q_max", 0xb4, None),
+        Item("f_act", 0xa4, Info(0x82, 0x84, 0xc1, 0x39)),
         Item("t_2hour_hi", 0x0b, None),
         Item("t_2hour_lo", 0x80, None),
         Item("contr_source", 0x22, None),
@@ -419,11 +421,8 @@ class TestDataPool(unittest.TestCase):
                 if not value.name in di:
                     raise KeyError('invalid datapoint "%s"' % value.name)
 
-def dumpHex(arr):
-    return [hex(x) for x in arr]
 
 print dumpHex(apdu.createGetMeasuredDataAPDU(dataReqValues))
-de
 
 def main():
     #res = dissectResponse(INFO_RESP)
