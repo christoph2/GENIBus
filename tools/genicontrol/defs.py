@@ -53,6 +53,13 @@ PDU_START           = 4
 CRC_HIGH            = -2
 CRC_LOW             = -1
 
+MAX_TELEGRAM_LEN    = 259
+MAX_PDU_LEN         = 253
+SLAVE_ADDR_OFFSET   = 32
+CONNECTION_REQ_ADDR = 254
+BROADCAST_ADDR      = 255
+
+
 ##
 ## ADPU classes.
 ##
