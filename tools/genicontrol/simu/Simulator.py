@@ -423,7 +423,7 @@ def dumpHex(arr):
     return [hex(x) for x in arr]
 
 print dumpHex(apdu.createGetMeasuredDataAPDU(dataReqValues))
-
+de
 
 def main():
     #res = dissectResponse(INFO_RESP)

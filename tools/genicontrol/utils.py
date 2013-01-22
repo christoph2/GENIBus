@@ -44,7 +44,7 @@ def loByte(w):
     return w & 0x00ff
 
 def bytes(w):
-    return tuple(hiByte(w), loByte(w))
+    return tuple((hiByte(w), loByte(w)))
 
 def makeBuffer(arr):
     return buffer(array.array('B', arr))
