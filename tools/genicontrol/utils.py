@@ -37,6 +37,15 @@ logger = logging.getLogger("genicontrol")
 def makeWord(bh, bl):
     return (bh <<8) | bl
 
+def hiByte(w):
+    return (w & 0xff00) >> 8
+
+def loByte(w):
+    return w & 0x00ff
+
+def bytes(w):
+    return tuple(hiByte(w), loByte(w))
+
 def makeBuffer(arr):
     return buffer(array.array('B', arr))
 
