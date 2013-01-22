@@ -153,6 +153,44 @@ def createGetValuesPDU(header, protocolData = [], measurements = [], parameter =
     return arr
 
 
+def createGetInfoPDU(header, measurements = [], parameter = [], references = []):
+    if not isinstance(header, Header):
+        raise TypeError('Parameter "header" must be of type "Header".')
+
+    length = 2
+    pdu = []
+
+    if measurements:
+        measurementsAPDU = createGetInfoAPDU(defs.ADPUClass.MEASURERED_DATA, measurements)
+        length += len(measurementsAPDU)
+
+    if parameter:
+        parameterAPDU = createGetInfoAPDU(defs.ADPUClass.CONFIGURATION_PARAMETERS, parameter)
+        length += len(parameterAPDU)
+
+    if references:
+        referencesAPDU = createGetInfoAPDU(defs.ADPUClass.REFERENCE_VALUES, references)
+        length += len(referencesAPDU)
+
+    pdu.extend([header.startDelimiter, length, header.destAddr, header.sourceAddr])
+
+    if measurements:
+        pdu.extend(measurementsAPDU)
+
+    if parameter:
+        pdu.extend(parameterAPDU)
+
+    if references:
+        pdu.extend(referencesAPDU)
+
+    crc = calcuteCrc(pdu)
+    pdu.extend(bytes(crc))
+
+    arr = array.array('B', pdu)
+    # TODO: arr.tostring() for I/O!
+    return arr
+
+
 def createConnectRequestPDU(sourceAddr):
     return createGetValuesPDU(
         Header(defs.SD_DATA_REQUEST, defs.CONNECTION_REQ_ADDR, sourceAddr),
@@ -161,4 +199,11 @@ def createConnectRequestPDU(sourceAddr):
         parameter =     ['unit_addr',   'group_addr']
     )
 
-print [hex(x) for x in createConnectRequestPDU(0x01)]
+
+if __name__ == '__main__':
+    print [hex(x) for x in createConnectRequestPDU(0x01)]
+
+    print [hex(x) for x in createGetInfoPDU(
+        Header(defs.SD_DATA_REQUEST, 0x20, 0x04),
+        measurements = ['h', 'q', 'p', 'speed', 'energy_hi'])
+    ]
