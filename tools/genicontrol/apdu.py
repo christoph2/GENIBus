@@ -152,13 +152,13 @@ def createGetValuesPDU(header, protocolData = [], measurements = [], parameter =
     # TODO: arr.tostring() for I/O!
     return arr
 
-from genicontrol.model.config import DataitemConfiguration
 
-# mv = [x[0] for x in DataitemConfiguration['MeasurementValues']]
-pd = ['df_buf_len', 'unit_bus_mode']
-mv = ['unit_family',  'unit_type']
-cp = ['unit_addr', 'group_addr']
+def createConnectRequestPDU(sourceAddr):
+    return createGetValuesPDU(
+        Header(defs.SD_DATA_REQUEST, defs.CONNECTION_REQ_ADDR, sourceAddr),
+        measurements =  ['unit_family', 'unit_type'],
+        protocolData =  ['df_buf_len',  'unit_bus_mode'],
+        parameter =     ['unit_addr',   'group_addr']
+    )
 
-apdu = createGetValuesPDU(Header(defs.SD_DATA_REQUEST, defs.CONNECTION_REQ_ADDR, 0x01), measurements = mv, protocolData = pd, parameter = cp)
-
-print [hex(x) for x in apdu]
+print [hex(x) for x in createConnectRequestPDU(0x01)]
