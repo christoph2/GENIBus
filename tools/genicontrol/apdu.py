@@ -191,6 +191,29 @@ def createGetInfoPDU(header, measurements = [], parameter = [], references = [])
     return arr
 
 
+def createSetCommandsPDU(header, commands):
+    if not isinstance(header, Header):
+        raise TypeError('Parameter "header" must be of type "Header".')
+
+    length = 2
+    pdu = []
+
+    commandsAPDU = createSetCommandsAPDU(commands)
+    length += len(commandsAPDU)
+
+    pdu.extend([header.startDelimiter, length, header.destAddr, header.sourceAddr])
+
+    pdu.extend(commandsAPDU)
+
+    crc = calcuteCrc(pdu)
+    pdu.extend(bytes(crc))
+
+    arr = array.array('B', pdu)
+    # TODO: arr.tostring() for I/O!
+    return arr
+
+
+
 def createConnectRequestPDU(sourceAddr):
     return createGetValuesPDU(
         Header(defs.SD_DATA_REQUEST, defs.CONNECTION_REQ_ADDR, sourceAddr),
@@ -202,6 +225,8 @@ def createConnectRequestPDU(sourceAddr):
 
 if __name__ == '__main__':
     print dumpHex(createConnectRequestPDU(0x01))
+
+    print dumpHex(createSetCommandsPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x04), ['REMOTE', 'START']))
 
     print dumpHex(createGetInfoPDU(
         Header(defs.SD_DATA_REQUEST, 0x20, 0x04),
