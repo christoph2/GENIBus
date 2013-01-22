@@ -44,7 +44,6 @@ class GUIController(IController):
         self._view.Bind(wx.EVT_CLOSE, self.onCloseApplication)
 
 
-
     def onChange(self, msg):
         if len(msg.topic) == 1:
             group = msg.topic[0]

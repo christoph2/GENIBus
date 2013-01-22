@@ -45,26 +45,26 @@ logger = logging.getLogger("genicontrol")
 
 ## Connect Req/Resp
 CONNECT_REQ = (
-    0x27,
-    0x0e,
-    0xfe,
-    0x01,
-
-    0x00,
-    0x02,
-    0x02,
-    0x03,
-    0x04,
-    0x02,
-    0x2e,
-    0x2f,
-    0x02,
-    0x02,
-    0x94,
-    0x95,
-
-    0xa2,
-    0xaa
+    0x27,   ##  Start Delimiter
+    0x0e,   ##  Length
+    0xfe,   ##  Destination Address
+    0x01,   ##  Source Address
+            ##
+    0x00,   ##  Class 0: Protocol Data
+    0x02,   ##  OS=0 (GET), Length=2
+    0x02,   ##  df_buf_len
+    0x03,   ##  unit_bus_mode
+    0x04,   ##  Class 4: Configuration Data
+    0x02,   ##  OS=0 (GET), Length=2
+    0x2e,   ##  unit_addr
+    0x2f,   ##  group_addr
+    0x02,   ##  Class 2: Measured Data
+    0x02,   ##  OS=0 (GET), Length=2
+    0x94,   ##  unit_family
+    0x95,   ##  unit_type
+            ##
+    0xa2,   ##  CRC high
+    0xaa    ##  CRC low
 )
 
 CONNECT_RESP = (
@@ -73,19 +73,19 @@ CONNECT_RESP = (
     0x01,   ##  Destination Address
     0x20,   ##  Source Address
             ##
-    0x00,
-    0x02,
-    0x46,
-    0x0e,
-    0x04,
-    0x02,
-    0x20,
-    0xf7,
-    0x02,
-    0x02,
-    0x03,
-    0x01,
-
+    0x00,   ##  Class 0: Protocol Data
+    0x02,   ##  OS=0 (GET), Length=2
+    0x46,   ##  df_buf_len
+    0x0e,   ##  unit_bus_mode
+    0x04,   ##  Class 4: Configuration Data
+    0x02,   ##  Ack=0, Length=2
+    0x20,   ##  unit_addr
+    0xf7,   ##  group_addr
+    0x02,   ##  Class 2: Measured Data
+    0x02,   ##  Ack=0, Length=2
+    0x03,   ##  unit_family
+    0x01,   ##  unit_type
+            ##
     0x00,   ##  CRC high
     0x04    ##  CRC low
 )
@@ -397,6 +397,8 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item("alarm_log_3", 0x30, None),
         Item("alarm_log_4", 0x40, None),
         Item("alarm_log_5", 0x00, None),
+        Item("unit_family", 0x03, None),
+        Item("unit_type", 0x01, None),
     },
     defs.ADPUClass.COMMANDS: {},
     defs.ADPUClass.CONFIGURATION_PARAMETERS: {
