@@ -80,7 +80,8 @@ class Options(wx.Dialog):
         sizer.Fit(self)
 	config.serverIP = fixIP(config.serverIP)
         addr.SetValue(config.serverIP)
-        mask.SetValue(config.subnetMask)
+	config.subnetMask = fixIP(config.subnetMask)
+	mask.SetValue(config.subnetMask)
         port.SetValue(config.serverPort)
         poll.SetValue(str(config.pollingInterval))
 
@@ -91,7 +92,7 @@ class Options(wx.Dialog):
         retval = wx.ID_OK
         if retval == wx.ID_OK:
 	    config.serverIP = fixIP(addr.GetValue())
-            config.subnetMaskP = mask.GetValue()
+            config.subnetMaskP = fixIP(mask.GetValue())
             config.serverPortP = port.GetValue()
             config.pollingInterval = poll.GetValue()
         self.Destroy()
