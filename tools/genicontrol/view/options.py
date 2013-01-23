@@ -38,6 +38,9 @@ ID_PORT     = wx.NewId()
 ID_POLL     = wx.NewId()
 
 
+def fixIP(addr):
+    return '.'.join(["%3s" % j for j in [i.strip() for i in addr.split('.')]])
+
 class Options(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, wx.ID_ANY, u'Options')
@@ -75,6 +78,7 @@ class Options(wx.Dialog):
         sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
         self.SetSizer(sizer)
         sizer.Fit(self)
+	config.serverIP = fixIP(config.serverIP)
         addr.SetValue(config.serverIP)
         mask.SetValue(config.subnetMask)
         port.SetValue(config.serverPort)
@@ -86,7 +90,7 @@ class Options(wx.Dialog):
         retval = self.ShowModal()
         retval = wx.ID_OK
         if retval == wx.ID_OK:
-            config.serverIP = addr.GetValue()
+	    config.serverIP = fixIP(addr.GetValue())
             config.subnetMaskP = mask.GetValue()
             config.serverPortP = port.GetValue()
             config.pollingInterval = poll.GetValue()
