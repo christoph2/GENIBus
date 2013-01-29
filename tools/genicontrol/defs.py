@@ -63,6 +63,12 @@ SD_DATA_REQUEST     = 0x27
 SD_DATA_REPLY       = 0x24
 SD_DATA_MESSAGE     = 0x26
 
+## Access constants.
+ACC_RO  = 0x01
+ACC_WO  = 0x02
+ACC_WR  = 0x03
+
+
 ##
 ## ADPU classes.
 ##
