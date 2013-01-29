@@ -44,7 +44,7 @@ DATAITEMS = (
     Dataitem(u"t_2hour_lo",                         2,  25, defs.ACC_RO,   u"Two hour counter"                                         ),
     Dataitem(u"i_dc",                               2,  26, defs.ACC_RO,   u"Frequency converter DC link current"                      ),
     Dataitem(u"v_dc",                               2,  27, defs.ACC_RO,   u"Frequency converter DC link voltage"                      ),
-    Dataitem(u"t_e",                                2,  28, defs.ACC_RO,   u"Temperature in contdefs.ACC_ROl electdefs.ACC_ROnics"               ),
+    Dataitem(u"t_e",                                2,  28, defs.ACC_RO,   u"Temperature in contdefs.ACC_ROl electdefs.ACC_ROnics"     ),
     Dataitem(u"t_m",                                2,  29, defs.ACC_RO,   u"Temp. in motor or in frequency converter module"          ),
     Dataitem(u"i_mo",                               2,  30, defs.ACC_RO,   u"Motor current"                                            ),
     Dataitem(u"i_line",                             2,  31, defs.ACC_RO,   u"Mains supply current"                                     ),

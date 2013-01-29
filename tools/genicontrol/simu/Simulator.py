@@ -372,35 +372,35 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         #Item("p_hi", 0x39, Info(0x82, 0x09, 0x00, 0xfa)),
         #Item("p_lo", 0x80, None),
 
-        Item("act_mode1", 0x10, Info(0x81, None, None, None)),
-        Item("act_mode2", 0x00, Info(0x81, None, None, None)),
-        Item("act_mode3", 0x00, Info(0x81, None, None, None)),
-        Item("led_contr", 0x01, None),
-        Item("ref_act", 0xa5, None),
-        Item("ref_inf", 0xfe, None),
-        Item("ref_att_loc", 0xfe, None),
-        Item("sys_ref", 0x94, None),
-        Item("h", 0x7b, Info(0x82, 0x19, 0x00, 0x0c)),
-        Item("q", 0x23, Info(0x82, 0x17, 0x00, 0x20)),
-        Item("h_max", 0xcd, None),
-        Item("q_max", 0xb4, None),
-        Item("f_act", 0xa4, Info(0x82, 0x84, 0xc1, 0x39)),
-        Item("t_2hour_hi", 0x0b, None),
-        Item("t_2hour_lo", 0x80, None),
-        Item("contr_source", 0x22, None),
-        Item("p", 0xe9, Info(0x82, 0x09, 0x00, 0x28)),
-        Item("energy_hi", 0x0c, Info(0x82, 0x2f, 0x00, 0xfe)),
-        Item("energy_lo", 0xe7, None),
-        Item("speed", 0xa5, Info(0x82, 0x13, 0x00, 0x24)),
-        Item("curve_no_ref", 0x0e, None),
-        Item("alarm_code", 0x00, None),
-        Item("alarm_log_1", 0x20, None),
-        Item("alarm_log_2", 0x39, None),
-        Item("alarm_log_3", 0x30, None),
-        Item("alarm_log_4", 0x40, None),
-        Item("alarm_log_5", 0x00, None),
-        Item("unit_family", 0x03, None),
-        Item("unit_type", 0x01, None),
+        Item("act_mode1", 0x10,     Info(0x81, None, None, None)),
+        Item("act_mode2", 0x00,     Info(0x81, None, None, None)),
+        Item("act_mode3", 0x00,     Info(0x81, None, None, None)),
+        Item("led_contr", 0x01,     Info(0x81, None, None, None)),
+        Item("ref_act", 0xa5,       Info(0x81, None, None, None)),
+        Item("ref_inf", 0xfe,       Info(0x81, None, None, None)),
+        Item("ref_att_loc", 0xfe,   Info(0x81, None, None, None)),
+        Item("sys_ref", 0x94,       Info(0x81, None, None, None)),
+        Item("h", 0x7b,             Info(0x82, 0x19, 0x00, 0x0c)),
+        Item("q", 0x23,             Info(0x82, 0x17, 0x00, 0x20)),
+        Item("h_max", 0xcd,         Info(0x81, None, None, None)),
+        Item("q_max", 0xb4,         Info(0x81, None, None, None)),
+        Item("f_act", 0xa4,         Info(0x82, 0x84, 0xc1, 0x39)),
+        Item("t_2hour_hi", 0x0b,    Info(0x81, None, None, None)),
+        Item("t_2hour_lo", 0x80,    Info(0x81, None, None, None)),
+        Item("contr_source", 0x22,  Info(0x81, None, None, None)),
+        Item("p", 0xe9,             Info(0x82, 0x09, 0x00, 0x28)),
+        Item("energy_hi", 0x0c,     Info(0x82, 0x2f, 0x00, 0xfe)),
+        Item("energy_lo", 0xe7,     Info(0x81, None, None, None)),
+        Item("speed", 0xa5,         Info(0x82, 0x13, 0x00, 0x24)),
+        Item("curve_no_ref", 0x0e,  Info(0x81, None, None, None)),
+        Item("alarm_code", 0x00,    Info(0x81, None, None, None)),
+        Item("alarm_log_1", 0x20,   Info(0x81, None, None, None)),
+        Item("alarm_log_2", 0x39,   Info(0x81, None, None, None)),
+        Item("alarm_log_3", 0x30,   Info(0x81, None, None, None)),
+        Item("alarm_log_4", 0x40,   Info(0x81, None, None, None)),
+        Item("alarm_log_5", 0x00,   Info(0x81, None, None, None)),
+        Item("unit_family", 0x03,   Info(0x81, None, None, None)),
+        Item("unit_type", 0x01,     Info(0x81, None, None, None)),
     },
     defs.ADPUClass.COMMANDS: {},
     defs.ADPUClass.CONFIGURATION_PARAMETERS: {
@@ -461,11 +461,28 @@ def createResponse(request):
     result.extend((utils.hiByte(crc), utils.loByte(crc), ))
     return result
 
+
+import genicontrol.conversion as conversion
+import genicontrol.units as units
+
+def interpreteResponse(response):
+    for apdu in response.APDUs:
+        dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[apdu.klass]])
+        for name, value in zip(dataReqValues, apdu.data):
+            _, (head, unit, zero, range) = dataItemsByName[name]
+            if head == 0x82:
+                unitInfo = units.UnitTable[unit]
+                value = conversion.convertForward8(value, zero, range, unitInfo.factor)
+                print "%s [%s]: %0.2f" % (name, unitInfo.unit, value)
+
+
 def main():
     telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = dataReqValues)
     res = createResponse(dissectResponse(telegram))
     dr = dissectResponse(res)
+    interpreteResponse(dr)
     print dr
+
 
 if __name__ == '__main__':
     main()
