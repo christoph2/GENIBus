@@ -138,3 +138,11 @@ CLASS_CAPABILITIES = {
 
 class IllegalOperationError(Exception): pass
 
+def operationToString(op):
+    if op == OS_GET:
+        return "Read"
+    elif op == OS_SET:
+        return "Write"
+    elif op == OS_INFO:
+        return "Info-Request"
+

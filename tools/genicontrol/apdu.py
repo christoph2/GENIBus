@@ -34,6 +34,7 @@ from genicontrol.utils import bytes, dumpHex
 
 logger = logging.getLogger("genicontrol")
 
+
 def createAPDUHeader(apdu, klass, operationSpecifier, length):
     apdu.append(klass)
     apdu.append((operationSpecifier << 6) | (length & 0x3F))
