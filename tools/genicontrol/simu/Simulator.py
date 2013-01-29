@@ -437,7 +437,8 @@ def createResponse(request):
         if ack not in defs.CLASS_CAPABILITIES[klass]:
             raise defs.IllegalOperationError("%s-Operation not supported." % defs.operationToString(ack))
         dataItemsById = dict([(v[2], (k, v[3], v[4])) for k, v in dataitems.DATAITEMS_FOR_CLASS[klass].items()])
-        apduLength = 2
+        apduLength = 0
+        length += 2
         pdu = []
         for item in data:
             name, acess, _ = dataItemsById[item]
@@ -463,8 +464,8 @@ def createResponse(request):
 def main():
     telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = dataReqValues)
     res = createResponse(dissectResponse(telegram))
-    res = dissectResponse(res)
-    print res
+    dr = dissectResponse(res)
+    print dr
 
 if __name__ == '__main__':
     main()
