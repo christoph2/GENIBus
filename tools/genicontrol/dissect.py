@@ -67,7 +67,7 @@ def dissectResponse(frame):
 
     if not (length == len(arr) - 4):
         raise FramingError("Frame length doesn't match length byte.")
-    assert(frame == arr)
+    #assert(frame == arr)
     for idx in range(defs.PDU_START, length + 2):
         ch = arr[idx]
         crc.update(ch)
@@ -89,11 +89,10 @@ def dissectResponse(frame):
                 result.append(APDU(klass, opAck, data))
         elif dissectingState == APDU_DATA:
             byteCount -= 1
+            data.append(ch)
             if byteCount <= 0:
                 dissectingState = APDU_HEADER0
                 result.append(APDU(klass, opAck, data))
-            else:
-                data.append(ch)
     frameCrc = utils.makeWord(arr[defs.CRC_HIGH], arr[defs.CRC_LOW])
     if crc.get() != frameCrc:
         raise CrcError("Frame CRC doesn't match calculated CRC.")

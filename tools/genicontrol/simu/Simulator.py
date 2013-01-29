@@ -422,14 +422,10 @@ class TestDataPool(unittest.TestCase):
                     raise KeyError('invalid datapoint "%s"' % value.name)
 
 
-print dumpHex(apdu.createGetMeasuredDataAPDU(dataReqValues))
 
 def main():
-    #res = dissectResponse(INFO_RESP)
-    print dumpHex(apdu.createGetInfoAPDU(defs.ADPUClass.MEASURERED_DATA, infoReqValues))
-    res = dissectResponse(DATA_RESP)
-    print hex(checkCrc(DATA_REQ)), hex(checkCrc(DATA_RESP))
-    res = dissectResponse(CONF_RESP)
+    telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = dataReqValues)
+    res = dissectResponse(telegram)
     print res
 
 if __name__ == '__main__':
