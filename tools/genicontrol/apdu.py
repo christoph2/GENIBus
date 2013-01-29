@@ -266,3 +266,4 @@ if __name__ == '__main__':
         Header(defs.SD_DATA_REQUEST, 0x20, 0x04),
         measurements = ['h', 'q', 'p', 'speed', 'energy_hi'])
     )
+

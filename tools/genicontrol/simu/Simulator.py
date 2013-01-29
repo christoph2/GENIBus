@@ -33,7 +33,7 @@
 from collections import namedtuple
 import logging
 import unittest
-from genicontrol.crc import Crc, checkCrc
+from genicontrol.crc import checkCrc, calcuteCrc
 import genicontrol.utils as utils
 import genicontrol.apdu as apdu
 import genicontrol.defs as defs
@@ -422,10 +422,48 @@ class TestDataPool(unittest.TestCase):
                     raise KeyError('invalid datapoint "%s"' % value.name)
 
 
+def createResponse(request):
+    """The actual 'simulation' function.
+    """
+    result = []
+    length = 2
+    pdus = []
+    for a in request.APDUs:
+        klass = a.klass
+        ack = a.ack
+        data = a.data
+        dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[klass]])
+        # name klass id access note
+        if ack not in defs.CLASS_CAPABILITIES[klass]:
+            raise defs.IllegalOperationError("%s-Operation not supported." % defs.operationToString(ack))
+        dataItemsById = dict([(v[2], (k, v[3], v[4])) for k, v in dataitems.DATAITEMS_FOR_CLASS[klass].items()])
+        apduLength = 2
+        pdu = []
+        for item in data:
+            name, acess, _ = dataItemsById[item]
+            value, info = dataItemsByName[name]
+            if ack == defs.OS_GET:
+                apduLength += 1 # Currently only 8-bit data values.
+                value = 0xff if value is None else value
+                pdu.append(value)
+            elif ack == defs.OS_INFO:
+                pass
+        pdus.append((klass, apduLength, pdu, ))
+        length += apduLength
+    result.extend([defs.SD_DATA_REPLY, length, request.sa, request.da])
+    for pdu in pdus:
+        klass, apduLength, pdu = pdu
+        result.append(klass)
+        result.append(apduLength & 0x3f)
+        result.extend(pdu)
+    crc = calcuteCrc(result)
+    result.extend((utils.hiByte(crc), utils.loByte(crc), ))
+    return result
 
 def main():
     telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = dataReqValues)
-    res = dissectResponse(telegram)
+    res = createResponse(dissectResponse(telegram))
+    res = dissectResponse(res)
     print res
 
 if __name__ == '__main__':

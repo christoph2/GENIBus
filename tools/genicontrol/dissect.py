@@ -67,7 +67,6 @@ def dissectResponse(frame):
 
     if not (length == len(arr) - 4):
         raise FramingError("Frame length doesn't match length byte.")
-    #assert(frame == arr)
     for idx in range(defs.PDU_START, length + 2):
         ch = arr[idx]
         crc.update(ch)
