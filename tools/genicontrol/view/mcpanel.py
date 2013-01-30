@@ -56,7 +56,7 @@ class ConnectionPanel(wx.Panel):
         self.cbBus = wx.ComboBox(self, choices = ['Simulator', 'Arduino / TCP'], style = wx.CB_DROPDOWN | wx.CB_READONLY)
         sizer.Add(self.cbBus, 1, wx.ALL, 5)
 
-        self.btnConnect = wx.Button(self, label = 'Connect', id = wx.ID_ANY) # controlids.ID_CONNECT
+        self.btnConnect = wx.Button(self, label = 'Connect', id = controlids.ID_CONNECT)
 
         sizer.Add(self.btnConnect, 1, wx.ALL, 5)
 

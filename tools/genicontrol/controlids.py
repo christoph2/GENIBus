@@ -28,6 +28,8 @@
 
 import wx
 
+ID_CONNECT                  = wx.NewId()
+
 ID_CMD_REMOTE_LOCAL         = wx.NewId()
 
 ID_CMD_START_STOP           = wx.NewId()
