@@ -46,6 +46,23 @@ def createToggleButton(parent, buttonDesc, sizer):
     btn.Bind(wx.EVT_TOGGLEBUTTON, parent.toggledbutton)
     return btn
 
+class ConnectionPanel(wx.Panel):
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
+        staticBox = wx.StaticBox(self, label = 'Connection')
+        sizer = wx.StaticBoxSizer(staticBox)
+
+
+        self.cbBus = wx.ComboBox(self, choices = ['Simulator', 'Arduino / TCP'], style = wx.CB_DROPDOWN | wx.CB_READONLY)
+        sizer.Add(self.cbBus, 1, wx.ALL, 5)
+
+        self.btnConnect = wx.Button(self, label = 'Connect', id = wx.ID_ANY) # controlids.ID_CONNECT
+
+        sizer.Add(self.btnConnect, 1, wx.ALL, 5)
+
+        self.SetSizerAndFit(sizer)
+
+
 class Controls(wx.Panel):
     def __init__(self, parent):
         self.toggleButtons = (
@@ -131,6 +148,9 @@ class MCPanel(ScrolledPanel):
         sizer.Add(self.alarmPanel, 1, wx.ALIGN_RIGHT | wx.ALIGN_TOP | wx.EXPAND | wx.ALL, 5)
         self.controlsPanel = Controls(self)
         sizer.Add(self.controlsPanel, 1, wx.ALIGN_LEFT | wx.ALIGN_BOTTOM | wx.EXPAND, 5)
+
+        self.connectionPanel = ConnectionPanel(self)
+        sizer.Add(self.connectionPanel, 1, wx.ALL, 5)
 
         self.SetSizerAndFit(sizer)
         self.SetupScrolling()
