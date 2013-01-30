@@ -476,8 +476,12 @@ import genicontrol.units as units
 
 ValueType = namedtuple('ValueType', 'name unit value')
 
+class MyList(list):
+    type = None
+
+
 def rawInterpreteResponse(response, datapoints, valueInterpretation):
-    result = []
+    result = MyList()
     for apdu in response.APDUs:
         if valueInterpretation == defs.OS_GET:
             dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[apdu.klass]])
@@ -485,9 +489,7 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
                 _, (head, unit, zero, range) = dataItemsByName[name]
                 if head == 0x82:
                     unitInfo = units.UnitTable[unit]
-                    value = conversion.convertForward8(value, zero, range, unitInfo.factor)
-                    #print "%s [%s]: %0.2f" % (name, unitInfo.unit, value)
-                    result.append(ValueType(name, unitInfo.unit, value))
+                    result.append(ValueType(name, unitInfo.unit, conversion.convertForward8(value, zero, range, unitInfo.factor)))
         elif valueInterpretation == defs.OS_INFO:
             idx = 0
             values = []
@@ -500,6 +502,7 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
                 else:
                     result.append(Info(data, apdu.data[idx + 1], apdu.data[idx + 2], apdu.data[idx + 3]))
                     idx += 4
+    result.type = valueInterpretation
     return result
 
 
