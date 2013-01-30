@@ -474,6 +474,8 @@ import genicontrol.conversion as conversion
 import genicontrol.units as units
 
 
+ValueType = namedtuple('ValueType', 'name unit value')
+
 def rawInterpreteResponse(response, datapoints, valueInterpretation):
     result = []
     for apdu in response.APDUs:
@@ -484,7 +486,8 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
                 if head == 0x82:
                     unitInfo = units.UnitTable[unit]
                     value = conversion.convertForward8(value, zero, range, unitInfo.factor)
-                    print "%s [%s]: %0.2f" % (name, unitInfo.unit, value)
+                    #print "%s [%s]: %0.2f" % (name, unitInfo.unit, value)
+                    result.append(ValueType(name, unitInfo.unit, value))
         elif valueInterpretation == defs.OS_INFO:
             idx = 0
             values = []
@@ -503,8 +506,8 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
 def testResponse(telegram, datapoints, valueInterpretation):
     res = createResponse(dissectResponse(telegram))
     dr = dissectResponse(res)
-    rawInterpreteResponse(dr, datapoints, valueInterpretation)
-    print dr
+    print rawInterpreteResponse(dr, datapoints, valueInterpretation)
+    print
 
 
 def main():
