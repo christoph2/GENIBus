@@ -448,7 +448,15 @@ def createResponse(request):
                 value = 0xff if value is None else value
                 pdu.append(value)
             elif ack == defs.OS_INFO:
-                pass
+                sif = info.head & 0b11
+                pdu.append(info.head)
+                if sif in (0, 1):
+                    apduLength += 1 # Unscaled value, i.e. no info scale field.
+                else:
+                    apduLength += 4
+                    pdu.append(info.unit)
+                    pdu.append(info.zero)
+                    pdu.append(info.range)
         pdus.append((klass, apduLength, pdu, ))
         length += apduLength
     result.extend([defs.SD_DATA_REPLY, length, request.sa, request.da])
@@ -465,27 +473,46 @@ def createResponse(request):
 import genicontrol.conversion as conversion
 import genicontrol.units as units
 
-def interpreteResponse(response):
+
+def rawInterpreteResponse(response, datapoints, valueInterpretation):
+    result = []
     for apdu in response.APDUs:
-        dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[apdu.klass]])
-        for name, value in zip(dataReqValues, apdu.data):
-            _, (head, unit, zero, range) = dataItemsByName[name]
-            if head == 0x82:
-                unitInfo = units.UnitTable[unit]
-                value = conversion.convertForward8(value, zero, range, unitInfo.factor)
-                print "%s [%s]: %0.2f" % (name, unitInfo.unit, value)
+        if valueInterpretation == defs.OS_GET:
+            dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[apdu.klass]])
+            for name, value in zip(datapoints, apdu.data):
+                _, (head, unit, zero, range) = dataItemsByName[name]
+                if head == 0x82:
+                    unitInfo = units.UnitTable[unit]
+                    value = conversion.convertForward8(value, zero, range, unitInfo.factor)
+                    print "%s [%s]: %0.2f" % (name, unitInfo.unit, value)
+        elif valueInterpretation == defs.OS_INFO:
+            idx = 0
+            values = []
+            for datapoint in datapoints:
+                data = apdu.data[idx]
+                sif = data & 0b11
+                if sif in (0, 1):
+                    result.append(Info(data, None, None, None))
+                    idx += 1    # No scaling information.
+                else:
+                    result.append(Info(data, apdu.data[idx + 1], apdu.data[idx + 2], apdu.data[idx + 3]))
+                    idx += 4
+    return result
 
 
-def testResponse(telegram):
+def testResponse(telegram, datapoints, valueInterpretation):
     res = createResponse(dissectResponse(telegram))
     dr = dissectResponse(res)
-    interpreteResponse(dr)
+    rawInterpreteResponse(dr, datapoints, valueInterpretation)
     print dr
 
 
 def main():
     telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = dataReqValues)
-    testResponse(telegram)
+    testResponse(telegram, dataReqValues, defs.OS_GET)
+
+    telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = infoReqValues)
+    testResponse(telegram, infoReqValues, defs.OS_INFO)
 
 
 if __name__ == '__main__':
