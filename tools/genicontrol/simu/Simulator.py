@@ -476,12 +476,16 @@ def interpreteResponse(response):
                 print "%s [%s]: %0.2f" % (name, unitInfo.unit, value)
 
 
-def main():
-    telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = dataReqValues)
+def testResponse(telegram):
     res = createResponse(dissectResponse(telegram))
     dr = dissectResponse(res)
     interpreteResponse(dr)
     print dr
+
+
+def main():
+    telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = dataReqValues)
+    testResponse(telegram)
 
 
 if __name__ == '__main__':
