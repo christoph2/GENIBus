@@ -457,6 +457,8 @@ def createResponse(request):
                     pdu.append(info.unit)
                     pdu.append(info.zero)
                     pdu.append(info.range)
+            elif ack == defs.OS_SET:
+                pass
         pdus.append((klass, apduLength, pdu, ))
         length += apduLength
     result.extend([defs.SD_DATA_REPLY, length, request.sa, request.da])
@@ -502,6 +504,8 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
                 else:
                     result.append(Info(data, apdu.data[idx + 1], apdu.data[idx + 2], apdu.data[idx + 3]))
                     idx += 4
+        elif valueInterpretation == defs.OS_SET:
+            pass
     result.type = valueInterpretation
     return result
 
