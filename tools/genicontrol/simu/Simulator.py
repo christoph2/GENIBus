@@ -358,54 +358,88 @@ refSetValues = (
     ("ref_rem", 0xa5, ),
 )
 
+commandSetValues = (
+    "RESET_ALARM", "REMOTE", "START", "PROP_PRESS"
+)
+
+
+
 Item = namedtuple('Item', 'name value info')
 Info = namedtuple('Info', 'head unit zero range')
 
 DATA_POOL = { # This dictionary is used to 'simulate' communication.
     defs.ADPUClass.PROTOCOL_DATA: {
-        Item("df_buf_len", 0x46, None),
-        Item("unit_bus_mode", 0x0e, None)
+        Item(u"df_buf_len", 0x46, None),
+        Item(u"unit_bus_mode", 0x0e, None)
     },
     defs.ADPUClass.MEASURERED_DATA: {
-        Item("i_mo", 0x7a, Info(0x82, 0x3e, 0x00, 0x39)),
+        Item(u"i_mo", 0x7a, Info(0x82, 0x3e, 0x00, 0x39)),
         #Item("t_mo", 0x42, Info(0x82, 0x15, 0x00, 0x64)),
         #Item("p_hi", 0x39, Info(0x82, 0x09, 0x00, 0xfa)),
         #Item("p_lo", 0x80, None),
-
-        Item("act_mode1", 0x10,     Info(0x81, None, None, None)),
-        Item("act_mode2", 0x00,     Info(0x81, None, None, None)),
-        Item("act_mode3", 0x00,     Info(0x81, None, None, None)),
-        Item("led_contr", 0x01,     Info(0x81, None, None, None)),
-        Item("ref_act", 0xa5,       Info(0x81, None, None, None)),
-        Item("ref_inf", 0xfe,       Info(0x81, None, None, None)),
-        Item("ref_att_loc", 0xfe,   Info(0x81, None, None, None)),
-        Item("sys_ref", 0x94,       Info(0x81, None, None, None)),
-        Item("h", 0x7b,             Info(0x82, 0x19, 0x00, 0x0c)),
-        Item("q", 0x23,             Info(0x82, 0x17, 0x00, 0x20)),
-        Item("h_max", 0xcd,         Info(0x81, None, None, None)),
-        Item("q_max", 0xb4,         Info(0x81, None, None, None)),
-        Item("f_act", 0xa4,         Info(0x82, 0x84, 0xc1, 0x39)),
-        Item("t_2hour_hi", 0x0b,    Info(0x81, None, None, None)),
-        Item("t_2hour_lo", 0x80,    Info(0x81, None, None, None)),
-        Item("contr_source", 0x22,  Info(0x81, None, None, None)),
-        Item("p", 0xe9,             Info(0x82, 0x09, 0x00, 0x28)),
-        Item("energy_hi", 0x0c,     Info(0x82, 0x2f, 0x00, 0xfe)),
-        Item("energy_lo", 0xe7,     Info(0x81, None, None, None)),
-        Item("speed", 0xa5,         Info(0x82, 0x13, 0x00, 0x24)),
-        Item("curve_no_ref", 0x0e,  Info(0x81, None, None, None)),
-        Item("alarm_code", 0x00,    Info(0x81, None, None, None)),
-        Item("alarm_log_1", 0x20,   Info(0x81, None, None, None)),
-        Item("alarm_log_2", 0x39,   Info(0x81, None, None, None)),
-        Item("alarm_log_3", 0x30,   Info(0x81, None, None, None)),
-        Item("alarm_log_4", 0x40,   Info(0x81, None, None, None)),
-        Item("alarm_log_5", 0x00,   Info(0x81, None, None, None)),
-        Item("unit_family", 0x03,   Info(0x81, None, None, None)),
-        Item("unit_type", 0x01,     Info(0x81, None, None, None)),
-    },
-    defs.ADPUClass.COMMANDS: {},
-    defs.ADPUClass.CONFIGURATION_PARAMETERS: {
+        #Item("i_rst_max_stop", 0xc8, Info(0x81, None, None, None)),
         #Item("t_mo_stop", 0xb5, None),
-        #Item("i_rst_max_stop", 0xc8, None),
+        Item(u"act_mode1", 0x10,     Info(0x81, None, None, None)),
+        Item(u"act_mode2", 0x00,     Info(0x81, None, None, None)),
+        Item(u"act_mode3", 0x00,     Info(0x81, None, None, None)),
+        Item(u"led_contr", 0x01,     Info(0x81, None, None, None)),
+        Item(u"ref_act", 0xa5,       Info(0x81, None, None, None)),
+        Item(u"ref_inf", 0xfe,       Info(0x81, None, None, None)),
+        Item(u"ref_att_loc", 0xfe,   Info(0x81, None, None, None)),
+        Item(u"sys_ref", 0x94,       Info(0x81, None, None, None)),
+        Item(u"h", 0x7b,             Info(0x82, 0x19, 0x00, 0x0c)),
+        Item(u"q", 0x23,             Info(0x82, 0x17, 0x00, 0x20)),
+        Item(u"h_max", 0xcd,         Info(0x81, None, None, None)),
+        Item(u"q_max", 0xb4,         Info(0x81, None, None, None)),
+        Item(u"f_act", 0xa4,         Info(0x82, 0x84, 0xc1, 0x39)),
+        Item(u"t_2hour_hi", 0x0b,    Info(0x81, None, None, None)),
+        Item(u"t_2hour_lo", 0x80,    Info(0x81, None, None, None)),
+        Item(u"contr_source", 0x22,  Info(0x81, None, None, None)),
+        Item(u"p", 0xe9,             Info(0x82, 0x09, 0x00, 0x28)),
+        Item(u"energy_hi", 0x0c,     Info(0x82, 0x2f, 0x00, 0xfe)),
+        Item(u"energy_lo", 0xe7,     Info(0x81, None, None, None)),
+        Item(u"speed", 0xa5,         Info(0x82, 0x13, 0x00, 0x24)),
+        Item(u"curve_no_ref", 0x0e,  Info(0x81, None, None, None)),
+        Item(u"alarm_code", 0x00,    Info(0x81, None, None, None)),
+        Item(u"alarm_log_1", 0x20,   Info(0x81, None, None, None)),
+        Item(u"alarm_log_2", 0x39,   Info(0x81, None, None, None)),
+        Item(u"alarm_log_3", 0x30,   Info(0x81, None, None, None)),
+        Item(u"alarm_log_4", 0x40,   Info(0x81, None, None, None)),
+        Item(u"alarm_log_5", 0x00,   Info(0x81, None, None, None)),
+        Item(u"unit_family", 0x03,   Info(0x81, None, None, None)),
+        Item(u"unit_type", 0x01,     Info(0x81, None, None, None)),
+    },
+    defs.ADPUClass.COMMANDS: {
+        Item(u"RESET",       None,   Info(None, None, None, None)),
+        Item(u"RESET_ALARM", None,   Info(None, None, None, None)),
+        Item(u"USER_BOOT",   None,   Info(None, None, None, None)),
+        Item(u"STOP",        None,   Info(None, None, None, None)),
+        Item(u"START",       None,   Info(None, None, None, None)),
+        Item(u"REMOTE",      None,   Info(None, None, None, None)),
+        Item(u"LOCAL",       None,   Info(None, None, None, None)),
+        Item(u"RUN",         None,   Info(None, None, None, None)),
+        Item(u"PROGRAM",     None,   Info(None, None, None, None)),
+        Item(u"CONST_FREQ",  None,   Info(None, None, None, None)),
+        Item(u"PROP_PRESS",  None,   Info(None, None, None, None)),
+        Item(u"CONST_PRESS", None,   Info(None, None, None, None)),
+        Item(u"MIN",         None,   Info(None, None, None, None)),
+        Item(u"MAX",         None,   Info(None, None, None, None)),
+        Item(u"INFLUENCE_E", None,   Info(None, None, None, None)),
+        Item(u"INFLUENCE_D", None,   Info(None, None, None, None)),
+        Item(u"LOCK_KEYS",   None,   Info(None, None, None, None)),
+        Item(u"UNLOCK_KEYS", None,   Info(None, None, None, None)),
+        Item(u"REF_UP",      None,   Info(None, None, None, None)),
+        Item(u"REF_DOWN",    None,   Info(None, None, None, None)),
+        Item(u"RESET_HIST",  None,   Info(None, None, None, None)),
+        Item(u"RESET_ALARM_LOG", None,   Info(None, None, None, None)),
+        Item(u"AUTOMATIC",   None,   Info(None, None, None, None)),
+        Item(u"TWIN_MODE_SPARE", None,   Info(None, None, None, None)),
+        Item(u"TWIN_MODE_ALT",   None,   Info(None, None, None, None)),
+        Item(u"TWIN_MODE_SYNC",  None,   Info(None, None, None, None)),
+        Item(u"NIGHT_REDUCT_E+", None,   Info(None, None, None, None)),
+        Item(u"NIGHT_REDUCT_D+", None,   Info(None, None, None, None)),
+    },
+    defs.ADPUClass.CONFIGURATION_PARAMETERS: {
         Item("unit_addr", 0x20, None),
         Item("group_addr", 0xf7, None),
     },
@@ -496,6 +530,7 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
             idx = 0
             values = []
             for datapoint in datapoints:
+                # TODO: OS_SET support.
                 data = apdu.data[idx]
                 sif = data & 0b11
                 if sif in (0, 1):
@@ -523,6 +558,9 @@ def main():
 
     telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = infoReqValues)
     testResponse(telegram, infoReqValues, defs.OS_INFO)
+
+    telegram = apdu.createSetCommandsPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), commands = commandSetValues)
+    testResponse(telegram, commandSetValues, defs.OS_SET)
 
 
 if __name__ == '__main__':
