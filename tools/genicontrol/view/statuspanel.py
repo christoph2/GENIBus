@@ -37,7 +37,7 @@ class StatusPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
 
-        staticBox = wx.StaticBox(self, label = 'Pump status')
+        staticBox = wx.StaticBox(self, label = 'Pump Status')
         groupSizer = wx.StaticBoxSizer(staticBox)
 
         sizer = self.addValues()

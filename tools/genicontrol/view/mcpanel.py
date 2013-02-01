@@ -70,8 +70,10 @@ class Controls(wx.Panel):
             ToggleButton(controlids.ID_CMD_START_STOP, 'Start', 'Stop', 'btnStartStop'),
         )
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
-        sizer1 = wx.BoxSizer(wx.VERTICAL)
+        staticBox = wx.StaticBox(self, label = '')
+        groupSizer = wx.StaticBoxSizer(staticBox)
 
+        sizer1 = wx.BoxSizer(wx.VERTICAL)
         sizer3 = wx.BoxSizer(wx.HORIZONTAL)
 
         sizer3.Add(wx.StaticText(self, -1, ''), 1, wx.ALL, 5)
@@ -91,8 +93,9 @@ class Controls(wx.Panel):
         sizer2.Add(btn, 1, wx.ALL, 5)
 
         sizer1.Add(sizer2)
+        groupSizer.Add(sizer1)
 
-        self.SetSizerAndFit(sizer1)
+        self.SetSizerAndFit(groupSizer)
 
         self.enableControls((controlids.ID_CMD_MAX, controlids.ID_CMD_MIN))
 
