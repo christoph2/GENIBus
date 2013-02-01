@@ -462,11 +462,13 @@ def createResponse(request):
     result = []
     length = 2
     pdus = []
+    #klasses = []
     for a in request.APDUs:
         klass = a.klass
         ack = a.ack
         data = a.data
         dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[klass]])
+
         # name klass id access note
         if ack not in defs.CLASS_CAPABILITIES[klass]:
             raise defs.IllegalOperationError("%s-Operation not supported." % defs.operationToString(ack))
@@ -474,25 +476,26 @@ def createResponse(request):
         apduLength = 0
         length += 2
         pdu = []
-        for item in data:
-            name, acess, _ = dataItemsById[item]
-            value, info = dataItemsByName[name]
-            if ack == defs.OS_GET:
-                apduLength += 1 # Currently only 8-bit data values.
-                value = 0xff if value is None else value
-                pdu.append(value)
-            elif ack == defs.OS_INFO:
-                sif = info.head & 0b11
-                pdu.append(info.head)
-                if sif in (0, 1):
-                    apduLength += 1 # Unscaled value, i.e. no info scale field.
-                else:
-                    apduLength += 4
-                    pdu.append(info.unit)
-                    pdu.append(info.zero)
-                    pdu.append(info.range)
-            elif ack == defs.OS_SET:
-                pass
+        if ack == defs.OS_SET:
+            pass # Ack = OK, Length = 0 is inherently generated!
+        else:
+            for item in data:
+                name, acess, _ = dataItemsById[item]
+                value, info = dataItemsByName[name]
+                if ack == defs.OS_GET:
+                    apduLength += 1 # Currently only 8-bit data values.
+                    value = 0xff if value is None else value
+                    pdu.append(value)
+                elif ack == defs.OS_INFO:
+                    sif = info.head & 0b11
+                    pdu.append(info.head)
+                    if sif in (0, 1):
+                        apduLength += 1 # Unscaled value, i.e. no info scale field.
+                    else:
+                        apduLength += 4
+                        pdu.append(info.unit)
+                        pdu.append(info.zero)
+                        pdu.append(info.range)
         pdus.append((klass, apduLength, pdu, ))
         length += apduLength
     result.extend([defs.SD_DATA_REPLY, length, request.sa, request.da])
@@ -511,6 +514,7 @@ import genicontrol.units as units
 
 
 ValueType = namedtuple('ValueType', 'name unit value')
+AckType = namedtuple('AckType', 'klass ack')
 
 class MyList(list):
     type = None
@@ -540,7 +544,7 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
                     result.append(Info(data, apdu.data[idx + 1], apdu.data[idx + 2], apdu.data[idx + 3]))
                     idx += 4
         elif valueInterpretation == defs.OS_SET:
-            pass
+            result.append(AckType(apdu.klass, apdu.ack >> 6))
     result.type = valueInterpretation
     return result
 
