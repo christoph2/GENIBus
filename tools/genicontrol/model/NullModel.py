@@ -26,18 +26,20 @@
 ##
 ##
 
-#import genicontrol.model.ModelIf
 import threading
 import logging
-import ModelIf
+import genicontrol.apdu as apdu
+import genicontrol.model.ModelIf as ModelIf
 from genicontrol.model.config import DataitemConfiguration
 from genicontrol.request import RequestorThread
 import genicontrol.dataitems as dataitems
 
-#from wx.lib.pubsub import Publisher as Publisher
+from genicontrol.utils import dumpHex
+
 
 class NullModel(ModelIf.IModel):
     logger = logging.getLogger("genicontrol")
+    TYPE = "Simulator"
 
     def initialize(self, quitEvent):
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues']):
@@ -47,7 +49,8 @@ class NullModel(ModelIf.IModel):
         self.sendMessage('References', ModelIf.DATA_NOT_AVAILABLE)
         self.dataAvailable = False
         self._quitEvent = quitEvent
-        self._modelThread = RequestorThread(quitEvent)
+        self._modelThread = RequestorThread(self)
+        self._requestQueue = self._modelThread.requestQueue
         self._modelThread.start()
         return self._modelThread
 
@@ -56,10 +59,15 @@ class NullModel(ModelIf.IModel):
         self._modelThread.join()
 
     def connect(self, *parameters):
-        pass
+        pdu = apdu.createConnectRequestPDU(0x01)
+        self._modelThread.request(pdu)
+        #print dumpHex(pdu)
 
     def disconnect(self):
         pass
+
+    def request(self, requ):
+        self._requestQueue.put(requ)
 
     def requestMeasurementValues(self):
         pass

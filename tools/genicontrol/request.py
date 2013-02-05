@@ -29,11 +29,21 @@
 import logging
 import threading
 import time
-import Queue
+import sys
+
+if sys.version_info.major > 2:
+    import queue
+else:
+    import Queue as queue
+
+import genicontrol.apdu as apdu
+from genicontrol.utils import dumpHex
 
 class PendingRequestError(Exception): pass
 class RequestTimeoutError(Exception): pass
 
+
+MAX_RETRIES = 10
 
 class WorkerThread(threading.Thread):
     logger = logging.getLogger("genicontrol")
@@ -48,13 +58,13 @@ class WorkerThread(threading.Thread):
 
     def run(self):
         name = self.getName()
-        #print "Starting %s." % name
+        #self.logger.info("Starting %s." % name)
         while True:
             if self._cancelEvent.wait(1.0):
                 break
         #self._respQueue.put([])
         #self._cancelEvent.wait(2.0)
-        #print "Exiting %s." % name
+        #self.logger.info("Exiting %s." % name)
 
 
 class RequestorThread(threading.Thread):
@@ -62,7 +72,8 @@ class RequestorThread(threading.Thread):
     PENDING = 1
     TIMEOUT = 2
     _clsLock = threading.Lock()
-    _respQueue = Queue.Queue()
+    _respQueue = queue.Queue()
+    _requestQueue = queue.Queue()
     _cancelEvent = threading.Event()
     _currentRequest = None
     _currentResponse = None
@@ -79,43 +90,63 @@ class RequestorThread(threading.Thread):
         return cls._instance
 
 
-    def __init__(self, evt):
+    def __init__(self, model):
         super(RequestorThread, self).__init__()
-        self.evt = evt
         self.setName(self.__class__.__name__)
+        self._connected = False
+        self._currentRetry = 0
+        self._model = model
+
+        self._lastCalled = time.clock()
 
     def run(self):
         name = self.getName()
-        print "Starting %s." % name
+        self.logger.info("Starting %s." % name)
         while True:
-            res = self.evt.wait(1.0)
+            if not self._connected:
+                self.logger.info('Trying to connect to %s.' % self._model.TYPE)
+                self._currentRetry += 1
+                self._model.connect()
+            res = self._model._quitEvent.wait(.5)
             if res:
-                print "Exiting %s." % name
-                RequestorThread._cancelEvent.set()
-                self.worker.join()
+                self.logger.info("Exiting %s." % name)
+                self.cancelWorkerThread()
                 break
-            #print "Running %s." % name
             if RequestorThread._state == RequestorThread.IDLE:
-                self.request([])
+                pass
+                #self.request([])
+
+    def cancelWorkerThread(self):
+        if hasattr(self, 'worker'):
+            RequestorThread._cancelEvent.set()
+            self.worker.join()
 
     def request(self, req):
         RequestorThread._state = RequestorThread.PENDING
         RequestorThread._currentRequest = req
         self.worker = WorkerThread(req, RequestorThread._currentResponse, RequestorThread._respQueue, RequestorThread._cancelEvent)
         self.worker.start()
+        print "Doing request. '%s'" % dumpHex(req)
         success = True
         try:
-            response = RequestorThread._respQueue.get(True, 2.0)
-        except Queue.Empty:
+            response = RequestorThread._respQueue.get(True, 0.5)
+        except queue.Empty:
             success = False
         if not success:
-            #print "Cancelling %s." % self.worker.getName()
-            RequestorThread._cancelEvent.set()
-            self.worker.join()
-            RequestorThread._cancelEvent.clear()
+            #self.logger.info("Cancelling %s." % self.worker.getName())
+            self.cancelWorkerThread()
+            #RequestorThread._cancelEvent.clear()
         else:
             print "Processing Response."
         RequestorThread._state = RequestorThread.IDLE
+
+    def _getRequestQueue(self):
+        return self._requestQueue
+
+    def clockDiff(self):
+        return time.clock() - self._lastCalled
+
+    requestQueue = property(_getRequestQueue)
 
 def buildLPDU():
     pass
