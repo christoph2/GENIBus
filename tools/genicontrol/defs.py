@@ -33,13 +33,21 @@ import os
 ## Common constants.
 ##
 HOME_DIRECTORY = os.path.abspath(os.path.expanduser('~/'))
-print "HOME DIRECTORY: %s" % HOME_DIRECTORY
+#print "HOME DIRECTORY: %s" % HOME_DIRECTORY
 CONFIGURATION_DIRECTORY = os.path.join(HOME_DIRECTORY, 'GeniControl')
 print "CONFIGURATION DIRECTORY: %s" % CONFIGURATION_DIRECTORY,
 if not os.access(CONFIGURATION_DIRECTORY, os.F_OK):
     print " doesn't exist. creating. ",
     os.mkdir(CONFIGURATION_DIRECTORY)
 print
+
+
+##
+## Connection constants.
+##
+CONNECTION_SIMULATOR    = 0
+CONNECTION_GENBUS_TCP   = 1
+CONNECTION_GENIBUS_DLL  = 2
 
 ##
 ## GeniBus constants.
