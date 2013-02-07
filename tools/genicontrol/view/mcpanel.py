@@ -57,11 +57,15 @@ class ConnectionPanel(wx.Panel):
         sizer.Add(self.cbBus, 1, wx.ALL, 5)
 
         self.btnConnect = wx.Button(self, label = 'Connect', id = controlids.ID_CONNECT)
+        self.btnConnect.Bind(wx.EVT_COMBOBOX, self.onSelect)
 
         sizer.Add(self.btnConnect, 1, wx.ALL, 5)
 
         self.SetSizerAndFit(sizer)
 
+    def onSelect(self, event):
+        item = event.GetSelection()
+        print "Selected: '%s'." % item
 
 class Controls(wx.Panel):
     def __init__(self, parent):
