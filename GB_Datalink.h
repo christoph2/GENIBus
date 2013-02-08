@@ -1,7 +1,7 @@
 /*
  *  Grundfos GENIBus Library.
  *
- *  (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+ *  (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
  *                                       cpu12.gems@googlemail.com>
  *
  *   All Rights Reserved
@@ -57,6 +57,7 @@ public:
     void connectRequest(uint8 sa);
 protected:
     void sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint8 len);
+	void sendRaw(uint8 const * data, uint8 len);
     uint16 calculateCRC(uint8 leftBound, uint8 rightBound);
     bool verifyCRC(uint8 leftBound, uint8 rightBound);
 private:

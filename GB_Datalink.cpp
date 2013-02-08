@@ -59,6 +59,11 @@ void GB_Datalink::sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint
     setState(DL_IDLE);
 }
 
+void GB_Datalink::sendRaw(uint8 const * data, uint8 len)
+{
+	_port.write(data, len);
+}
+
 /*!
  *  TODO: Callback 'onError(code)'.
  */
