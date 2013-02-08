@@ -1,7 +1,7 @@
 /*
  *  Grundfos GENIBus Library.
  *
- *  (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+ *  (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
  *                                       cpu12.gems@googlemail.com>
  *
  *   All Rights Reserved
@@ -61,8 +61,15 @@ void GB_Datalink::sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint
 
 void GB_Datalink::sendRaw(uint8 const * data, uint8 len)
 {
-	_port.write(data, len);
+    _port.write(data, len);
 }
+
+
+void GB_Datalink::write(uint8 ch)
+{
+    _port.write(ch);
+}
+
 
 /*!
  *  TODO: Callback 'onError(code)'.

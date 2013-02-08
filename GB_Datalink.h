@@ -55,9 +55,10 @@ public:
     inline Dl_State getState(void) const { return _state; };
     inline void setState(Dl_State state) { _state = state; };
     void connectRequest(uint8 sa);
-protected:
     void sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint8 len);
-	void sendRaw(uint8 const * data, uint8 len);
+    void sendRaw(uint8 const * data, uint8 len);
+    void write(uint8 ch);
+protected:
     uint16 calculateCRC(uint8 leftBound, uint8 rightBound);
     bool verifyCRC(uint8 leftBound, uint8 rightBound);
 private:
