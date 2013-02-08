@@ -9,9 +9,9 @@ IPAddress subnet = (255, 255, 255, 0);
 #define LOCAL_PORT  6734
 
 /* TODO: The IP-configuration has to be adjusted to your needs!!! */
-IPAddress myIP(192, 168, 100, 20);
-IPAddress serverIP(192, 168, 100, 10);
-IPAddress gateway = (192, 168, 100, 1);
+IPAddress myIP(192, 168, 1, 3);        // for Linux users: adjust the two first line on the file /etc/hosts:
+IPAddress serverIP(192, 168, 1, 2);    // IP address of "localhost" must be the same as "IPAddress serverIP", for example "192.168.1.2	localhost" 
+//IPAddress gateway = (192,168, 1, 1);    // and, 2nd line, "192.168.1.2   'my computer name'" 
 
 #define LED_PIN  9  /* Pin 13 has an LED connected on most Arduino boards, otherwise this should be changed. */
                     /* Pin 9: led connected on Arduino Ethernet board*/
@@ -29,14 +29,14 @@ void setup(void)
   delay(1000); // give the Ethernet shield a second to initialize:.
 
   Serial.begin(9600);
-  
+   
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
 }
 
 void frameReceived(uint8 * buffer, uint8 len)
 {
-
+  client.write(buffer, len);
 }
 
 GB_Datalink link(Serial, frameReceived);
