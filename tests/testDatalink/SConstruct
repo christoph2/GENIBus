@@ -1,0 +1,23 @@
+
+import os, sys
+
+env = Environment()
+env.Decider('MD5-timestamp')
+
+includes=Split(r"""
+./
+../../
+""")
+
+
+sources=Split("""
+../../GB_Datalink.cpp
+../../Crc.cpp
+HardwareSerial.cpp
+testDatalink.cpp
+""")
+
+ccFlags="-g -O2 -Wall"
+
+env.Program(target='testDatalink', source = sources, CPPPATH = includes) 
+

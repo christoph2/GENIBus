@@ -99,7 +99,7 @@ void GB_Datalink::feed(void)
 	   // printf("START.\n");
 	}
         if (getState() == DL_RECEIVING) {
-	    printf("%u\n", byteCount);
+	    //printf("%u\n", byteCount);
             if (--byteCount == 0) {
                 if (verifyCRC(1, _frameLength - 2)) {
                     if (_callout != NULL) {
@@ -145,5 +145,4 @@ bool GB_Datalink::verifyCRC(uint8 leftBound, uint8 rightBound)
     //printf("R: %#4X C: %#4X\n", receivedCrc, calculatedCrc);
     return receivedCrc == calculatedCrc;
 }
-
 
