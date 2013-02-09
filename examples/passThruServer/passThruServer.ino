@@ -36,6 +36,7 @@ void setup(void)
 
 void frameReceived(uint8 * buffer, uint8 len)
 {
+  // TAP#4 - If we reach this point, TestClient should be able to receive an display the completed frame.
   client.write(buffer, len);
 }
 
@@ -49,15 +50,19 @@ void loop(void)
   client = server.available();
 
   if (client) {
+    // TAP#1 - Indicates basic TCP/IP connectivity.
     readRequest(client);
   }
   delay(50);
 }
 
+
 void serialEvent(void)
 {
+   // TAP#3 - Pump received a correct request and is now answering.
    link.feed(); 
 }
+
 
 void writeToClient(EthernetClient client, byte const * data, byte len)
 {   
@@ -79,6 +84,7 @@ void readRequest(EthernetClient client)
         } else if (totalLength > 1) {
           remainingBytes -= 1;
           if (remainingBytes == 0) {
+            // TAP#2 - Complete telegram received from TestClient.
             client.stop();
             return;
           }
