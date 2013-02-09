@@ -88,8 +88,8 @@ void GB_Datalink::feed(void)
     uint8 receivedByte;
     uint16 calculatedCrc;
 
-    while (Serial.available() > 0) {
-        receivedByte = Serial.read();
+    while (_port.available() > 0) {
+        receivedByte = _port.read();
         _scratchBuffer[idx] = receivedByte;
         if (idx == 1) {
             byteCount =  receivedByte + 2;
