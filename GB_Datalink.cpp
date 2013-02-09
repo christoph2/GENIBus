@@ -23,7 +23,7 @@
  */
 
 #include "GB_Datalink.h"
-
+#include <stdio.h>
 
 static const uint8 connectReqPayload[] = {
     0x00, 0x02, 0x02, 0x03, 0x04, 0x02, 0x2e, 0x2f, 0x02, 0x02, 0x94, 0x95
@@ -92,11 +92,14 @@ void GB_Datalink::feed(void)
         receivedByte = _port.read();
         _scratchBuffer[idx] = receivedByte;
         if (idx == 1) {
-            byteCount =  receivedByte + 2;
+            byteCount =  receivedByte + 3;
             _frameLength = byteCount + 1;
             setState(DL_RECEIVING);
-        }
+        } else if (idx == 0) {
+	   // printf("START.\n");
+	}
         if (getState() == DL_RECEIVING) {
+	    printf("%u\n", byteCount);
             if (--byteCount == 0) {
                 if (verifyCRC(1, _frameLength - 2)) {
                     if (_callout != NULL) {
@@ -137,9 +140,9 @@ bool GB_Datalink::verifyCRC(uint8 leftBound, uint8 rightBound)
     uint16 calculatedCrc;
     uint16 receivedCrc;
 
-    receivedCrc = MAKEWORD(_scratchBuffer[rightBound + 1], _scratchBuffer[rightBound + 2]);
+    receivedCrc = MAKEWORD(_scratchBuffer[rightBound], _scratchBuffer[rightBound + 1]);
     calculatedCrc = calculateCRC(leftBound, rightBound);
-
+    //printf("R: %#4X C: %#4X\n", receivedCrc, calculatedCrc);
     return receivedCrc == calculatedCrc;
 }
 
