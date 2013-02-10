@@ -447,6 +447,11 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
     defs.ADPUClass.ASCII_STRINGS: {},
 }
 
+
+def getParameterValue(name):
+    return [p.value for p in DATA_POOL[defs.ADPUClass.CONFIGURATION_PARAMETERS] if p.name == name][0]
+
+
 class TestDataPool(unittest.TestCase):
     def testCorrectnessOfKeys(self):
         for klass, values in DATA_POOL.items():
@@ -498,7 +503,11 @@ def createResponse(request):
                         pdu.append(info.range)
         pdus.append((klass, apduLength, pdu, ))
         length += apduLength
-    result.extend([defs.SD_DATA_REPLY, length, request.sa, request.da])
+    if request.da == defs.CONNECTION_REQ_ADDR:
+        da = getParameterValue('unit_addr') # Handle connection address.
+    else:
+        da = request.da
+    result.extend([defs.SD_DATA_REPLY, length, request.sa, da])
     for pdu in pdus:
         klass, apduLength, pdu = pdu
         result.append(klass)
@@ -555,6 +564,8 @@ def testResponse(telegram, datapoints, valueInterpretation):
     print rawInterpreteResponse(dr, datapoints, valueInterpretation)
     print
 
+
+import sys
 
 def main():
     telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = dataReqValues)
