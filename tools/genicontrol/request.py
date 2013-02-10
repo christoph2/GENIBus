@@ -48,19 +48,17 @@ MAX_RETRIES = 10
 class WorkerThread(threading.Thread):
     logger = logging.getLogger("genicontrol")
 
-    def __init__(self, req, resp, respQueue, cancelEvent):
+    def __init__(self, request, requestorThread):
         super(WorkerThread, self).__init__()
-        self._request = req
-        self._response = resp
-        self._respQueue = respQueue
-        self._cancelEvent = cancelEvent
+        self._request = request
+        self._requestorThread = requestorThread
         self.setName(self.__class__.__name__)
 
     def run(self):
         name = self.getName()
         #self.logger.info("Starting %s." % name)
         while True:
-            if self._cancelEvent.wait(1.0):
+            if self._requestorThread._cancelEvent.wait(1.0):
                 break
         #self._respQueue.put([])
         #self._cancelEvent.wait(2.0)
@@ -124,16 +122,16 @@ class RequestorThread(threading.Thread):
     def request(self, req):
         RequestorThread._state = RequestorThread.PENDING
         RequestorThread._currentRequest = req
-        self.worker = WorkerThread(req, RequestorThread._currentResponse, RequestorThread._respQueue, RequestorThread._cancelEvent)
+        self.worker = WorkerThread(req, self)
         self.worker.start()
-        print "Doing request. '%s'" % dumpHex(req)
+        self.logger.info("Doing request. '%s'" % dumpHex(req))
         success = True
         try:
             response = RequestorThread._respQueue.get(True, 0.5)
         except queue.Empty:
             success = False
         if not success:
-            #self.logger.info("Cancelling %s." % self.worker.getName())
+            self.logger.info("Timed out, cancelling %s." % self.worker.getName())
             self.cancelWorkerThread()
             #RequestorThread._cancelEvent.clear()
         else:
