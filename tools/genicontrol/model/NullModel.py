@@ -65,9 +65,13 @@ class NullModel(ModelIf.IModel):
 
     def writeToServer(self, req):
         self._server.write(req)
+        self._controller.trace(False, req)
 
     def readFromServer(self):
-        return self._server.read()
+        resp = self._server.read()
+        self._controller.trace(True, resp)
+        print "READ", resp
+        return resp
 
     def connect(self, *parameters):
         pdu = apdu.createConnectRequestPDU(0x01)

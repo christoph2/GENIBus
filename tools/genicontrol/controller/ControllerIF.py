@@ -44,10 +44,17 @@ class IController(object):
         self._view = viewClass  # (self, model)
         self._waitingPoint = threading.Event()
         self._model = modelCls(self._waitingPoint)
+        setattr(self._model, '_controller', self)
         self._viewThread = self._view.initialize(self._model, IController.quitViewEvent)
+        self._sync = threading.RLock()
         # TODO: Create and disable controls.
         self._modelThread = self._model.initialize(IController.quitModelEvent)
 
     def signal(self):
         self._waitingPoint.set()
+
+    def trace(self, rxTx, telegram):
+        self._sync.acquire()
+        self._view.updateBusmonitor(rxTx, telegram)
+        self._sync.release()
 

@@ -79,15 +79,12 @@ class GUIController(IController):
         self.signal()
 
     def onQuit(self, msg):
-        print "onQuit"
         self.quitApplication()
 
     def onCloseApplication(self, event):
-        print "onCloseApplication"
         self.quitApplication()
 
     def quitApplication(self):
-        print "quitApplication"
         self._quitEvent.set()
         self._controllerThread.join()
         self._view.shutdownView()

@@ -41,6 +41,7 @@ from genicontrol.controller.GUIController import GUIController
 import genicontrol.controlids as controlids
 from genicontrol.configuration import Config as Config
 from genicontrol.view.options import showOptionsDialogue
+from genicontrol.utils import dumpHex
 
 TR = wx.GetTranslation
 
@@ -65,9 +66,17 @@ class BusmonitorPanel(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
         sizer = wx.BoxSizer()
-        tc = wx.TextCtrl(self, wx.NewId(), style = wx.TE_MULTILINE | wx.HSCROLL | wx.TE_RICH2 | wx.TE_NOHIDESEL | wx.TE_READONLY)
-        sizer.Add(tc, 1, wx.EXPAND | wx.GROW)
+        font = wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL)
+        self.tc = wx.TextCtrl(self, wx.NewId(), style = wx.TE_MULTILINE | wx.HSCROLL | wx.TE_RICH2 | wx.TE_NOHIDESEL | wx.TE_READONLY)
+        self.tc.SetFont(font)
+        sizer.Add(self.tc, 1, wx.EXPAND | wx.GROW)
         self.SetSizerAndFit(sizer)
+
+    def appendLine(self, rxTx, telegram):
+        rt = "Rx" if rxTx else "Tx"
+        formattedTelegram = ' '.join(["0x%02x" % x for x in telegram])
+        timestamp = time.strftime("%d/%b/%Y %H:%M:%S")
+        self.tc.AppendText("[%s] %s - %s\n" % (timestamp, rt, formattedTelegram))
 
 
 class TestNB(wx.Notebook):
@@ -201,6 +210,9 @@ class GBFrame(wx.Frame):
         config.posY = pos.y
         config.sizeX = size.x
         config.sizeY = size.y
+
+    def updateBusmonitor(self, rxTx, telegram):
+        self.notebook.bmPanel.appendLine(rxTx, telegram)
 
 
 class GUIThread(threading.Thread):
