@@ -67,41 +67,27 @@ class ControllerThread(threading.Thread):
 
 class GUIController(IController):
     def __init__(self, modelCls, view):
-##
-##        Publisher().subscribe(self.onChange, 'Measurements')
-##        Publisher().subscribe(self.onChange, 'References')
-##        Publisher().subscribe(self.onQuit, 'QUIT')
-##
+        self._view = view
+        self._view.Bind(wx.EVT_CLOSE, self.onCloseApplication)
+        Publisher().subscribe(self.onQuit, 'QUIT')
 
         super(GUIController, self).__init__(modelCls, view)
 
         self._quitEvent = threading.Event()
         self._controllerThread = ControllerThread(self._model, view, self._quitEvent)
         self._controllerThread.start()
-
         self.signal()
-        self._view = view
-        self._view.Bind(wx.EVT_CLOSE, self.onCloseApplication)
-
-
-##
-##    def onChange(self, msg):
-##        if len(msg.topic) == 1:
-##            group = msg.topic[0]
-##            item = ''
-##        else:
-##            group, item = msg.topic
-##        print "GROUP: '%s' ITEM: '%s' DATA: '%s'" % (group, item, msg.data)
-##
-
 
     def onQuit(self, msg):
+        print "onQuit"
         self.quitApplication()
 
     def onCloseApplication(self, event):
+        print "onCloseApplication"
         self.quitApplication()
 
     def quitApplication(self):
+        print "quitApplication"
         self._quitEvent.set()
         self._controllerThread.join()
         self._view.shutdownView()

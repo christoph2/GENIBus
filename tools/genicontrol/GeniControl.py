@@ -213,7 +213,6 @@ class GUIThread(threading.Thread):
         self.quitEvent = quitEvent
         self.setName(self.__class__.__name__)
 
-
     def run(self):
         name = self.getName()
         self.logger.info("Starting %s." % name)
