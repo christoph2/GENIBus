@@ -96,6 +96,26 @@ class ADPUClass:
     SIXTEENBIT_CONFIGURATION_PARAMETERS = 12
     SIXTEENBIT_REFERENCE_VALUES         = 13
 
+    @staticmethod
+    def toString(klass):
+        di = {
+            ADPUClass.PROTOCOL_DATA                       : 'PROTOCOL_DATA',
+            ADPUClass.BUS_DATA                            : 'BUS_DATA',
+            ADPUClass.MEASURERED_DATA                     : 'MEASURERED_DATA',
+            ADPUClass.COMMANDS                            : 'COMMANDS',
+            ADPUClass.CONFIGURATION_PARAMETERS            : 'CONFIGURATION_PARAMETERS',
+            ADPUClass.REFERENCE_VALUES                    : 'REFERENCE_VALUES',
+            ADPUClass.TEST_DATA                           : 'TEST_DATA',
+            ADPUClass.ASCII_STRINGS                       : 'ASCII_STRINGS',
+            ADPUClass.MEMORY_BLOCKS                       : 'MEMORY_BLOCKS',
+            ADPUClass.EMBEDDED_PUDS                       : 'EMBEDDED_PUDS',
+            ADPUClass.DATA_OBJECTS                        : 'DATA_OBJECTS',
+            ADPUClass.SIXTEENBIT_MEASURERED_DATA          : 'SIXTEENBIT_MEASURERED_DATA',
+            ADPUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS : 'SIXTEENBIT_CONFIGURATION_PARAMETERS',
+            ADPUClass.SIXTEENBIT_REFERENCE_VALUES         : 'SIXTEENBIT_REFERENCE_VALUES',
+        }
+        return di[klass]
+
 ##
 ## Supported classes (by GeniControl).
 ##
