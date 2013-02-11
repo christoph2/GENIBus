@@ -50,6 +50,7 @@ class NullModel(ModelIf.IModel):
         self.sendMessage('References', ModelIf.DATA_NOT_AVAILABLE)
         self.dataAvailable = False
         self._quitEvent = quitEvent
+        self._setValueLock = threading.RLock()
         self._valueDict = createDataDictionary()
         self._infoDict = createDataDictionary()
         self._server = SimulationServer()
@@ -100,6 +101,12 @@ class NullModel(ModelIf.IModel):
 
     def sendCommand(self, command):
         pass
+
+    def setValue(self, group, datapoint, value):
+        self._setValueLock.acquire()
+        #print "SetValue - Group: %s DP: % s Value: %s" % (defs.ADPUClass.toString(group), datapoint, value)
+        self.sendMessage("%s.%s" % (defs.ADPUClass.toString(group), datapoint), value)
+        self._setValueLock.release()
 
 
 def createDataDictionary():

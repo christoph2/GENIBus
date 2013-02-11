@@ -37,9 +37,10 @@ class IModel(object):
     __metaclass__ = abc.ABCMeta
     logger = logging.getLogger("genicontrol")
 
-    def __init__(self):
+    def __init__(self, waitingPoint):
         #super(IModel, self).__init__(self)
         self._pub = Publisher()
+        self._waitingPoint = waitingPoint
         #self.initialize()
 
     def sendMessage(self, topic, data):
@@ -47,6 +48,9 @@ class IModel(object):
 
     def subscribe(self, topic, callback):
         self._pub.subscribe(topic = topic, listener = callback)
+
+    def waitForController(self):
+        self._waitingPoint.wait()
 
     @abc.abstractmethod
     def initialize(self):

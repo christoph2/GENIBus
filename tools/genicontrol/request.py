@@ -103,6 +103,7 @@ class RequestorThread(threading.Thread):
         self._lastCalled = time.clock()
 
     def run(self):
+        self._model.waitForController()
         name = self.getName()
         self.logger.info("Starting %s." % name)
         while True:
@@ -154,12 +155,18 @@ class RequestorThread(threading.Thread):
         for apdu in response.APDUs:
             if apdu.klass == defs.ADPUClass.PROTOCOL_DATA:
                 df_buf_len, unit_bus_mode = apdu.data
+                self.setValue(defs.ADPUClass.PROTOCOL_DATA, 'df_buf_len', df_buf_len)
+                self.setValue(defs.ADPUClass.PROTOCOL_DATA, 'unit_bus_mode', unit_bus_mode)
                 #print "Buflen: %u BusMode: %u" % (df_buf_len, unit_bus_mode)
             elif apdu.klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
                 unit_addr, group_addr = apdu.data
+                self.setValue(defs.ADPUClass.CONFIGURATION_PARAMETERS, 'unit_addr', unit_addr)
+                self.setValue(defs.ADPUClass.CONFIGURATION_PARAMETERS, 'group_addr', group_addr)
                 #print "UnitAddr: %u GroupAddr: %u" % (unit_addr, group_addr)
             elif apdu.klass == defs.ADPUClass.MEASURERED_DATA:
                 unit_family, unit_type = apdu.data
+                self.setValue(defs.ADPUClass.MEASURERED_DATA, 'unit_family', unit_family)
+                self.setValue(defs.ADPUClass.MEASURERED_DATA, 'unit_type', unit_type)
                 #print "UnitFamily: %u UnitType: %u" % (unit_family, unit_type)
         self._connected = True
         self.logger.info('OK, Connected.')
@@ -169,6 +176,9 @@ class RequestorThread(threading.Thread):
 
     def readFromServer(self):
         return self._model.readFromServer()
+
+    def setValue(self, group, datapoint, value):
+        self._model.setValue(group, datapoint, value)
 
     def _getRequestQueue(self):
         return self._requestQueue

@@ -30,6 +30,7 @@ import logging
 import threading
 import wx
 from genicontrol.model.config import DataitemConfiguration
+import genicontrol.defs as defs
 from genicontrol.controller.ControllerIF import IController
 from wx.lib.pubsub import Publisher as Publisher
 
@@ -43,6 +44,8 @@ class ControllerThread(threading.Thread):
         self._view = view
         self.quitEvent = quitEvent
         self.setName(self.__class__.__name__)
+        for klass in defs.ADPUClass.nameDict.values():
+            Publisher().subscribe(self.onChange,klass)
 
 
     def run(self):
@@ -53,36 +56,44 @@ class ControllerThread(threading.Thread):
                 break
         print "Exiting %s." % name
 
-
-class GUIController(IController):
-
-    def __init__(self, modelCls, view):
-        Publisher().subscribe(self.onChange, 'Measurements')
-        Publisher().subscribe(self.onChange, 'References')
-        Publisher().subscribe(self.onQuit, 'QUIT')
-
-        super(GUIController, self).__init__(modelCls, view)
-
-        self._view = view
-        self._view.Bind(wx.EVT_CLOSE, self.onCloseApplication)
-        self._quitEvent = threading.Event()
-        self._controllerThread = ControllerThread(self._model, view, self._quitEvent)
-        self._controllerThread.start()
-
-
     def onChange(self, msg):
         if len(msg.topic) == 1:
             group = msg.topic[0]
             item = ''
         else:
             group, item = msg.topic
-        print "GROUP: '%s' ITEM: '%s' DATA: '%s'" % (group, item, msg.data)
+        print "Update: '%s' Item:'%s' Data: '%s'" % (group, item, msg.data)
 
-        def initialize(self, model, quitEvent):
-            self._model = model
-            self.notebook.mcPanel.setLEDState(0, True)
-            self._quitEvent = quitEvent
-            return self._guiThread
+
+class GUIController(IController):
+    def __init__(self, modelCls, view):
+##
+##        Publisher().subscribe(self.onChange, 'Measurements')
+##        Publisher().subscribe(self.onChange, 'References')
+##        Publisher().subscribe(self.onQuit, 'QUIT')
+##
+
+        super(GUIController, self).__init__(modelCls, view)
+
+        self._quitEvent = threading.Event()
+        self._controllerThread = ControllerThread(self._model, view, self._quitEvent)
+        self._controllerThread.start()
+
+        self.signal()
+        self._view = view
+        self._view.Bind(wx.EVT_CLOSE, self.onCloseApplication)
+
+
+##
+##    def onChange(self, msg):
+##        if len(msg.topic) == 1:
+##            group = msg.topic[0]
+##            item = ''
+##        else:
+##            group, item = msg.topic
+##        print "GROUP: '%s' ITEM: '%s' DATA: '%s'" % (group, item, msg.data)
+##
+
 
     def onQuit(self, msg):
         self.quitApplication()

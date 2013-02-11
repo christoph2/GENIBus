@@ -94,25 +94,26 @@ class ADPUClass:
     SIXTEENBIT_CONFIGURATION_PARAMETERS = 12
     SIXTEENBIT_REFERENCE_VALUES         = 13
 
+    nameDict = {
+        PROTOCOL_DATA                       : 'PROTOCOL_DATA',
+        BUS_DATA                            : 'BUS_DATA',
+        MEASURERED_DATA                     : 'MEASURERED_DATA',
+        COMMANDS                            : 'COMMANDS',
+        CONFIGURATION_PARAMETERS            : 'CONFIGURATION_PARAMETERS',
+        REFERENCE_VALUES                    : 'REFERENCE_VALUES',
+        TEST_DATA                           : 'TEST_DATA',
+        ASCII_STRINGS                       : 'ASCII_STRINGS',
+        MEMORY_BLOCKS                       : 'MEMORY_BLOCKS',
+        EMBEDDED_PUDS                       : 'EMBEDDED_PUDS',
+        DATA_OBJECTS                        : 'DATA_OBJECTS',
+        SIXTEENBIT_MEASURERED_DATA          : 'SIXTEENBIT_MEASURERED_DATA',
+        SIXTEENBIT_CONFIGURATION_PARAMETERS : 'SIXTEENBIT_CONFIGURATION_PARAMETERS',
+        SIXTEENBIT_REFERENCE_VALUES         : 'SIXTEENBIT_REFERENCE_VALUES',
+    }
+
     @staticmethod
     def toString(klass):
-        di = {
-            ADPUClass.PROTOCOL_DATA                       : 'PROTOCOL_DATA',
-            ADPUClass.BUS_DATA                            : 'BUS_DATA',
-            ADPUClass.MEASURERED_DATA                     : 'MEASURERED_DATA',
-            ADPUClass.COMMANDS                            : 'COMMANDS',
-            ADPUClass.CONFIGURATION_PARAMETERS            : 'CONFIGURATION_PARAMETERS',
-            ADPUClass.REFERENCE_VALUES                    : 'REFERENCE_VALUES',
-            ADPUClass.TEST_DATA                           : 'TEST_DATA',
-            ADPUClass.ASCII_STRINGS                       : 'ASCII_STRINGS',
-            ADPUClass.MEMORY_BLOCKS                       : 'MEMORY_BLOCKS',
-            ADPUClass.EMBEDDED_PUDS                       : 'EMBEDDED_PUDS',
-            ADPUClass.DATA_OBJECTS                        : 'DATA_OBJECTS',
-            ADPUClass.SIXTEENBIT_MEASURERED_DATA          : 'SIXTEENBIT_MEASURERED_DATA',
-            ADPUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS : 'SIXTEENBIT_CONFIGURATION_PARAMETERS',
-            ADPUClass.SIXTEENBIT_REFERENCE_VALUES         : 'SIXTEENBIT_REFERENCE_VALUES',
-        }
-        return di[klass]
+        return ADPUClass.nameDict[klass]
 
 ##
 ## Supported classes (by GeniControl).

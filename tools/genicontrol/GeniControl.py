@@ -216,12 +216,12 @@ class GUIThread(threading.Thread):
 
     def run(self):
         name = self.getName()
-        print "Starting %s." % name
+        self.logger.info("Starting %s." % name)
         while True:
             if self.quitEvent.wait(0.5):
                 break
             self._view.notebook.mcPanel.setLEDState(0, not self._view.notebook.mcPanel.getLEDState(0))
-        print "Exiting %s." % name
+        self.logger.info("Exiting %s." % name)
 
 
 class GeniControlApp(wx.PySimpleApp):
