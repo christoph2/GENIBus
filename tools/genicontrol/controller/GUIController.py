@@ -26,10 +26,33 @@
 ##
 ##
 
+import logging
+import threading
 import wx
 from genicontrol.model.config import DataitemConfiguration
 from genicontrol.controller.ControllerIF import IController
 from wx.lib.pubsub import Publisher as Publisher
+
+
+class ControllerThread(threading.Thread):
+    logger = logging.getLogger("genicontrol")
+
+    def __init__(self, model, view, quitEvent):
+        super(ControllerThread, self).__init__()
+        self._model = model
+        self._view = view
+        self.quitEvent = quitEvent
+        self.setName(self.__class__.__name__)
+
+
+    def run(self):
+        name = self.getName()
+        print "Starting %s." % name
+        while True:
+            if self.quitEvent.wait(0.5):
+                break
+        print "Exiting %s." % name
+
 
 class GUIController(IController):
 
@@ -42,6 +65,9 @@ class GUIController(IController):
 
         self._view = view
         self._view.Bind(wx.EVT_CLOSE, self.onCloseApplication)
+        self._quitEvent = threading.Event()
+        self._controllerThread = ControllerThread(self._model, view, self._quitEvent)
+        self._controllerThread.start()
 
 
     def onChange(self, msg):
@@ -52,6 +78,12 @@ class GUIController(IController):
             group, item = msg.topic
         print "GROUP: '%s' ITEM: '%s' DATA: '%s'" % (group, item, msg.data)
 
+        def initialize(self, model, quitEvent):
+            self._model = model
+            self.notebook.mcPanel.setLEDState(0, True)
+            self._quitEvent = quitEvent
+            return self._guiThread
+
     def onQuit(self, msg):
         self.quitApplication()
 
@@ -59,6 +91,8 @@ class GUIController(IController):
         self.quitApplication()
 
     def quitApplication(self):
+        self._quitEvent.set()
+        self._controllerThread.join()
         self._view.shutdownView()
         self._model.quit()
 

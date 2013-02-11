@@ -33,9 +33,7 @@ import os
 ## Common constants.
 ##
 HOME_DIRECTORY = os.path.abspath(os.path.expanduser('~/'))
-#print "HOME DIRECTORY: %s" % HOME_DIRECTORY
 CONFIGURATION_DIRECTORY = os.path.join(HOME_DIRECTORY, 'GeniControl')
-print "CONFIGURATION DIRECTORY: %s" % CONFIGURATION_DIRECTORY,
 if not os.access(CONFIGURATION_DIRECTORY, os.F_OK):
     print " doesn't exist. creating. ",
     os.mkdir(CONFIGURATION_DIRECTORY)
