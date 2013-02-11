@@ -121,10 +121,11 @@ class RequestorThread(threading.Thread):
 
     def request(self, req):
         RequestorThread._state = RequestorThread.PENDING
-        RequestorThread._currentRequest = req
+        #RequestorThread._currentRequest = req
+        self.writeToServer(req)
         self.worker = WorkerThread(req, self)
         self.worker.start()
-        self.logger.info("Doing request. '%s'" % dumpHex(req))
+        #self.logger.info("Doing request. '%s'" % dumpHex(req))
         success = True
         try:
             response = RequestorThread._respQueue.get(True, 0.5)
@@ -137,6 +138,13 @@ class RequestorThread(threading.Thread):
         else:
             print "Processing Response."
         RequestorThread._state = RequestorThread.IDLE
+
+
+    def writeToServer(self, req):
+        self._model.writeToServer(req)
+
+    def readFromServer(self):
+        return self._model.readFromServer()
 
     def _getRequestQueue(self):
         return self._requestQueue

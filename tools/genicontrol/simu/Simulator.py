@@ -515,7 +515,7 @@ def createResponse(request):
         result.extend(pdu)
     crc = calcuteCrc(result)
     result.extend((utils.hiByte(crc), utils.loByte(crc), ))
-    return result
+    return bytearray(result)
 
 
 import genicontrol.conversion as conversion
@@ -556,6 +556,25 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
             result.append(AckType(apdu.klass, apdu.ack >> 6))
     result.type = valueInterpretation
     return result
+
+
+class SimulationServer(object):
+    logger = logging.getLogger("genicontrol")
+
+    def __init__(self, *args, **kwargs):
+        self._request = None
+        self._response = None
+
+    def write(self, req):
+        #print "Request: " , req
+        resp = createResponse(dissectResponse(req))
+        #print "Our response: ", dumpHex(resp)
+        self._response = resp
+
+    def read(self):
+        resp = self._response
+        self._response = None
+        return resp
 
 
 def testResponse(telegram, datapoints, valueInterpretation):

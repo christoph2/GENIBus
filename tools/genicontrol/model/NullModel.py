@@ -33,7 +33,7 @@ import genicontrol.model.ModelIf as ModelIf
 from genicontrol.model.config import DataitemConfiguration
 from genicontrol.request import RequestorThread
 import genicontrol.dataitems as dataitems
-
+from genicontrol.simu.Simulator import SimulationServer
 from genicontrol.utils import dumpHex
 
 
@@ -49,6 +49,7 @@ class NullModel(ModelIf.IModel):
         self.sendMessage('References', ModelIf.DATA_NOT_AVAILABLE)
         self.dataAvailable = False
         self._quitEvent = quitEvent
+        self._server = SimulationServer()
         self._modelThread = RequestorThread(self)
         self._requestQueue = self._modelThread.requestQueue
         self._modelThread.start()
@@ -57,6 +58,12 @@ class NullModel(ModelIf.IModel):
     def quit(self):
         self._quitEvent.set()
         self._modelThread.join()
+
+    def writeToServer(self, req):
+        self._server.write(req)
+
+    def readFromServer(self):
+        return self._server.read()
 
     def connect(self, *parameters):
         pdu = apdu.createConnectRequestPDU(0x01)
