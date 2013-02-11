@@ -6,7 +6,7 @@ import struct
 import sys
 import time
 
-SERVER = '192.168.100.20'  # TODO: Adjust to the IP-address of your Arduino board!
+SERVER = '192.168.1.2'  # TODO: Adjust to the IP-address of your Arduino board!
 
 #SERVER = 'localhost'
 #SERVER = socket.gethostname()
