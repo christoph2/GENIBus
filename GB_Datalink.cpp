@@ -96,17 +96,19 @@ void GB_Datalink::feed(void)
             _frameLength = byteCount + 1;
             setState(DL_RECEIVING);
         } else if (idx == 0) {
-	   // printf("START.\n");
-	}
+           // printf("START.\n");
+        }
         if (getState() == DL_RECEIVING) {
-	    //printf("%u\n", byteCount);
+            //printf("%u\n", byteCount);
             if (--byteCount == 0) {
                 if (verifyCRC(1, _frameLength - 2)) {
-                    if (_callout != NULL) {
-                        _callout(_scratchBuffer, _frameLength);
+                    if (_dataLinkCallout != NULL) {
+                        _dataLinkCallout(_scratchBuffer, _frameLength);
                     }
                 } else {
-                    /* todo: Errorhandling! */
+                    if (_errorCallout != NULL) {
+                        _errorCallout(ERR_INVALID_CRC);
+                    }
                 }
                 setState(DL_IDLE);
                 idx = 0;
