@@ -26,6 +26,10 @@
 ##
 ##
 
+##
+## Asynchronous part of model.
+##
+
 import logging
 import threading
 import time
@@ -56,13 +60,12 @@ class WorkerThread(threading.Thread):
 
     def run(self):
         name = self.getName()
-        #self.logger.info("Starting %s." % name)
         while True:
+            resp = self._requestorThread.readFromServer()
+            if resp:    # todo: Exception.
+                self._requestorThread._respQueue.put(resp)
             if self._requestorThread._cancelEvent.wait(1.0):
                 break
-        #self._respQueue.put([])
-        #self._cancelEvent.wait(2.0)
-        #self.logger.info("Exiting %s." % name)
 
 
 class RequestorThread(threading.Thread):
@@ -121,7 +124,7 @@ class RequestorThread(threading.Thread):
 
     def request(self, req):
         RequestorThread._state = RequestorThread.PENDING
-        #RequestorThread._currentRequest = req
+        RequestorThread._currentRequest = req
         self.writeToServer(req)
         self.worker = WorkerThread(req, self)
         self.worker.start()
