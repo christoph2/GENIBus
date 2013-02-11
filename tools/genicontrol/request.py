@@ -62,12 +62,9 @@ class WorkerThread(threading.Thread):
 
     def run(self):
         name = self.getName()
-        while True:
-            resp = self._requestorThread.readFromServer()
-            if resp:    # todo: Exception.
-                self._requestorThread._respQueue.put(resp)
-            if self._requestorThread._cancelEvent.wait(1.0):
-                break
+        resp = self._requestorThread.readFromServer()
+        if resp:    # todo: Exception.
+            self._requestorThread._respQueue.put(resp)
 
 
 class RequestorThread(threading.Thread):
@@ -77,7 +74,6 @@ class RequestorThread(threading.Thread):
     _clsLock = threading.Lock()
     _respQueue = queue.Queue()
     _requestQueue = queue.Queue()
-    _cancelEvent = threading.Event()
     _currentRequest = None
     _currentResponse = None
     logger = logging.getLogger("genicontrol")
@@ -120,30 +116,21 @@ class RequestorThread(threading.Thread):
                 pass
                 #self.request([])
 
-    def cancelWorkerThread(self):
-        if hasattr(self, 'worker'):
-            RequestorThread._cancelEvent.set()
-            self.worker.join()
-
     def request(self, req):
         RequestorThread._state = RequestorThread.PENDING
         RequestorThread._currentRequest = req
         self.writeToServer(req)
         self.worker = WorkerThread(req, self)
         self.worker.start()
-        #self.logger.info("Doing request. '%s'" % dumpHex(req))
         success = True
         try:
-            data = RequestorThread._respQueue.get(True, 0.5)
+            data = RequestorThread._respQueue.get(True, 1.0)
         except queue.Empty:
             success = False
         if not success:
-            self.logger.info("Timed out, cancelling %s." % self.worker.getName())
-            self.cancelWorkerThread()
-            #RequestorThread._cancelEvent.clear()
+            self.logger.info("Timed out.")
         else:
             response = dissectResponse(data)
-            #print "RESP: ", response
             if not self._connected:
                 self.processConnectResp(response)
             else:
@@ -157,17 +144,14 @@ class RequestorThread(threading.Thread):
                 df_buf_len, unit_bus_mode = apdu.data
                 self.setValue(defs.ADPUClass.PROTOCOL_DATA, 'df_buf_len', df_buf_len)
                 self.setValue(defs.ADPUClass.PROTOCOL_DATA, 'unit_bus_mode', unit_bus_mode)
-                #print "Buflen: %u BusMode: %u" % (df_buf_len, unit_bus_mode)
             elif apdu.klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
                 unit_addr, group_addr = apdu.data
                 self.setValue(defs.ADPUClass.CONFIGURATION_PARAMETERS, 'unit_addr', unit_addr)
                 self.setValue(defs.ADPUClass.CONFIGURATION_PARAMETERS, 'group_addr', group_addr)
-                #print "UnitAddr: %u GroupAddr: %u" % (unit_addr, group_addr)
             elif apdu.klass == defs.ADPUClass.MEASURERED_DATA:
                 unit_family, unit_type = apdu.data
                 self.setValue(defs.ADPUClass.MEASURERED_DATA, 'unit_family', unit_family)
                 self.setValue(defs.ADPUClass.MEASURERED_DATA, 'unit_type', unit_type)
-                #print "UnitFamily: %u UnitType: %u" % (unit_family, unit_type)
         self._connected = True
         self.logger.info('OK, Connected.')
 
