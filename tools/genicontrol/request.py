@@ -110,7 +110,6 @@ class RequestorThread(threading.Thread):
             res = self._model._quitEvent.wait(.5)
             if res:
                 self.logger.info("Exiting %s." % name)
-                self.cancelWorkerThread()
                 break
             if RequestorThread._state == RequestorThread.IDLE:
                 pass
