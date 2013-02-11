@@ -33,6 +33,7 @@ import genicontrol.model.ModelIf as ModelIf
 from genicontrol.model.config import DataitemConfiguration
 from genicontrol.request import RequestorThread
 import genicontrol.dataitems as dataitems
+import genicontrol.defs as defs
 from genicontrol.simu.Simulator import SimulationServer
 from genicontrol.utils import dumpHex
 
@@ -49,6 +50,8 @@ class NullModel(ModelIf.IModel):
         self.sendMessage('References', ModelIf.DATA_NOT_AVAILABLE)
         self.dataAvailable = False
         self._quitEvent = quitEvent
+        self._valueDict = createDataDictionary()
+        self._infoDict = createDataDictionary()
         self._server = SimulationServer()
         self._modelThread = RequestorThread(self)
         self._requestQueue = self._modelThread.requestQueue
@@ -98,4 +101,12 @@ class NullModel(ModelIf.IModel):
     def sendCommand(self, command):
         pass
 
+
+def createDataDictionary():
+    ddict = dict()
+
+    klasses = [x for x in dir(defs.ADPUClass) if x.upper() and not x.startswith('__')]
+    for klass in klasses:
+        ddict[klass] = {}
+    return ddict
 

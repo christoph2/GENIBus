@@ -41,6 +41,8 @@ else:
     import Queue as queue
 
 import genicontrol.apdu as apdu
+import genicontrol.defs as defs
+from genicontrol.dissect import dissectResponse
 from genicontrol.utils import dumpHex
 
 class PendingRequestError(Exception): pass
@@ -131,7 +133,7 @@ class RequestorThread(threading.Thread):
         #self.logger.info("Doing request. '%s'" % dumpHex(req))
         success = True
         try:
-            response = RequestorThread._respQueue.get(True, 0.5)
+            data = RequestorThread._respQueue.get(True, 0.5)
         except queue.Empty:
             success = False
         if not success:
@@ -139,9 +141,28 @@ class RequestorThread(threading.Thread):
             self.cancelWorkerThread()
             #RequestorThread._cancelEvent.clear()
         else:
-            print "Processing Response."
+            response = dissectResponse(data)
+            #print "RESP: ", response
+            if not self._connected:
+                self.processConnectResp(response)
+            else:
+                pass
         RequestorThread._state = RequestorThread.IDLE
 
+    def processConnectResp(self, response):
+        unitAddress = response.sa
+        for apdu in response.APDUs:
+            if apdu.klass == defs.ADPUClass.PROTOCOL_DATA:
+                df_buf_len, unit_bus_mode = apdu.data
+                #print "Buflen: %u BusMode: %u" % (df_buf_len, unit_bus_mode)
+            elif apdu.klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
+                unit_addr, group_addr = apdu.data
+                #print "UnitAddr: %u GroupAddr: %u" % (unit_addr, group_addr)
+            elif apdu.klass == defs.ADPUClass.MEASURERED_DATA:
+                unit_family, unit_type = apdu.data
+                #print "UnitFamily: %u UnitType: %u" % (unit_family, unit_type)
+        self._connected = True
+        self.logger.info('OK, Connected.')
 
     def writeToServer(self, req):
         self._model.writeToServer(req)
