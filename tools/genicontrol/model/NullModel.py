@@ -53,6 +53,7 @@ class NullModel(ModelIf.IModel):
         self._setValueLock = threading.RLock()
         self._valueDict = createDataDictionary()
         self._infoDict = createDataDictionary()
+        self._values = dict()
         self._server = SimulationServer()
         self._modelThread = RequestorThread(self)
         self._requestQueue = self._modelThread.requestQueue
@@ -110,8 +111,15 @@ class NullModel(ModelIf.IModel):
     def setValue(self, group, datapoint, value):
         self._setValueLock.acquire()
         #print "SetValue - Group: %s DP: % s Value: %s" % (defs.ADPUClass.toString(group), datapoint, value)
+        self._valueDict.setdefault(group, dict())[datapoint] = value
         self.sendMessage("%s.%s" % (defs.ADPUClass.toString(group), datapoint), value)
         self._setValueLock.release()
+
+    def getValue(self, group, datapoint):
+        return self._valueDict[group][datapoint]
+
+    def getUnitAddress(self):
+        return self.getValue(defs.ADPUClass.CONFIGURATION_PARAMETERS, 'unit_addr')
 
     def updateInfoDict(self, di):
         self._infoDict.update(di)
