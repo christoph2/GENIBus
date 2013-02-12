@@ -107,11 +107,14 @@ class NullModel(ModelIf.IModel):
         pass
 
     def updateReferences(self, references):
-        print "Update Refs: "
         msg = "REFERENCE_VALUES.%s"
         for key, value in references.items():
             self.sendMessage(msg % key, value)
 
+    def updateParameter(self, parameter):
+        msg = "CONFIGURATION_PARAMETERS.%s"
+        for key, value in parameter.items():
+            self.sendMessage(msg % key, value)
 
     def setValue(self, group, datapoint, value):
         self._setValueLock.acquire()

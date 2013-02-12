@@ -171,8 +171,8 @@ class RequestorThread(threading.Thread):
                 self.setState(RequestorThread.STATE_REQ_PARAM)
                 self._model.updateReferences(result)
             elif self.getState() == RequestorThread.STATE_REQ_PARAM:
-                result = interpreteGetValueResponse(response, self._requestedDatapoints)
-                ## TODO: Process!!!
+                result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.CONFIGURATION_PARAMETERS]
+                self._model.updateParameter(result)
                 self.setState(RequestorThread.STATE_OPERATIONAL)
             else:
                 pass
