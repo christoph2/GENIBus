@@ -130,8 +130,14 @@ class RequestorThread(threading.Thread):
                     )
                     self.request(req)
             elif self.getState() == RequestorThread.STATE_REQ_PARAM:
-                #print "MOVING ON TO PARAMETERS..."
-                pass
+                    self._requestedDatapoints = ('unit_addr', 'group_addr', 'min_curve_no', 'h_const_ref_min', 'h_const_ref_max',
+                        'h_prop_ref_min', 'h_prop_ref_max', 'ref_steps'
+                    )
+                    req = apdu.createGetValuesPDU(
+                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x04),
+                        parameter = self._requestedDatapoints
+                    )
+                    self.request(req)
             else:
                 pass
             res = self._model._quitEvent.wait(self._cycleTime)
@@ -161,10 +167,13 @@ class RequestorThread(threading.Thread):
                 result = interpreteInfoResponse(response, self._requestedDatapoints)
                 self._model.updateInfoDict(result)
             elif self.getState() == RequestorThread.STATE_REQ_REFS:
-                print "REF-RESPONSES: ", response
                 result = interpreteGetValueResponse(response, self._requestedDatapoints)
                 self.setState(RequestorThread.STATE_REQ_PARAM)
                 ## TODO: Process!!!
+            elif self.getState() == RequestorThread.STATE_REQ_PARAM:
+                result = interpreteGetValueResponse(response, self._requestedDatapoints)
+                ## TODO: Process!!!
+                self.setState(RequestorThread.STATE_OPERATIONAL)
             else:
                 pass
 
@@ -273,11 +282,9 @@ def interpreteGetValueResponse(response, datapoints):
     for apdu in response.APDUs:
         klass = apdu.klass
         result.setdefault(klass, {})
-        idx = 0
         values = []
-        for datapoint in datapoints:
-            pass
-
+        for idx, datapoint in enumerate(datapoints):
+            result[klass][datapoint] = apdu.data[idx]
     return result
 
 def main():
