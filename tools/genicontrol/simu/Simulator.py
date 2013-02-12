@@ -386,6 +386,49 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"ref_act", 0xa5,       Info(0x81, None, None, None)),
         Item(u"ref_inf", 0xfe,       Info(0x81, None, None, None)),
         Item(u"ref_att_loc", 0xfe,   Info(0x81, None, None, None)),
+        Item(u"ref_loc", 0x80,       Info(0x81, None, None, None)),
+        Item(u"i_dc", 0x80,         Info(0x81, None, None, None)),
+        Item(u"q_kn1", 0x80,       Info(0x81, None, None, None)),
+        Item(u"stop_alarm1_bak", 0x80,  Info(0x81, None, None, None)),
+        Item(u"stop_alarm2_bak", 0x80,  Info(0x81, None, None, None)),
+        Item(u"stop_alarm3_bak", 0x80,  Info(0x81, None, None, None)),
+        Item(u"ind_alarm_bak", 0x80,       Info(0x81, None, None, None)),
+        Item(u"alarm_code_disp", 0x80,       Info(0x81, None, None, None)),
+        Item(u"unit_version", 0x80,       Info(0x81, None, None, None)),
+        Item(u"surv_alarm1_bak", 0x80,       Info(0x81, None, None, None)),
+        Item(u"surv_alarm2_bak", 0x80,       Info(0x81, None, None, None)),
+        Item(u"surv_alarm3_bak", 0x80,       Info(0x81, None, None, None)),
+        Item(u"loc_setup1", 0x80,       Info(0x81, None, None, None)),
+        Item(u"rem_setup1", 0x80,       Info(0x81, None, None, None)),
+        Item(u"stop_alarm1", 0x80,       Info(0x81, None, None, None)),
+        Item(u"stop_alarm2", 0x80,       Info(0x81, None, None, None)),
+        Item(u"stop_alarm3", 0x80,       Info(0x81, None, None, None)),
+        Item(u"t_w", 0x80,       Info(0x81, None, None, None)),
+        Item(u"ind_alarm", 0x80,       Info(0x81, None, None, None)),
+        Item(u"contr_ref", 0x80,       Info(0x81, None, None, None)),
+        Item(u"t_m", 0x80,       Info(0x81, None, None, None)),
+        Item(u"i_line", 0x80,       Info(0x81, None, None, None)),
+        Item(u"surv_alarm1", 0x80,       Info(0x81, None, None, None)),
+        Item(u"surv_alarm2", 0x80,       Info(0x81, None, None, None)),
+        Item(u"surv_alarm3", 0x80,       Info(0x81, None, None, None)),
+        Item(u"t_e", 0x80,       Info(0x81, None, None, None)),
+        Item(u"start_alarm1_bak", 0x80,       Info(0x81, None, None, None)),
+        Item(u"start_alarm2_bak", 0x80,       Info(0x81, None, None, None)),
+        Item(u"start_alarm3_bak", 0x80,       Info(0x81, None, None, None)),
+        Item(u"v_dc", 0x80,       Info(0x81, None, None, None)),
+        Item(u"start_alarm1", 0x80,       Info(0x81, None, None, None)),
+        Item(u"start_alarm2", 0x80,       Info(0x81, None, None, None)),
+        Item(u"start_alarm3", 0x80,       Info(0x81, None, None, None)),
+        Item(u"twin_pump_mode", 0x80,       Info(0x81, None, None, None)),
+        Item(u"extern_inputs", 0x80,       Info(0x81, None, None, None)),
+        Item(u"qsd_alarm1", 0x80,       Info(0x81, None, None, None)),
+        Item(u"qsd_alarm2", 0x80,       Info(0x81, None, None, None)),
+        Item(u"qsd_alarm3", 0x80,       Info(0x81, None, None, None)),
+        Item(u"p_max", 0x80,       Info(0x81, None, None, None)),
+
+        Item(u"qsd_alarm1_bak", 0x80,       Info(0x81, None, None, None)),
+        Item(u"qsd_alarm2_bak", 0x80,       Info(0x81, None, None, None)),
+        Item(u"qsd_alarm3_bak", 0x80,       Info(0x81, None, None, None)),
         Item(u"sys_ref", 0x94,       Info(0x81, None, None, None)),
         Item(u"h", 0x7b,             Info(0x82, 0x19, 0x00, 0x0c)),
         Item(u"q", 0x23,             Info(0x82, 0x17, 0x00, 0x20)),
@@ -495,7 +538,7 @@ def createResponse(request):
         else:
             for item in data:
                 name, acess, _ = dataItemsById[item]
-                print "KLASS: %s NAME: %s " % (klass, name)
+                #print "KLASS: %s NAME: %s " % (klass, name)
                 value, info = dataItemsByName[name]
                 if ack == defs.OS_GET:
                     apduLength += 1 # Currently only 8-bit data values.
