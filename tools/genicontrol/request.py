@@ -103,7 +103,6 @@ class RequestorThread(threading.Thread):
         self._connected = False
         self._currentRetry = 0
         self._model = model
-        self._infoRequests = createInfoRequestTelegrams()
         self._requestedDatapoints = []
         self._lastCalled = time.clock()
         self._cycleTime = CYCLE_TIME_STARTUP
@@ -148,13 +147,13 @@ class RequestorThread(threading.Thread):
             if self.getState() == RequestorThread.STATE_CONNECT:
                 self.setState(RequestorThread.STATE_REQ_INFO)
                 self.processConnectResp(response)
+                self._infoRequests = createInfoRequestTelegrams(self._model.getUnitAddress())
             elif self.getState() == RequestorThread.STATE_REQ_INFO:
                 #print "Processing INFO Response: ", response, self._requestedDatapoints
                 result = interpreteInfoResponse(response, self._requestedDatapoints)
                 self._model.updateInfoDict(result)
             else:
                 pass
-
 
     def processConnectResp(self, response):
         unitAddress = response.sa
@@ -171,7 +170,6 @@ class RequestorThread(threading.Thread):
                 unit_family, unit_type = apdu.data
                 self.setValue(defs.ADPUClass.MEASURERED_DATA, 'unit_family', unit_family)
                 self.setValue(defs.ADPUClass.MEASURERED_DATA, 'unit_type', unit_type)
-        self._connected = True
         self.logger.info('OK, Connected.')
 
     def writeToServer(self, req):
@@ -207,7 +205,7 @@ MAX_INFO_REQUESTS = 15
 ##      n = 15
 
 
-def createInfoRequestTelegrams():
+def createInfoRequestTelegrams(destAddr):
     ##
     ## Info responses contain vital information like physical units and scaling stuff.
     ##
@@ -229,11 +227,11 @@ def createInfoRequestTelegrams():
         for idx, slice in enumerate(slices):
             slice = [n for n,i in slice]
             if klass == defs.ADPUClass.MEASURERED_DATA:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = slice)
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x04), measurements = slice)
             elif klass == defs.ADPUClass.REFERENCE_VALUES:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), references = slice)
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x04), references = slice)
             elif klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), parameter = slice)
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x04), parameter = slice)
             result.append((telegram, slice, ))
     return result
 
