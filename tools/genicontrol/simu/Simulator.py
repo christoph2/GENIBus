@@ -410,29 +410,29 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"unit_type", 0x01,     Info(0x81, None, None, None)),
     },
     defs.ADPUClass.COMMANDS: {
-        Item(u"RESET",       None,   Info(None, None, None, None)),
-        Item(u"RESET_ALARM", None,   Info(None, None, None, None)),
-        Item(u"USER_BOOT",   None,   Info(None, None, None, None)),
-        Item(u"STOP",        None,   Info(None, None, None, None)),
-        Item(u"START",       None,   Info(None, None, None, None)),
-        Item(u"REMOTE",      None,   Info(None, None, None, None)),
-        Item(u"LOCAL",       None,   Info(None, None, None, None)),
-        Item(u"RUN",         None,   Info(None, None, None, None)),
-        Item(u"PROGRAM",     None,   Info(None, None, None, None)),
-        Item(u"CONST_FREQ",  None,   Info(None, None, None, None)),
-        Item(u"PROP_PRESS",  None,   Info(None, None, None, None)),
-        Item(u"CONST_PRESS", None,   Info(None, None, None, None)),
-        Item(u"MIN",         None,   Info(None, None, None, None)),
-        Item(u"MAX",         None,   Info(None, None, None, None)),
-        Item(u"INFLUENCE_E", None,   Info(None, None, None, None)),
-        Item(u"INFLUENCE_D", None,   Info(None, None, None, None)),
-        Item(u"LOCK_KEYS",   None,   Info(None, None, None, None)),
-        Item(u"UNLOCK_KEYS", None,   Info(None, None, None, None)),
-        Item(u"REF_UP",      None,   Info(None, None, None, None)),
-        Item(u"REF_DOWN",    None,   Info(None, None, None, None)),
-        Item(u"RESET_HIST",  None,   Info(None, None, None, None)),
+        Item(u"RESET",           None,   Info(None, None, None, None)),
+        Item(u"RESET_ALARM",     None,   Info(None, None, None, None)),
+        Item(u"USER_BOOT",       None,   Info(None, None, None, None)),
+        Item(u"STOP",            None,   Info(None, None, None, None)),
+        Item(u"START",           None,   Info(None, None, None, None)),
+        Item(u"REMOTE",          None,   Info(None, None, None, None)),
+        Item(u"LOCAL",           None,   Info(None, None, None, None)),
+        Item(u"RUN",             None,   Info(None, None, None, None)),
+        Item(u"PROGRAM",         None,   Info(None, None, None, None)),
+        Item(u"CONST_FREQ",      None,   Info(None, None, None, None)),
+        Item(u"PROP_PRESS",      None,   Info(None, None, None, None)),
+        Item(u"CONST_PRESS",     None,   Info(None, None, None, None)),
+        Item(u"MIN",             None,   Info(None, None, None, None)),
+        Item(u"MAX",             None,   Info(None, None, None, None)),
+        Item(u"INFLUENCE_E",     None,   Info(None, None, None, None)),
+        Item(u"INFLUENCE_D",     None,   Info(None, None, None, None)),
+        Item(u"LOCK_KEYS",       None,   Info(None, None, None, None)),
+        Item(u"UNLOCK_KEYS",     None,   Info(None, None, None, None)),
+        Item(u"REF_UP",          None,   Info(None, None, None, None)),
+        Item(u"REF_DOWN",        None,   Info(None, None, None, None)),
+        Item(u"RESET_HIST",      None,   Info(None, None, None, None)),
         Item(u"RESET_ALARM_LOG", None,   Info(None, None, None, None)),
-        Item(u"AUTOMATIC",   None,   Info(None, None, None, None)),
+        Item(u"AUTOMATIC",       None,   Info(None, None, None, None)),
         Item(u"TWIN_MODE_SPARE", None,   Info(None, None, None, None)),
         Item(u"TWIN_MODE_ALT",   None,   Info(None, None, None, None)),
         Item(u"TWIN_MODE_SYNC",  None,   Info(None, None, None, None)),
@@ -440,10 +440,19 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"NIGHT_REDUCT_D+", None,   Info(None, None, None, None)),
     },
     defs.ADPUClass.CONFIGURATION_PARAMETERS: {
-        Item("unit_addr", 0x20, None),
-        Item("group_addr", 0xf7, None),
+        Item(u"unit_addr",      0x20, Info(0x81, None, None, None)),
+        Item(u"group_addr",     0xf7, Info(0x81, None, None, None)),
+        Item((u"min_curve_no",      0x01, Info(0x81, None, None, None)),
+        Item((u"h_const_ref_min",   0x01, Info(0x81, None, None, None)),
+        Item((u"h_const_ref_max",   0xfe, Info(0x81, None, None, None)),
+        Item((u"h_prop_ref_min",    0x01, Info(0x81, None, None, None)),
+        Item((u"h_prop_ref_max",    0xfe, Info(0x81, None, None, None)),
+    },  Item((u"ref_steps",         0x09, Info(0x81, None, None, None)),
+    defs.ADPUClass.REFERENCE_VALUES: {
+        Item(u"ref_rem",        0x10, Info(0x81, None, None, None)),
+        Item(u"ref_ir",         0x20, Info(0x81, None, None, None)),
+        Item(u"ref_att_rem",    0x30, Info(0x81, None, None, None)),
     },
-    defs.ADPUClass.REFERENCE_VALUES: {},
     defs.ADPUClass.ASCII_STRINGS: {},
 }
 
@@ -474,7 +483,6 @@ def createResponse(request):
         data = a.data
         dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[klass]])
 
-        # name klass id access note
         if ack not in defs.CLASS_CAPABILITIES[klass]:
             raise defs.IllegalOperationError("%s-Operation not supported." % defs.operationToString(ack))
         dataItemsById = dict([(v[2], (k, v[3], v[4])) for k, v in dataitems.DATAITEMS_FOR_CLASS[klass].items()])
@@ -486,6 +494,7 @@ def createResponse(request):
         else:
             for item in data:
                 name, acess, _ = dataItemsById[item]
+                print "KLASS: %s NAME: %s " % (klass, name)
                 value, info = dataItemsByName[name]
                 if ack == defs.OS_GET:
                     apduLength += 1 # Currently only 8-bit data values.
@@ -584,9 +593,48 @@ def testResponse(telegram, datapoints, valueInterpretation):
     print
 
 
+def printTuple(data, name):
+    print "%s = (" % name
+    for d in data:
+        print "     0x%02x," % d
+
+    print ")"
+
+def createStaticTelegrams():
+    """
+    Create telegrams for TestClient.
+    """
+    # First transform dictionary.
+    dd= dict.fromkeys(set([x.klass for x in dataitems.DATAITEMS if not (x.klass in (0, 3, 7))]))
+    for key in dd.keys():
+        dd[key] = dict()
+    for item in dataitems.DATAITEMS:
+        name, klass, _id, _, _ = item
+        if klass in (0, 3, 7):
+            continue
+        dd[klass][name] = _id
+    for klass, items in dd.items():
+        print klass
+        # [it[i:i+n] for i in range(0, len(it), n)]
+        items = items.items()
+        if len(items) > 15:
+            slices = [items [i : i + 15] for i in range(0, len(items), 15)]
+        else:
+            slices = [items]
+        for idx, slice in enumerate(slices):
+            slice = [n for n,i in slice]
+            if klass == defs.ADPUClass.MEASURERED_DATA:
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = slice)
+            elif klass == defs.ADPUClass.REFERENCE_VALUES:
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), references = slice)
+            elif klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), parameter = slice)
+            printTuple(telegram, "INFO_REQUEST%u" % idx)
+
 import sys
 
 def main():
+    createStaticTelegrams()
     telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = dataReqValues)
     testResponse(telegram, dataReqValues, defs.OS_GET)
 
