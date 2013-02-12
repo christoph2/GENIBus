@@ -59,7 +59,7 @@ def getScalingInfo(infoTuple):
 	     factor = '-'
 	     physEntity = '-'
 	     unt = '-'
-	     signOfZero = None
+	     signOfZero = '-'
 
         return ScalingTuple(physEntity, factor, unt, valueInterpretation, byteOrder, scaleInformationFormat, signOfZero)
 

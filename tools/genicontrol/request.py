@@ -123,6 +123,15 @@ class RequestorThread(threading.Thread):
                     self._model.requestInfo(req)
                 else:
                     self.setState(RequestorThread.STATE_REQ_REFS)
+                    self._requestedDatapoints = ('ref_rem', 'ref_ir', 'ref_att_rem')
+                    req = apdu.createGetValuesPDU(
+                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x04),
+                        references = self._requestedDatapoints
+                    )
+                    self.request(req)
+            elif self.getState() == RequestorThread.STATE_REQ_PARAM:
+                #print "MOVING ON TO PARAMETERS..."
+                pass
             else:
                 pass
             res = self._model._quitEvent.wait(self._cycleTime)
@@ -149,9 +158,13 @@ class RequestorThread(threading.Thread):
                 self.processConnectResp(response)
                 self._infoRequests = createInfoRequestTelegrams(self._model.getUnitAddress())
             elif self.getState() == RequestorThread.STATE_REQ_INFO:
-                #print "Processing INFO Response: ", response, self._requestedDatapoints
                 result = interpreteInfoResponse(response, self._requestedDatapoints)
                 self._model.updateInfoDict(result)
+            elif self.getState() == RequestorThread.STATE_REQ_REFS:
+                print "REF-RESPONSES: ", response
+                result = interpreteGetValueResponse(response, self._requestedDatapoints)
+                self.setState(RequestorThread.STATE_REQ_PARAM)
+                ## TODO: Process!!!
             else:
                 pass
 
@@ -254,6 +267,18 @@ def interpreteInfoResponse(response, datapoints):
                 idx += 4
     return result
 
+
+def interpreteGetValueResponse(response, datapoints):
+    result = dict()
+    for apdu in response.APDUs:
+        klass = apdu.klass
+        result.setdefault(klass, {})
+        idx = 0
+        values = []
+        for datapoint in datapoints:
+            pass
+
+    return result
 
 def main():
     fin  = threading.Event()

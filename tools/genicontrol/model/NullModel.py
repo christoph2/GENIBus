@@ -91,12 +91,10 @@ class NullModel(ModelIf.IModel):
     def requestParameters(self):
         pass
 
-    def requestReferences(self):
+    def requestReferences(self, req):
         pass
 
     def requestInfo(self, req):
-        #print "INFO-REQ"
-        #print dumpHex(req)
         self._modelThread.request(req)
 
     def setReferenceValue(self, item, value):
@@ -123,7 +121,7 @@ class NullModel(ModelIf.IModel):
 
     def updateInfoDict(self, di):
         self._infoDict.update(di)
-        # TODO: Notify Controller!!!
+        self.sendMessage('INFO', di)
 
     def getInfo(self, klass, dp):
         return self._infoDict[klass][dp]
