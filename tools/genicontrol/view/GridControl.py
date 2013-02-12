@@ -46,21 +46,24 @@ class GridControl(gridlib.Grid, mixins.GridAutoEditMixin):
 
         self.CreateGrid(len(values), 6)
 
+        self.dataitemToRowMapping = dict()
+
         fnt = self.GetFont()
         self.SetColLabelValue(0, "item")
-	self.SetColLabelValue(1, "phys. entity")
-	self.SetColLabelValue(2, "factor")
+        self.SetColLabelValue(1, "phys. entity")
+        self.SetColLabelValue(2, "factor")
         self.SetColLabelValue(3, "unit")
         self.SetColLabelValue(4, "zero")
         self.SetColLabelValue(5, "range")
 
         for i in range((len(values))):
+            self.dataitemToRowMapping[values[i]] = i
             self.SetCellValue(i, 0, values[i])
             self.SetCellValue(i, 1, 'n/a')
             self.SetCellValue(i, 2, 'n/a')
             self.SetCellValue(i, 3, 'n/a')
-	    self.SetCellValue(i, 4, 'n/a')
-	    self.SetCellValue(i, 5, 'n/a')
+            self.SetCellValue(i, 4, 'n/a')
+            self.SetCellValue(i, 5, 'n/a')
 ##            self.AutoSizeColumn(i)
 ##            self.SetCellValue(0, i, '')
 ##
@@ -74,6 +77,19 @@ class GridControl(gridlib.Grid, mixins.GridAutoEditMixin):
         self.SetColLabelAlignment(wx.ALIGN_LEFT, wx.ALIGN_CENTER)
         self.SetRowLabelAlignment(wx.ALIGN_LEFT, wx.ALIGN_CENTER)
 
+
+    def setItem(self, item, physEntity, factor, unit, zero, _range):
+        row = self.getRowForDataitem(item)
+
+        self.SetCellValue(row, 1, physEntity)
+        self.SetCellValue(row, 2, factor)
+        self.SetCellValue(row, 3, unit)
+        self.SetCellValue(row, 4, zero)
+        self.SetCellValue(row, 5, _range)
+
+
+    def getRowForDataitem(self, item):
+        return self.dataitemToRowMapping[item]
 
     def OnIdle(self, evt):
         if self.moveTo != None:
