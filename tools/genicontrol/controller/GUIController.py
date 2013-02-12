@@ -31,6 +31,7 @@ import threading
 import wx
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.defs as defs
+from genicontrol.scaling import getScalingInfo
 from genicontrol.controller.ControllerIF import IController
 from wx.lib.pubsub import Publisher as Publisher
 
@@ -44,8 +45,9 @@ class ControllerThread(threading.Thread):
         self._view = view
         self.quitEvent = quitEvent
         self.setName(self.__class__.__name__)
+        Publisher().subscribe(self.onInfoUpdate, 'INFO')
         for klass in defs.ADPUClass.nameDict.values():
-            Publisher().subscribe(self.onChange,klass)
+            Publisher().subscribe(self.onChange, klass)
 
 
     def run(self):
@@ -55,6 +57,13 @@ class ControllerThread(threading.Thread):
             if self.quitEvent.wait(0.5):
                 break
         print "Exiting %s." % name
+
+    def onInfoUpdate(self, msg):
+        for values in msg.data.values():
+            for key, value in values.items():
+                svalue = getScalingInfo(value)
+                self._view.notebook.infoPanel.setItem(key, svalue.physEntity, str(svalue.factor), svalue.unit, str(value.zero), str(value.range))
+                self._view.notebook.infoPanel.grid.Fit()
 
     def onChange(self, msg):
         if len(msg.topic) == 1:
