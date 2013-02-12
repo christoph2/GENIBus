@@ -44,6 +44,7 @@ import genicontrol.apdu as apdu
 import genicontrol.defs as defs
 from genicontrol.dissect import dissectResponse
 from genicontrol.utils import dumpHex
+import genicontrol.dataitems as dataitems
 
 class PendingRequestError(Exception): pass
 class RequestTimeoutError(Exception): pass
@@ -95,7 +96,8 @@ class RequestorThread(threading.Thread):
         self._connected = False
         self._currentRetry = 0
         self._model = model
-
+        self._infoRequests = createInfoRequestTelegrams()
+        print self._infoRequests
         self._lastCalled = time.clock()
 
     def run(self):
@@ -171,8 +173,46 @@ class RequestorThread(threading.Thread):
 
     requestQueue = property(_getRequestQueue)
 
-def buildLPDU():
-    pass
+
+
+MAX_INFO_REQUESTS = 15
+##
+## GeniBus guarantees a minimun telegeram length of 70 bytes.
+## 8 bytes are fixed per info-response, 1 - 4 bytes per datapoint:
+##      8 + (4 * n) = 70
+##      n = 15
+
+
+def createInfoRequestTelegrams():
+    ##
+    ## Info responses contain vital information like physical units and scaling stuff.
+    ##
+    result = []
+    dd = dict.fromkeys(set([x.klass for x in dataitems.DATAITEMS if not (x.klass in (0, 3, 7))]))
+    for key in dd.keys():
+        dd[key] = dict()
+    for item in dataitems.DATAITEMS:
+        name, klass, _id, _, _ = item
+        if klass not in (defs.ADPUClass.MEASURERED_DATA, defs.ADPUClass.REFERENCE_VALUES, defs.ADPUClass.CONFIGURATION_PARAMETERS):
+            continue
+        dd[klass][name] = _id
+    for klass, items in dd.items():
+        print klass
+        items = items.items()
+        if len(items) > MAX_INFO_REQUESTS:
+            slices = [items [i : i + MAX_INFO_REQUESTS] for i in range(0, len(items), MAX_INFO_REQUESTS)]
+        else:
+            slices = [items]
+        for idx, slice in enumerate(slices):
+            slice = [n for n,i in slice]
+            if klass == defs.ADPUClass.MEASURERED_DATA:
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = slice)
+            elif klass == defs.ADPUClass.REFERENCE_VALUES:
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), references = slice)
+            elif klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), parameter = slice)
+            result.append(telegram)
+    return result
 
 
 def main():

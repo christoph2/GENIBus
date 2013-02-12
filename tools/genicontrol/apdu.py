@@ -186,6 +186,7 @@ def createSetValuesPDU(header, parameter = [], references = []):
 
 
 def createGetInfoPDU(header, measurements = [], parameter = [], references = []):
+    ## To be defensive, at most 15 datapoints should be requested at once (min.frame length = 70 bytes).
     if not isinstance(header, Header):
         raise TypeError('Parameter "header" must be of type "Header".')
 
