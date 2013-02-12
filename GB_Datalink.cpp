@@ -32,7 +32,7 @@ static const uint8 connectReqPayload[] = {
 
 void GB_Datalink::sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint8 len)
 {
-    uint8 idx;
+    uint8 _idx;
     uint16 calculatedCrc;
 
     if (getState() != DL_IDLE) {
@@ -46,13 +46,13 @@ void GB_Datalink::sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint
     _scratchBuffer[2] = da;
     _scratchBuffer[3] = sa;
 
-    for (idx = ((uint8)0x00); idx < len; ++idx) {
-        _scratchBuffer[idx + ((uint8)0x04)] = data[idx];
+    for (_idx = ((uint8)0x00); _idx < len; ++_idx) {
+        _scratchBuffer[_idx + ((uint8)0x04)] = data[_idx];
     }
 
     calculatedCrc = calculateCRC(1, len + 4);
-    _scratchBuffer[idx] = HIBYTE(calculatedCrc);
-    _scratchBuffer[idx + 1] = LOBYTE(calculatedCrc);
+    _scratchBuffer[_idx] = HIBYTE(calculatedCrc);
+    _scratchBuffer[_idx + 1] = LOBYTE(calculatedCrc);
 
     _port.write(_scratchBuffer, len);
 
@@ -81,21 +81,26 @@ typedef enum tagDl_Error {
     DL_ERROR_CHECKSUM
 };
 
+void GB_Datalink::reset(void)
+{
+    _idx = 0;
+    setState(DL_IDLE);
+}
+
 void GB_Datalink::feed(void)
 {
-    static uint8 idx = 0;
     static uint8 byteCount;
     uint8 receivedByte;
     uint16 calculatedCrc;
 
     while (_port.available() > 0) {
         receivedByte = _port.read();
-        _scratchBuffer[idx] = receivedByte;
-        if (idx == 1) {
+        _scratchBuffer[_idx] = receivedByte;
+        if (_idx == 1) {
             byteCount =  receivedByte + 3;
             _frameLength = byteCount + 1;
             setState(DL_RECEIVING);
-        } else if (idx == 0) {
+        } else if (_idx == 0) {
            // printf("START.\n");
         }
         if (getState() == DL_RECEIVING) {
@@ -111,11 +116,11 @@ void GB_Datalink::feed(void)
                     }
                 }
                 setState(DL_IDLE);
-                idx = 0;
+                _idx = 0;
                 break; /* We're done. */
             }
         }
-        ++idx;
+        ++_idx;
     }
 }
 
@@ -126,12 +131,12 @@ void GB_Datalink::connectRequest(uint8 sa)
 
 uint16  GB_Datalink::calculateCRC(uint8 leftBound, uint8 rightBound)
 {
-    uint8 idx;
+    uint8 _idx;
 
      _crc.init(0xffff);
 
-    for (idx = leftBound; idx < rightBound; ++idx) {
-        _crc.update(_scratchBuffer[idx]);
+    for (_idx = leftBound; _idx < rightBound; ++_idx) {
+        _crc.update(_scratchBuffer[_idx]);
     }
 
     return _crc.get();

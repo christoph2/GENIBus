@@ -55,8 +55,9 @@ public:
 /* TODO: rename 'callout', add errorCallout, add checked. */
     GB_Datalink(HardwareSerial & port, Dl_Callout dataLinkCallout = NULL, Error_Callout errorCallout = NULL, boolean checked = FALSE) :
         _port(port), _crc(0xffffu), _state(DL_IDLE), _dataLinkCallout(dataLinkCallout), _errorCallout(errorCallout),
-        _checked(checked), _frameLength(0)
+        _checked(checked), _frameLength(0), _idx(0)
         { _port.begin(9600); };
+    void reset(void);
     void feed(void);
     inline uint8 const * const getBufferPointer(void) const { return (uint8 const * const )_scratchBuffer; };
     inline Dl_State getState(void) const { return _state; };
@@ -77,6 +78,7 @@ private:
     Dl_State _state;
     uint8 _frameLength;
     boolean _checked;
+    uint8 _idx;
 };
 
 
