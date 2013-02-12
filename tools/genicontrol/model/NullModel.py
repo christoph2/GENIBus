@@ -70,7 +70,6 @@ class NullModel(ModelIf.IModel):
     def readFromServer(self):
         resp = self._server.read()
         self._controller.trace(True, resp)
-        print "READ", resp
         return resp
 
     def connect(self, *parameters):
@@ -94,8 +93,10 @@ class NullModel(ModelIf.IModel):
     def requestReferences(self):
         pass
 
-    def requestInfo(self):
-        pass
+    def requestInfo(self, req):
+        #print "INFO-REQ"
+        #print dumpHex(req)
+        self._modelThread.request(req)
 
     def setReferenceValue(self, item, value):
         pass
@@ -112,12 +113,16 @@ class NullModel(ModelIf.IModel):
         self.sendMessage("%s.%s" % (defs.ADPUClass.toString(group), datapoint), value)
         self._setValueLock.release()
 
+    def updateInfoDict(self, di):
+        self._infoDict.update(di)
+        # TODO: Notify Controller!!!
+
 
 def createDataDictionary():
     ddict = dict()
 
-    klasses = [x for x in dir(defs.ADPUClass) if x.upper() and not x.startswith('__')]
+    # klasses = [x for x in dir(defs.ADPUClass) if x.upper() and not x.startswith('__')]
+    klasses = defs.ADPUClass.nameDict.keys()
     for klass in klasses:
         ddict[klass] = {}
     return ddict
-

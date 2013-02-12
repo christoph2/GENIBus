@@ -50,7 +50,9 @@ class PendingRequestError(Exception): pass
 class RequestTimeoutError(Exception): pass
 
 
-MAX_RETRIES = 10
+MAX_RETRIES             = 10
+CYCLE_TIME_STARTUP      = 0.1
+CYCLE_TIME_OPERATIONAL  = 0.5
 
 class WorkerThread(threading.Thread):
     logger = logging.getLogger("genicontrol")
@@ -69,9 +71,14 @@ class WorkerThread(threading.Thread):
 
 
 class RequestorThread(threading.Thread):
-    IDLE    = 0
-    PENDING = 1
-    TIMEOUT = 2
+    STATE_IDLE          = 0
+    STATE_CONNECT       = 1
+    STATE_REQ_INFO      = 2
+    STATE_REQ_REFS      = 3
+    STATE_REQ_PARAM     = 4
+    STATE_REQ_STRING    = 5
+    STATE_OPERATIONAL   = 6
+
     _clsLock = threading.Lock()
     _respQueue = queue.Queue()
     _requestQueue = queue.Queue()
@@ -83,7 +90,7 @@ class RequestorThread(threading.Thread):
         try:
             cls._clsLock.acquire()
             if not hasattr(cls, '_instance'):
-                cls._state = cls.IDLE
+                cls._state = cls.STATE_IDLE
                 cls._instance = super(cls.__class__, cls).__new__(cls)
         finally:
             cls._clsLock.release()
@@ -97,28 +104,34 @@ class RequestorThread(threading.Thread):
         self._currentRetry = 0
         self._model = model
         self._infoRequests = createInfoRequestTelegrams()
-        print self._infoRequests
+        self._requestedDatapoints = []
         self._lastCalled = time.clock()
+        self._cycleTime = CYCLE_TIME_STARTUP
 
     def run(self):
         self._model.waitForController()
         name = self.getName()
         self.logger.info("Starting %s." % name)
         while True:
-            if not self._connected:
+            if self.getState() == RequestorThread.STATE_IDLE:
+                self.setState(RequestorThread.STATE_CONNECT)
                 self.logger.info('Trying to connect to %s.' % self._model.TYPE)
                 self._currentRetry += 1
                 self._model.connect()
-            res = self._model._quitEvent.wait(.5)
+            elif self.getState() == RequestorThread.STATE_REQ_INFO:
+                if self._infoRequests:
+                    req, self._requestedDatapoints = self._infoRequests.pop()
+                    self._model.requestInfo(req)
+                else:
+                    self.setState(RequestorThread.STATE_REQ_REFS)
+            else:
+                pass
+            res = self._model._quitEvent.wait(self._cycleTime)
             if res:
                 self.logger.info("Exiting %s." % name)
                 break
-            if RequestorThread._state == RequestorThread.IDLE:
-                pass
-                #self.request([])
 
     def request(self, req):
-        RequestorThread._state = RequestorThread.PENDING
         RequestorThread._currentRequest = req
         self.writeToServer(req)
         self.worker = WorkerThread(req, self)
@@ -132,11 +145,16 @@ class RequestorThread(threading.Thread):
             self.logger.info("Timed out.")
         else:
             response = dissectResponse(data)
-            if not self._connected:
+            if self.getState() == RequestorThread.STATE_CONNECT:
+                self.setState(RequestorThread.STATE_REQ_INFO)
                 self.processConnectResp(response)
+            elif self.getState() == RequestorThread.STATE_REQ_INFO:
+                #print "Processing INFO Response: ", response, self._requestedDatapoints
+                result = interpreteInfoResponse(response, self._requestedDatapoints)
+                self._model.updateInfoDict(result)
             else:
                 pass
-        RequestorThread._state = RequestorThread.IDLE
+
 
     def processConnectResp(self, response):
         unitAddress = response.sa
@@ -168,6 +186,12 @@ class RequestorThread(threading.Thread):
     def _getRequestQueue(self):
         return self._requestQueue
 
+    def setState(self, state):
+        self._state = state
+
+    def getState (self):
+        return self._state
+
     def clockDiff(self):
         return time.clock() - self._lastCalled
 
@@ -197,7 +221,6 @@ def createInfoRequestTelegrams():
             continue
         dd[klass][name] = _id
     for klass, items in dd.items():
-        print klass
         items = items.items()
         if len(items) > MAX_INFO_REQUESTS:
             slices = [items [i : i + MAX_INFO_REQUESTS] for i in range(0, len(items), MAX_INFO_REQUESTS)]
@@ -211,7 +234,26 @@ def createInfoRequestTelegrams():
                 telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), references = slice)
             elif klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
                 telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), parameter = slice)
-            result.append(telegram)
+            result.append((telegram, slice, ))
+    return result
+
+
+def interpreteInfoResponse(response, datapoints):
+    result = dict()
+    for apdu in response.APDUs:
+        klass = apdu.klass
+        result.setdefault(klass, {})
+        idx = 0
+        values = []
+        for datapoint in datapoints:
+            data = apdu.data[idx]
+            sif = data & 0b11
+            if sif in (0, 1):
+                result[klass][datapoint] = defs.Info(data, None, None, None)
+                idx += 1    # No scaling information.
+            else:
+                result[klass][datapoint] = defs.Info(data, apdu.data[idx + 1], apdu.data[idx + 2], apdu.data[idx + 3])
+                idx += 4
     return result
 
 
