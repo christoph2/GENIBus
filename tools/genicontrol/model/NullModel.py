@@ -117,6 +117,9 @@ class NullModel(ModelIf.IModel):
         self._infoDict.update(di)
         # TODO: Notify Controller!!!
 
+    def getInfo(self, klass, dp):
+        return self._infoDict[klass][dp]
+
 
 def createDataDictionary():
     ddict = dict()
