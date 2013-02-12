@@ -167,9 +167,9 @@ class RequestorThread(threading.Thread):
                 result = interpreteInfoResponse(response, self._requestedDatapoints)
                 self._model.updateInfoDict(result)
             elif self.getState() == RequestorThread.STATE_REQ_REFS:
-                result = interpreteGetValueResponse(response, self._requestedDatapoints)
+                result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.REFERENCE_VALUES]
                 self.setState(RequestorThread.STATE_REQ_PARAM)
-                ## TODO: Process!!!
+                self._model.updateReferences(result)
             elif self.getState() == RequestorThread.STATE_REQ_PARAM:
                 result = interpreteGetValueResponse(response, self._requestedDatapoints)
                 ## TODO: Process!!!

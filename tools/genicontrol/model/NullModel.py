@@ -106,6 +106,13 @@ class NullModel(ModelIf.IModel):
     def sendCommand(self, command):
         pass
 
+    def updateReferences(self, references):
+        print "Update Refs: "
+        msg = "REFERENCE_VALUES.%s"
+        for key, value in references.items():
+            self.sendMessage(msg % key, value)
+
+
     def setValue(self, group, datapoint, value):
         self._setValueLock.acquire()
         #print "SetValue - Group: %s DP: % s Value: %s" % (defs.ADPUClass.toString(group), datapoint, value)
