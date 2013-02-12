@@ -40,7 +40,7 @@ ScalingTuple = namedtuple('ScalingTuple', 'physEntity factor unit valueInterpret
 class MalformedScalingInformationError(Exception): pass
 
 def getScalingInfo(infoTuple):
-    header = infoTuple.header
+    header = infoTuple.head
     unit = infoTuple.unit
     if (header & 0xc0) != 0x80:
         raise MalformedScalingInformationError()
@@ -48,9 +48,19 @@ def getScalingInfo(infoTuple):
         valueInterpretation = (header & 0x20) >> 5
         byteOrder = (header & 0x10) >> 6
         scaleInformationFormat = (header & 0x03)
-        signOfZero = (unit & 0x80) >> 7
-        unit &= 0x7f
-        ut = UnitTable[unit]
-        return ScalingTuple(ut.physEntity, ut.factor, ut.unit, valueInterpretation, byteOrder, scaleInformationFormat, signOfZero)
+	if unit:
+             signOfZero = (unit & 0x80) >> 7
+             unit &= 0x7f
+             ut = UnitTable[unit]
+	     factor = ut.factor
+	     physEntity = ut.physEntity
+	     unt = ut.unit
+	else:
+	     factor = '-'
+	     physEntity = '-'
+	     unt = '-'
+	     signOfZero = None
+
+        return ScalingTuple(physEntity, factor, unt, valueInterpretation, byteOrder, scaleInformationFormat, signOfZero)
 
 
