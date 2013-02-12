@@ -34,6 +34,7 @@ from collections import namedtuple
 import logging
 import unittest
 from genicontrol.crc import checkCrc, calcuteCrc
+from genicontrol.defs import Info, Item
 import genicontrol.utils as utils
 import genicontrol.apdu as apdu
 import genicontrol.defs as defs
@@ -362,11 +363,6 @@ commandSetValues = (
     "RESET_ALARM", "REMOTE", "START", "PROP_PRESS"
 )
 
-
-
-Item = namedtuple('Item', 'name value info')
-Info = namedtuple('Info', 'head unit zero range')
-
 DATA_POOL = { # This dictionary is used to 'simulate' communication.
     defs.ADPUClass.PROTOCOL_DATA: {
         Item(u"df_buf_len", 0x46, None),
@@ -578,38 +574,6 @@ import genicontrol.units as units
 ValueType = namedtuple('ValueType', 'name unit value')
 AckType = namedtuple('AckType', 'klass ack')
 
-class MyList(list):
-    type = None
-
-
-def rawInterpreteResponse(response, datapoints, valueInterpretation):
-    result = MyList()
-    for apdu in response.APDUs:
-        if valueInterpretation == defs.OS_GET:
-            dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[apdu.klass]])
-            for name, value in zip(datapoints, apdu.data):
-                _, (head, unit, zero, range) = dataItemsByName[name]
-                if head == 0x82:
-                    unitInfo = units.UnitTable[unit]
-                    result.append(ValueType(name, unitInfo.unit, conversion.convertForward8(value, zero, range, unitInfo.factor)))
-        elif valueInterpretation == defs.OS_INFO:
-            idx = 0
-            values = []
-            for datapoint in datapoints:
-                # TODO: OS_SET support.
-                data = apdu.data[idx]
-                sif = data & 0b11
-                if sif in (0, 1):
-                    result.append(Info(data, None, None, None))
-                    idx += 1    # No scaling information.
-                else:
-                    result.append(Info(data, apdu.data[idx + 1], apdu.data[idx + 2], apdu.data[idx + 3]))
-                    idx += 4
-        elif valueInterpretation == defs.OS_SET:
-            result.append(AckType(apdu.klass, apdu.ack >> 6))
-    result.type = valueInterpretation
-    return result
-
 
 class SimulationServer(object):
     logger = logging.getLogger("genicontrol")
@@ -676,6 +640,38 @@ def createStaticTelegrams():
             printTuple(telegram, "INFO_REQUEST%u" % idx)
 
 import sys
+
+
+class MyList(list):
+    type = None
+
+
+def rawInterpreteResponse(response, datapoints, valueInterpretation):
+    result = MyList()
+    for apdu in response.APDUs:
+        if valueInterpretation == defs.OS_GET:
+            dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[apdu.klass]])
+            for name, value in zip(datapoints, apdu.data):
+                _, (head, unit, zero, range) = dataItemsByName[name]
+                if head == 0x82:
+                    unitInfo = units.UnitTable[unit]
+                    result.append(ValueType(name, unitInfo.unit, conversion.convertForward8(value, zero, range, unitInfo.factor)))
+        elif valueInterpretation == defs.OS_INFO:
+            idx = 0
+            values = []
+            for datapoint in datapoints:
+                data = apdu.data[idx]
+                sif = data & 0b11
+                if sif in (0, 1):
+                    result.append(Info(data, None, None, None))
+                    idx += 1    # No scaling information.
+                else:
+                    result.append(Info(data, apdu.data[idx + 1], apdu.data[idx + 2], apdu.data[idx + 3]))
+                    idx += 4
+        elif valueInterpretation == defs.OS_SET:
+            result.append(AckType(apdu.klass, apdu.ack >> 6))
+    result.type = valueInterpretation
+    return result
 
 def main():
     createStaticTelegrams()

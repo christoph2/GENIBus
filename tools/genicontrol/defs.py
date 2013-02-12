@@ -27,6 +27,7 @@
 ##
 ##
 
+from collections import namedtuple
 import os
 
 ##
@@ -173,3 +174,5 @@ def operationToString(op):
     elif op == OS_INFO:
         return "Info-Request"
 
+Item = namedtuple('Item', 'name value info')
+Info = namedtuple('Info', 'head unit zero range')
