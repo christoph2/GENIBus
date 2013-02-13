@@ -112,7 +112,7 @@ void GB_Datalink::feed(void)
                     }
                 } else {
                     if (_errorCallout != NULL) {
-                        _errorCallout(ERR_INVALID_CRC);
+                        _errorCallout(ERR_INVALID_CRC, _scratchBuffer, _frameLength);
                     }
                 }
                 setState(DL_IDLE);

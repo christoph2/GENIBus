@@ -48,7 +48,7 @@ typedef enum tagGb_Error {
 
 
 typedef void (*Dl_Callout)(uint8 * buffer, uint8 len);
-typedef void (*Error_Callout)(Gb_Error error);
+typedef void (*Error_Callout)(Gb_Error error, uint8 * buffer, uint8 len);
 
 class GB_Datalink {
 public:
