@@ -106,6 +106,13 @@ class NullModel(ModelIf.IModel):
     def sendCommand(self, command):
         pass
 
+    def updateMeasurements(self, measurements):
+        msg = "MEASURERED_DATA.%"
+        for key, value in measurements.items():
+            info = self.getInfo(defs.ADPUClass.MEASURERED_DATA, key)
+            #print key, value, info
+            #self.sendMessage(msg % key, value)
+
     def updateReferences(self, references):
         msg = "REFERENCE_VALUES.%s"
         for key, value in references.items():
@@ -130,7 +137,8 @@ class NullModel(ModelIf.IModel):
         return self.getValue(defs.ADPUClass.CONFIGURATION_PARAMETERS, 'unit_addr')
 
     def updateInfoDict(self, di):
-        self._infoDict.update(di)
+        for key, value in di.items():
+            self._infoDict[key].update(value)
         self.sendMessage('INFO', di)
 
     def getInfo(self, klass, dp):

@@ -122,13 +122,14 @@ class RequestorThread(threading.Thread):
                     req, self._requestedDatapoints = self._infoRequests.pop()
                     self._model.requestInfo(req)
                 else:
-                    self.setState(RequestorThread.STATE_REQ_REFS)
+                    #self.setState(RequestorThread.STATE_REQ_REFS)
+                    self.setState(RequestorThread.STATE_REQ_PARAM)
                     self._requestedDatapoints = ('ref_rem', 'ref_ir', 'ref_att_rem')
                     req = apdu.createGetValuesPDU(
                         apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x04),
                         references = self._requestedDatapoints
                     )
-                    self.request(req)
+                    #self.request(req)
             elif self.getState() == RequestorThread.STATE_REQ_PARAM:
                     self._requestedDatapoints = ('unit_addr', 'group_addr', 'min_curve_no', 'h_const_ref_min', 'h_const_ref_max',
                         'h_prop_ref_min', 'h_prop_ref_max', 'ref_steps'
@@ -138,6 +139,13 @@ class RequestorThread(threading.Thread):
                         parameter = self._requestedDatapoints
                     )
                     self.request(req)
+            elif self.getState() == RequestorThread.STATE_OPERATIONAL:
+                self._requestedDatapoints = ('speed', 'h', 'q', 'p', 'f_act')
+                req = apdu.createGetValuesPDU(
+                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x04),
+                    measurements = self._requestedDatapoints
+                )
+                self.request(req)
             else:
                 pass
             res = self._model._quitEvent.wait(self._cycleTime)
@@ -169,11 +177,15 @@ class RequestorThread(threading.Thread):
             elif self.getState() == RequestorThread.STATE_REQ_REFS:
                 result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.REFERENCE_VALUES]
                 self.setState(RequestorThread.STATE_REQ_PARAM)
-                self._model.updateReferences(result)
+                #self._model.updateReferences(result)
             elif self.getState() == RequestorThread.STATE_REQ_PARAM:
                 result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.CONFIGURATION_PARAMETERS]
                 self._model.updateParameter(result)
                 self.setState(RequestorThread.STATE_OPERATIONAL)
+                self._cycleTime = CYCLE_TIME_OPERATIONAL
+            elif self.getState() == RequestorThread.STATE_OPERATIONAL:
+                result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.MEASURERED_DATA]
+                self._model.updateMeasurements(result)
             else:
                 pass
 
