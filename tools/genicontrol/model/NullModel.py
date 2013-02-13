@@ -31,7 +31,9 @@ import logging
 import genicontrol.apdu as apdu
 import genicontrol.model.ModelIf as ModelIf
 from genicontrol.model.config import DataitemConfiguration
+import genicontrol.conversion as conversion
 from genicontrol.request import RequestorThread
+from genicontrol.scale import getScalingInfo
 import genicontrol.dataitems as dataitems
 import genicontrol.defs as defs
 from genicontrol.simu.Simulator import SimulationServer
@@ -107,11 +109,18 @@ class NullModel(ModelIf.IModel):
         pass
 
     def updateMeasurements(self, measurements):
-        msg = "MEASURERED_DATA.%"
+        msg = "MEASURERED_DATA.%s"
         for key, value in measurements.items():
             info = self.getInfo(defs.ADPUClass.MEASURERED_DATA, key)
-            #print key, value, info
-            #self.sendMessage(msg % key, value)
+            scalingInfo = getScalingInfo(info)
+            if value == 0xff:
+                scaledValue = 'n/a'
+            else:
+                if (info.head & 0x02) == 2:
+                    scaledValue = "%.2f" % conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor)
+                else:
+                    scaledValue = str(value) # Unscaled.
+                self.sendMessage(msg % key, scaledValue)
 
     def updateReferences(self, references):
         msg = "REFERENCE_VALUES.%s"

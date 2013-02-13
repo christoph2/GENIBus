@@ -430,7 +430,7 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"q", 0x23,             Info(0x82, 0x17, 0x00, 0x20)),
         Item(u"h_max", 0xcd,         Info(0x81, None, None, None)),
         Item(u"q_max", 0xb4,         Info(0x81, None, None, None)),
-        Item(u"f_act", 0xa4,         Info(0x82, 0x84, 0xc1, 0x39)),
+        Item(u"f_act", 0xa4,         Info(0x81, None, None, None)),
         Item(u"t_2hour_hi", 0x0b,    Info(0x81, None, None, None)),
         Item(u"t_2hour_lo", 0x80,    Info(0x81, None, None, None)),
         Item(u"contr_source", 0x22,  Info(0x81, None, None, None)),

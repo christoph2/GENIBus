@@ -71,7 +71,7 @@ class ControllerThread(threading.Thread):
             item = ''
         else:
             group, item = msg.topic
-        print "Update: '%s' Item:'%s' Data: '%s'" % (group, item, msg.data)
+        #print "Update: '%s' Item:'%s' Data: '%s'" % (group, item, msg.data)
 
 
 class GUIController(IController):
