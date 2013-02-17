@@ -98,6 +98,46 @@ def dissectResponse(frame):
     return DissectionResult(sd, da, sa, result)
 
 
+
+def dissectControlMode(dp, value):
+    result = []
+    if dp == 'act_mode1':
+        operationMode = (value & 0x7)
+        controlMode = (value & 0x38) >> 3
+        nightReduction = (value & 0x40) >> 6
+
+        result.append(('nightReduction', nightReduction, ))
+        if operationMode == 0x00:
+            om = 'START'
+        elif operationMode == 0x01:
+            om = 'STOP'
+        elif operationMode == 0x02:
+            om = 'MIN'
+        elif operationMode == 0x03:
+            om = 'MAX'
+        result.append(('operationMode', om, ))
+
+        if controlMode == 0x00:
+            cm = 'Constant Pressure'
+        elif controlMode == 0x01:
+            cm = 'Proportional Pressure'
+        elif controlMode == 0x02:
+            cm = 'Constant Frequency'
+        elif controlMode == 0x05:
+            cm = 'Automatic Setpoint'
+        result.append(('controlMode', cm, ))
+    elif dp == 'act_mode2':
+        temperatureInfluence = value & 0x01
+        buttonsOnPump = (value & 0x20) >> 5
+        minimumCurve = (value & 0xc0) >> 6
+        result.append(('temperatureInfluence', temperatureInfluence))
+        result.append(('buttonsOnPump', buttonsOnPump))
+        result.append(('minimumCurve', minimumCurve))
+    elif dp == 'act_mode3':
+        pass
+    return result
+
+
 def main():
     pass
 

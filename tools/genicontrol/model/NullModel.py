@@ -34,6 +34,7 @@ from genicontrol.model.config import DataitemConfiguration
 import genicontrol.conversion as conversion
 from genicontrol.request import RequestorThread
 from genicontrol.scale import getScalingInfo
+from genicontrol.dissect import dissectControlMode
 import genicontrol.dataitems as dataitems
 import genicontrol.defs as defs
 from genicontrol.simu.Simulator import SimulationServer
@@ -43,6 +44,7 @@ from genicontrol.utils import dumpHex
 class NullModel(ModelIf.IModel):
     logger = logging.getLogger("genicontrol")
     TYPE = "Simulator"
+    SPECIAL_DATAPOINTS = ('act_mode1', 'act_mode2', 'act_mode3')
 
     def initialize(self, quitEvent):
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues']):
@@ -119,8 +121,12 @@ class NullModel(ModelIf.IModel):
                 if (info.head & 0x02) == 2:
                     scaledValue = "%.2f" % conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor)
                 else:
-                    scaledValue = str(value) # Unscaled.
-                    # TODO: Handle special cases like act_mode!
+                    if key in NullModel.SPECIAL_DATAPOINTS:
+                        #print "SPECIAL: %s" % key,
+                        #print dissectControlMode(key, value)
+                        scaledValue = str(value)
+                    else:
+                        scaledValue = str(value) # Unscaled.
                 self.sendMessage(msg % key, scaledValue)
 
     def updateReferences(self, references):
