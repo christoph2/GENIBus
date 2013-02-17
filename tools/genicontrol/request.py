@@ -140,7 +140,7 @@ class RequestorThread(threading.Thread):
                     )
                     self.request(req)
             elif self.getState() == RequestorThread.STATE_OPERATIONAL:
-                self._requestedDatapoints = ('speed', 'h', 'q', 'p', 'f_act')
+                self._requestedDatapoints = ('speed', 'h', 'q', 'p', 'f_act', 'act_mode1', 'act_mode2', 'act_mode3')
                 req = apdu.createGetValuesPDU(
                     apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x04),
                     measurements = self._requestedDatapoints
@@ -166,7 +166,10 @@ class RequestorThread(threading.Thread):
         if not success:
             self.logger.info("Timed out.")
         else:
-            response = dissectResponse(data)
+            try:
+                response = dissectResponse(data)
+            except Exception as e:
+                print str(e), data
             if self.getState() == RequestorThread.STATE_CONNECT:
                 self.setState(RequestorThread.STATE_REQ_INFO)
                 self.processConnectResp(response)
