@@ -65,9 +65,14 @@ class Config(object):
             config.set('network', 'serverIP', '192.168.100.10')
             config.set('network', 'subnetMask', '255.255.255.0')
             config.set('network', 'serverPort', '6734')
+            config.set('network', 'driver', '1')
         self.serverIP = config.get('network', 'serverIP')
         self.serverPort = config.get('network', 'serverPort')
         self.subnetMask = config.get('network', 'subnetMask')
+        try:
+            self.networkDriver = config.get('network', 'driver')
+        except:
+            self.networkDriver = '1'
         if not config.has_section('window'):
             config.add_section('window')
             config.set('window', 'sizeX', '800')
@@ -91,6 +96,7 @@ class Config(object):
             config.set('network', 'serverIP', str(self.serverIP))
             config.set('network', 'subnetMask', str(self.subnetMask))
             config.set('network', 'serverPort', str(self.serverPort))
+            config.set('network', 'driver', str(self.networkDriver))
             config.write(fout)
 
 

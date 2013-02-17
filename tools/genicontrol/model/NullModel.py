@@ -120,6 +120,7 @@ class NullModel(ModelIf.IModel):
                     scaledValue = "%.2f" % conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor)
                 else:
                     scaledValue = str(value) # Unscaled.
+                    # TODO: Handle special cases like act_mode!
                 self.sendMessage(msg % key, scaledValue)
 
     def updateReferences(self, references):

@@ -54,7 +54,7 @@ USAGE = """usage: %s header unit range zero value
 
 """ % os.path.split(sys.argv[0])[1]
 
-print USAGE
+#print USAGE
 
 # UNIT      RANGE   ZERO
 #   21      90      10
@@ -63,8 +63,8 @@ print USAGE
 u21 = UnitTable[21]
 u44 = UnitTable[44]
 
-print convertForward8(163, 10, 90, 1)
-print convertForward16(0x10d6, 0, 120, 1)
+#print convertForward8(163, 10, 90, 1)
+#print convertForward16(0x10d6, 0, 120, 1)
 
 
 def argumentsToLower():

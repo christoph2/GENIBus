@@ -36,6 +36,7 @@ ID_IPADDR   = wx.NewId()
 ID_SUBNET   = wx.NewId()
 ID_PORT     = wx.NewId()
 ID_POLL     = wx.NewId()
+ID_LB_CONN  = wx.NewId()
 
 
 def fixIP(addr):
@@ -48,7 +49,7 @@ class Options(wx.Dialog):
         #config.loadConfiguration()
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-        gridsizer = wx.FlexGridSizer(4,2)
+        gridsizer = wx.FlexGridSizer(5,2)
         st = wx.StaticText(self, label = 'Server IP-address')
         gridsizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         addr = ipaddrctrl.IpAddrCtrl(self, id = ID_IPADDR)
@@ -66,6 +67,10 @@ class Options(wx.Dialog):
         gridsizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         poll = TextCtrl(self, id = ID_POLL, mask = '#####')
         gridsizer.Add(poll, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+        st = wx.StaticText(self, label = 'Driver')
+        gridsizer.Add(st, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        self.lbConn = wx.ComboBox(self, id = ID_LB_CONN, choices = ['Simulator', 'Arduino / TCP'], style = wx.CB_READONLY)
+        gridsizer.Add(self.lbConn, 0, wx.ALIGN_RIGHT | wx.ALL, 5)
         line = wx.StaticLine(self, style = wx.LI_HORIZONTAL)
         sizer.Add(line, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
         btnsizer = wx.StdDialogButtonSizer()
@@ -78,23 +83,33 @@ class Options(wx.Dialog):
         sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
         self.SetSizer(sizer)
         sizer.Fit(self)
-	config.serverIP = fixIP(config.serverIP)
+        config.serverIP = fixIP(config.serverIP)
         addr.SetValue(config.serverIP)
-	config.subnetMask = fixIP(config.subnetMask)
-	mask.SetValue(config.subnetMask)
+        config.subnetMask = fixIP(config.subnetMask)
+        mask.SetValue(config.subnetMask)
         port.SetValue(config.serverPort)
         poll.SetValue(str(config.pollingInterval))
-
+        if config.networkDriver == '0':
+            value = 'Simulator'
+        else:
+            value = 'Arduino / TCP'
+        self.lbConn.SetValue(value)
         addr.SetFocus()
         #self.SetValues()
         self.Centre()
         retval = self.ShowModal()
         retval = wx.ID_OK
         if retval == wx.ID_OK:
-	    config.serverIP = fixIP(addr.GetValue())
+            config.serverIP = fixIP(addr.GetValue())
             config.subnetMaskP = fixIP(mask.GetValue())
             config.serverPortP = port.GetValue()
             config.pollingInterval = poll.GetValue()
+            value = self.lbConn.GetValue()
+            if value == 'Simulator':
+                config.networkDriver = '0'
+            else:
+                config.networkDriver = '1'
+        self.lbConn.SetValue(value)
         self.Destroy()
 
 
