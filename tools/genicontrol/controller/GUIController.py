@@ -72,6 +72,8 @@ class ControllerThread(threading.Thread):
         else:
             group, item = msg.topic
         #print "Update: '%s' Item:'%s' Data: '%s'" % (group, item, msg.data)
+        if group == 'MEASURERED_DATA':
+            self._view.notebook.mcPanel.setValue(item, msg.data)
 
 
 class GUIController(IController):
@@ -96,6 +98,6 @@ class GUIController(IController):
     def quitApplication(self):
         self._quitEvent.set()
         self._controllerThread.join()
-        self._view.shutdownView()
         self._model.quit()
+        self._view.shutdownView()
 

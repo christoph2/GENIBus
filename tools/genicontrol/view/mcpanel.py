@@ -141,3 +141,7 @@ class MCPanel(ScrolledPanel):
 
     def getLEDState(self, num):
         return self.statusPanel.ledControl.getState(num)
+
+    def setValue(self, item ,value):
+        #print "MCP: %s %s" % (item, value)
+        pass
