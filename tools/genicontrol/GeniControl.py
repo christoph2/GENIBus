@@ -27,6 +27,7 @@
 ##
 
 import logging
+import os
 import wx
 from wx.lib.pubsub import Publisher as Publisher
 import time
@@ -39,6 +40,7 @@ from genicontrol.model.NullModel import NullModel
 from genicontrol.model.config import DataitemConfiguration
 from genicontrol.controller.GUIController import GUIController
 import genicontrol.controlids as controlids
+import genicontrol.defs as defs
 from genicontrol.configuration import Config as Config
 from genicontrol.view.options import showOptionsDialogue
 from genicontrol.utils import dumpHex
@@ -71,13 +73,24 @@ class BusmonitorPanel(wx.Panel):
         self.tc.SetFont(font)
         sizer.Add(self.tc, 1, wx.EXPAND | wx.GROW)
         self.SetSizerAndFit(sizer)
+        self.logFile =  None
+        self.logFile =  file(os.path.join(defs.CONFIGURATION_DIRECTORY, 'busmonitor.log'), 'w')
 
-    def appendLine(self, rxTx, telegram):
+    def __del__(self):
+        if self.logFile:
+            self.logFile.close()
+
+    def formatTelegram(self, rxTx, telegram):
         rt = "Rx" if rxTx else "Tx"
         formattedTelegram = ' '.join(["0x%02x" % x for x in telegram])
         timestamp = time.strftime("%d/%b/%Y %H:%M:%S")
-        self.tc.AppendText("[%s] %s - %s\n" % (timestamp, rt, formattedTelegram))
+        return "[%s] %s - %s\n" % (timestamp, rt, formattedTelegram)
 
+    def appendLine(self, rxTx, telegram):
+        formattedTelegram = self.formatTelegram(rxTx, telegram)
+        self.tc.AppendText(formattedTelegram)
+	if self.logFile:
+	     self.logFile.write(formattedTelegram)
 
 class TestNB(wx.Notebook):
     def __init__(self, parent, id):
