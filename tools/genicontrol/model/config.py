@@ -40,7 +40,13 @@ MEAS_VALUES = (
     (u'energy_hi',      u'Energy',          u'kWh',     controlids.ID_MEAS_ENERGY, controlids.ID_MEAS_ENERGY_UNIT),
     (u't_2hour_hi',     u'Hours',           u'h',       controlids.ID_MEAS_HOURS, controlids.ID_MEAS_HOURS_UNIT),
     (u'f_act',          u'Performance',     u'%',       controlids.ID_MEAS_PERFORMACE, controlids.ID_MEAS_PERFORMACE_UNIT),
+
+    (u'unit_family',    u'Unit family code', u'',       None, None),
+    (u'unit_type',      u'Unit type code',  u'',        None, None),
 )
+
+MEAS_VALUES_DICT = dict([(key, (desc, unit, a, b)) for key, desc, unit, a, b in MEAS_VALUES])
+
 
 REF_VALUES = (
     (u"ref_rem",        u'GENIBus ref.',    u'%'),

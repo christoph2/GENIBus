@@ -30,7 +30,7 @@ from collections import namedtuple
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 import genicontrol.controlids as controlids
-from genicontrol.model.config import DataitemConfiguration
+from genicontrol.model.config import DataitemConfiguration, MEAS_VALUES_DICT
 import genicontrol.dataitems as dataitems
 from genicontrol.view.statuspanel import StatusPanel, AlarmPanel, PumpOperationPanel
 
@@ -144,4 +144,13 @@ class MCPanel(ScrolledPanel):
 
     def setValue(self, item ,value):
         #print "MCP: %s %s" % (item, value)
-        pass
+        entry = MEAS_VALUES_DICT.get(item, None)
+        if entry:
+            _, _, controlID, _ = entry
+            #print entry
+            if controlID:
+                control = self.statusPanel.FindWindowById(controlID)
+                if control:
+                    if item == 'f_act':
+                        value = int(value)
+                    control.SetValue(value)

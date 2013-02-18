@@ -44,10 +44,10 @@ class StatusPanel(wx.Panel):
         ctrl = wx.StaticText(self, wx.ID_ANY, 'Performance', style = wx.ALIGN_RIGHT)
         sizer.Add(ctrl, (7, 0), wx.DefaultSpan, wx.ALL, 5)
 
-        gauge = wx.Gauge(parent = self, range = 100)
-        gauge.SetToolTip(wx.ToolTip('n/a'))
-        gauge.SetValue(0)
-        sizer.Add(gauge, (7, 1), (1, 1), wx.ALL, 5)
+        self.gauge = wx.Gauge(parent = self, range = 100, id = controlids.ID_MEAS_PERFORMACE)
+        self.gauge.SetToolTip(wx.ToolTip('n/a'))
+        self.gauge.SetValue(0)
+        sizer.Add(self.gauge, (7, 1), (1, 1), wx.ALL, 5)
 
         ctrl = wx.StaticText(self, wx.ID_ANY, '%', style = wx.ALIGN_RIGHT)
         sizer.Add(ctrl, (7, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
@@ -67,7 +67,7 @@ class StatusPanel(wx.Panel):
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues'], 1):
             key, displayName, unit, controlIdValue, controlIdUnit = item
             ditem =  dataitems.MEASUREMENT_VALUES[key]
-            if key == 'f_act':
+            if key in ('f_act', 'unit_family', 'unit_type'):
                 continue
 
             ctrl = wx.StaticText(self, wx.ID_ANY, displayName, style = wx.ALIGN_RIGHT)
