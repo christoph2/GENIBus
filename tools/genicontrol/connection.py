@@ -26,37 +26,28 @@
 ##
 ##
 
+
 import abc
 import logging
-import threading
-from wx.lib.pubsub import Publisher as Publisher
-from genicontrol.configuration import Config
 
-DATA_NOT_AVAILABLE = None
-config = Config()
+logger = logging.getLogger("genicontrol")
 
-class IController(object):
+def ConnectionFactory(driver):
+    if driver == '0':
+        value = 'Simulator'
+    else:
+        value = 'Arduino / TCP'
+
+
+class ConnectionIF(object):
     __metaclass__ = abc.ABCMeta
     logger = logging.getLogger("genicontrol")
-    quitViewEvent = threading.Event()
-    quitModelEvent = threading.Event()
 
-    def __init__(self, modelCls, viewClass):
-        self._pub = Publisher()
-        self._view = viewClass  # (self, model)
-        self._waitingPoint = threading.Event()
-        self._model = modelCls(self._waitingPoint)
-        setattr(self._model, '_controller', self)
-        self._viewThread = self._view.initialize(self._model, IController.quitViewEvent)
-        self._sync = threading.RLock()
-        # TODO: Create and disable controls.
-        self._modelThread = self._model.initialize(IController.quitModelEvent)
+    @abc.abstractmethod
+    def write(self, data): pass
 
-    def signal(self):
-        self._waitingPoint.set()
+    @abc.abstractmethod
+    def read(self): pass
 
-    def trace(self, rxTx, telegram):
-        self._sync.acquire()
-        self._view.updateBusmonitor(rxTx, telegram)
-        self._sync.release()
-
+    def getDriver(self):
+        return self.DRIVER

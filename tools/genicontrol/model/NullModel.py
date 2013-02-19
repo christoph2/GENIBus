@@ -58,7 +58,7 @@ class NullModel(ModelIf.IModel):
         self._valueDict = createDataDictionary()
         self._infoDict = createDataDictionary()
         self._values = dict()
-        self._server = SimulationServer()
+        self._connection = SimulationServer()
         self._modelThread = RequestorThread(self)
         self._requestQueue = self._modelThread.requestQueue
         self._modelThread.start()
@@ -69,11 +69,11 @@ class NullModel(ModelIf.IModel):
         self._modelThread.join()
 
     def writeToServer(self, req):
-        self._server.write(req)
+        self._connection.write(req)
         self._controller.trace(False, req)
 
     def readFromServer(self):
-        resp = self._server.read()
+        resp = self._connection.read()
         self._controller.trace(True, resp)
         return resp
 

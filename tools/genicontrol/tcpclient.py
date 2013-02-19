@@ -34,6 +34,7 @@ import sys
 import time
 import threading
 from genicontrol.configuration import Config
+from genicontrol.connection import ConnectionIF
 
 logger = logging.getLogger("genicontrol")
 
@@ -59,7 +60,17 @@ socket.setdefaulttimeout(0.5)
 def hexDump(data):
     return [hex(x) for x in data]
 
-class Connector(object):
+
+def ConnectionFactory(driver):
+    if driver == '0':
+        value = 'Simulator'
+    else:
+        value = 'Arduino / TCP'
+
+
+class Connector(ConnectionIF):
+    DRIVER = 'Arduino / TCP'
+
     def __init__(self, serverIP, serverPort):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

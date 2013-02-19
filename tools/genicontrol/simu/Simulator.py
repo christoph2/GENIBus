@@ -575,8 +575,10 @@ ValueType = namedtuple('ValueType', 'name unit value')
 AckType = namedtuple('AckType', 'klass ack')
 
 
-class SimulationServer(object):
-    logger = logging.getLogger("genicontrol")
+from genicontrol.connection import ConnectionIF
+
+class SimulationServer(ConnectionIF):
+    DRIVER = 'Simulator'
 
     def __init__(self, *args, **kwargs):
         self._request = None
