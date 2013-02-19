@@ -78,10 +78,11 @@ class NullModel(ModelIf.IModel):
         return resp
 
     def connect(self, *parameters):
-        pdu = apdu.createConnectRequestPDU(0x01)
-        self._modelThread.request(pdu)
-        #self.request(pdu)
-        #print dumpHex(pdu)
+	if not self._connection.connected:
+             self._connection.connect()
+	else:
+             pdu = apdu.createConnectRequestPDU(0x01)
+             self._modelThread.request(pdu)
 
     def disconnect(self):
         pass

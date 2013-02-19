@@ -42,11 +42,6 @@ config = Config()
 
 config.loadConfiguration()  ## TEST!!!
 
-print config.serverIP
-print config.subnetMask
-print config.serverPort
-
-
 #SERVER = '192.168.1.2'  # TODO: Adjust to the IP-address of your Arduino board!
 
 #SERVER = 'localhost'
@@ -75,20 +70,28 @@ class Connector(ConnectionIF):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.settimeout(0.5)
+	self.serverIP = serverIP
+	self.serverPort = serverPort
+	self.connected = False
 
     def connect(self):
-        self.connection = self.sock.connect((serverIP, int(serverPort)))
+	try:
+             self.connection = self.sock.connect((self.serverIP, int(self.serverPort)))
+	     self.connected = True
+	except Exception as e:
+             print str(e)
 
     def __del__(self):
         self.sock.close()
-        print "FIN"
 
     def write(self, data):
-        self.sock.send(bytearray(data))
+	if self.connected:
+             self.sock.send(bytearray(data))
 
     def read(self):
-        data = bytearray(self.sock.recv(BUF_SIZE))
-        return data
+	if self.connected:
+             data = bytearray(self.sock.recv(BUF_SIZE))
+             return data
 
 """
 

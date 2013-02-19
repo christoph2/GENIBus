@@ -46,7 +46,6 @@ class IController(object):
         self._view = viewClass  # (self, model)
         self._waitingPoint = threading.Event()
         connection = connectionFactory(config.networkDriver)
-        print "CON: ", connection
         self._model = modelCls(self._waitingPoint, connection)
         setattr(self._model, '_controller', self)
         self._viewThread = self._view.initialize(self._model, IController.quitViewEvent)
