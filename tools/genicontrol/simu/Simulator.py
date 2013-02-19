@@ -584,6 +584,9 @@ class SimulationServer(ConnectionIF):
         self._request = None
         self._response = None
 
+    def connect(self):
+        pass
+
     def write(self, req):
         #print "Request: " , req
         resp = createResponse(dissectResponse(req))

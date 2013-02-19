@@ -45,6 +45,8 @@ class IController(object):
         self._pub = Publisher()
         self._view = viewClass  # (self, model)
         self._waitingPoint = threading.Event()
+        connection = connectionFactory(config.networkDriver)
+        print "CON: ", connection
         self._model = modelCls(self._waitingPoint)
         setattr(self._model, '_controller', self)
         self._viewThread = self._view.initialize(self._model, IController.quitViewEvent)
@@ -60,3 +62,11 @@ class IController(object):
         self._view.updateBusmonitor(rxTx, telegram)
         self._sync.release()
 
+
+def connectionFactory(driver):
+    from genicontrol.simu.Simulator import SimulationServer
+    from genicontrol.tcpclient import Connector, SERVER
+    if driver == '0':
+        return Connector(SERVER, config.serverPort)
+    else:
+        return SimulationServer()

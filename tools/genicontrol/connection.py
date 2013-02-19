@@ -32,16 +32,12 @@ import logging
 
 logger = logging.getLogger("genicontrol")
 
-def ConnectionFactory(driver):
-    if driver == '0':
-        value = 'Simulator'
-    else:
-        value = 'Arduino / TCP'
-
-
 class ConnectionIF(object):
     __metaclass__ = abc.ABCMeta
     logger = logging.getLogger("genicontrol")
+
+    @abc.abstractmethod
+    def connect (self): pass
 
     @abc.abstractmethod
     def write(self, data): pass

@@ -76,6 +76,7 @@ class Connector(ConnectionIF):
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.settimeout(0.5)
 
+    def connect(self):
         self.connection = self.sock.connect((serverIP, int(serverPort)))
 
     def __del__(self):
@@ -88,13 +89,6 @@ class Connector(ConnectionIF):
     def read(self):
         data = bytearray(self.sock.recv(BUF_SIZE))
         return data
-
-#cn = Connector(config.serverIP, config.serverPort)
-cn = Connector(SERVER, config.serverPort)
-
-cn.write('hello word!!!')
-print "RCV: ", cn.read()
-del cn
 
 """
 
