@@ -58,7 +58,7 @@ class NullModel(ModelIf.IModel):
         self._valueDict = createDataDictionary()
         self._infoDict = createDataDictionary()
         self._values = dict()
-        self._connection = SimulationServer()
+        #self._connection = SimulationServer()
         self._modelThread = RequestorThread(self)
         self._requestQueue = self._modelThread.requestQueue
         self._modelThread.start()

@@ -47,7 +47,7 @@ class IController(object):
         self._waitingPoint = threading.Event()
         connection = connectionFactory(config.networkDriver)
         print "CON: ", connection
-        self._model = modelCls(self._waitingPoint)
+        self._model = modelCls(self._waitingPoint, connection)
         setattr(self._model, '_controller', self)
         self._viewThread = self._view.initialize(self._model, IController.quitViewEvent)
         self._sync = threading.RLock()
@@ -64,9 +64,10 @@ class IController(object):
 
 
 def connectionFactory(driver):
+    #print "DRIVER:", driver
     from genicontrol.simu.Simulator import SimulationServer
     from genicontrol.tcpclient import Connector, SERVER
-    if driver == '0':
+    if driver == '1':
         return Connector(SERVER, config.serverPort)
     else:
         return SimulationServer()

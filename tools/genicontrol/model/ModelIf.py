@@ -37,10 +37,11 @@ class IModel(object):
     __metaclass__ = abc.ABCMeta
     logger = logging.getLogger("genicontrol")
 
-    def __init__(self, waitingPoint):
+    def __init__(self, waitingPoint, connection):
         #super(IModel, self).__init__(self)
         self._pub = Publisher()
         self._waitingPoint = waitingPoint
+	self._connection = connection
         #self.initialize()
 
     def sendMessage(self, topic, data):
