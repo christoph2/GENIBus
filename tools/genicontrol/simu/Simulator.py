@@ -583,9 +583,10 @@ class SimulationServer(ConnectionIF):
     def __init__(self, *args, **kwargs):
         self._request = None
         self._response = None
+	self.connected = False
 
     def connect(self):
-        pass
+        self.connected = True
 
     def write(self, req):
         #print "Request: " , req
