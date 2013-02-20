@@ -67,21 +67,21 @@ class Connector(ConnectionIF):
     DRIVER = 'Arduino / TCP'
 
     def __init__(self, serverIP, serverPort):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.settimeout(0.5)
 	self.serverIP = serverIP
 	self.serverPort = serverPort
-	print "INIT -- IP: '%s' PORT: '%s'" % (self.serverIP, int(self.serverPort))
 	self.connected = False
 
     def connect(self):
 	try:
+	     self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+             self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+             self.sock.settimeout(0.5)
              self.connection = self.sock.connect((self.serverIP, int(self.serverPort)))
 	     self.connected = True
+	     return True
 	except Exception as e:
-	     print "EXC -- IP: '%s' PORT: '%s'" % (self.serverIP, int(self.serverPort))
              print str(e)
+	     return False
 
     def disconnect(self):
 	self.connected = False

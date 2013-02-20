@@ -82,6 +82,8 @@ class NullModel(ModelIf.IModel):
 	if toDriver:
 	     res = self._connection.connect()
 	     self.connected = res
+	     if not res:
+	          self._connection.close()
 	else:
              pdu = apdu.createConnectRequestPDU(0x01)
 	     self._modelThread.request(pdu)

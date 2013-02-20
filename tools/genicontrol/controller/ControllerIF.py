@@ -63,10 +63,12 @@ class IController(object):
 
 
 def connectionFactory(driver):
-    #print "DRIVER:", driver
     from genicontrol.simu.Simulator import SimulationServer
-    from genicontrol.tcpclient import Connector, SERVER
+    from genicontrol.tcpclient import Connector 
+
+    ip = config.serverIP
+    port = config.serverPort
     if driver == '1':
-        return Connector(SERVER, config.serverPort)
+        return Connector(ip, port)
     else:
         return SimulationServer()
