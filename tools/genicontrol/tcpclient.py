@@ -72,6 +72,7 @@ class Connector(ConnectionIF):
         self.sock.settimeout(0.5)
 	self.serverIP = serverIP
 	self.serverPort = serverPort
+	print "INIT -- IP: '%s' PORT: '%s'" % (self.serverIP, int(self.serverPort))
 	self.connected = False
 
     def connect(self):
@@ -79,10 +80,18 @@ class Connector(ConnectionIF):
              self.connection = self.sock.connect((self.serverIP, int(self.serverPort)))
 	     self.connected = True
 	except Exception as e:
+	     print "EXC -- IP: '%s' PORT: '%s'" % (self.serverIP, int(self.serverPort))
              print str(e)
 
+    def disconnect(self):
+	self.connected = False
+
+    def close(self):
+	self.connected = False
+	self.sock.close()
+
     def __del__(self):
-        self.sock.close()
+        self.close()
 
     def write(self, data):
 	if self.connected:

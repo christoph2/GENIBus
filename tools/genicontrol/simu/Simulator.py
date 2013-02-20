@@ -587,17 +587,24 @@ class SimulationServer(ConnectionIF):
 
     def connect(self):
         self.connected = True
+	return True
+
+    def disconnect(self):
+	self.connected = False
+
+    def close(self):
+	self.connected = False
 
     def write(self, req):
-        #print "Request: " , req
-        resp = createResponse(dissectResponse(req))
-        #print "Our response: ", dumpHex(resp)
-        self._response = resp
+	if self.connected:
+             resp = createResponse(dissectResponse(req))
+             self._response = resp
 
     def read(self):
-        resp = self._response
-        self._response = None
-        return resp
+	if self.connected:
+             resp = self._response
+             self._response = None
+             return resp
 
 
 def testResponse(telegram, datapoints, valueInterpretation):

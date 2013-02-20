@@ -72,12 +72,13 @@ class WorkerThread(threading.Thread):
 
 class RequestorThread(threading.Thread):
     STATE_IDLE          = 0
-    STATE_CONNECT       = 1
-    STATE_REQ_INFO      = 2
-    STATE_REQ_REFS      = 3
-    STATE_REQ_PARAM     = 4
-    STATE_REQ_STRING    = 5
-    STATE_OPERATIONAL   = 6
+    STATE_CONNECT_LL    = 1
+    STATE_CONNECT_HL	= 2
+    STATE_REQ_INFO      = 3
+    STATE_REQ_REFS      = 4
+    STATE_REQ_PARAM     = 5
+    STATE_REQ_STRING    = 6
+    STATE_OPERATIONAL   = 7
 
     _clsLock = threading.Lock()
     _respQueue = queue.Queue()
@@ -113,10 +114,14 @@ class RequestorThread(threading.Thread):
         self.logger.info("Starting %s." % name)
         while True:
             if self.getState() == RequestorThread.STATE_IDLE:
-                self.setState(RequestorThread.STATE_CONNECT)
+                
                 self.logger.info('Trying to connect to %s.' % self._model._connection.getDriver())
                 self._currentRetry += 1
-                self._model.connect()
+                self._model.connect(toDriver = True)
+		if self._model.connected:
+		     self.setState(RequestorThread.STATE_CONNECT_HL)
+	    elif self.getState() == RequestorThread.STATE_CONNECT_HL:
+		    self._model.connect(toDriver = False)
             elif self.getState() == RequestorThread.STATE_REQ_INFO:
                 if self._infoRequests:
                     req, self._requestedDatapoints = self._infoRequests.pop()
@@ -170,10 +175,11 @@ class RequestorThread(threading.Thread):
                 response = dissectResponse(data)
             except Exception as e:
                 print str(e), data
-            if self.getState() == RequestorThread.STATE_CONNECT:
-                self.setState(RequestorThread.STATE_REQ_INFO)
-                self.processConnectResp(response)
-                self._infoRequests = createInfoRequestTelegrams(self._model.getUnitAddress())
+            if self.getState() == RequestorThread.STATE_CONNECT_HL:
+                 if  self._model._connection.connected:
+                     self.setState(RequestorThread.STATE_REQ_INFO)
+                     self.processConnectResp(response)
+                     self._infoRequests = createInfoRequestTelegrams(self._model.getUnitAddress())
             elif self.getState() == RequestorThread.STATE_REQ_INFO:
                 result = interpreteInfoResponse(response, self._requestedDatapoints)
                 self._model.updateInfoDict(result)

@@ -59,6 +59,7 @@ class NullModel(ModelIf.IModel):
         self._infoDict = createDataDictionary()
         self._values = dict()
         #self._connection = SimulationServer()
+	self.connected = False
         self._modelThread = RequestorThread(self)
         self._requestQueue = self._modelThread.requestQueue
         self._modelThread.start()
@@ -77,12 +78,13 @@ class NullModel(ModelIf.IModel):
         self._controller.trace(True, resp)
         return resp
 
-    def connect(self, *parameters):
-	if not self._connection.connected:
-             self._connection.connect()
+    def connect(self, toDriver = True):
+	if toDriver:
+	     res = self._connection.connect()
+	     self.connected = res
 	else:
              pdu = apdu.createConnectRequestPDU(0x01)
-             self._modelThread.request(pdu)
+	     self._modelThread.request(pdu)
 
     def disconnect(self):
         pass

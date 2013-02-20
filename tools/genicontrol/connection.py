@@ -37,13 +37,19 @@ class ConnectionIF(object):
     logger = logging.getLogger("genicontrol")
 
     @abc.abstractmethod
-    def connect (self): pass
+    def connect(self): pass
+
+    @abc.abstractmethod
+    def disconnect(self): pass
 
     @abc.abstractmethod
     def write(self, data): pass
 
     @abc.abstractmethod
     def read(self): pass
+
+    @abc.abstractmethod
+    def close(self): pass
 
     def getDriver(self):
         return self.DRIVER
