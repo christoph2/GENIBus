@@ -34,7 +34,7 @@ from genicontrol.model.config import DataitemConfiguration
 import genicontrol.conversion as conversion
 from genicontrol.request import RequestorThread
 from genicontrol.scale import getScalingInfo
-from genicontrol.dissect import dissectControlMode
+from genicontrol.dissect import dissectPumpStatus
 import genicontrol.dataitems as dataitems
 import genicontrol.defs as defs
 from genicontrol.simu.Simulator import SimulationServer
@@ -122,7 +122,7 @@ class NullModel(ModelIf.IModel):
             if key in NullModel.SPECIAL_DATAPOINTS:
 		 # Special handling of bit fields.
 		 msg = "PUMP_STATUS.%s"
-                 datapoints = dissectControlMode(key, value)
+                 datapoints = dissectPumpStatus(key, value)
 		 for key, value in datapoints:
 		        print msg % key
 		 	self.sendMessage(msg % key, str(value))

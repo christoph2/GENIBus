@@ -99,7 +99,7 @@ def dissectResponse(frame):
 
 
 
-def dissectControlMode(dp, value):
+def dissectPumpStatus(dp, value):
     result = []
     if dp == 'act_mode1':
         operationMode = (value & 0x7)
