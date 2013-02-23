@@ -135,6 +135,19 @@ def dissectPumpStatus(dp, value):
         result.append(('minimumCurve', minimumCurve))
     elif dp == 'act_mode3':
         pass
+    elif dp == 'contr_source':
+	cs = (value & 0x0f) >> 4
+	if cs == 0b0001:
+	    contrSource = "Buttons"
+   	elif cs == 0b0010:
+	    contrSource = "GENIBus"
+      	elif cs == 0b0011:
+	    contrSource = "GENILink"
+   	elif cs == 0b0100:
+	    contrSource = "External control"   
+	else:
+	    contrSource = '---'
+	result.append(('activeSource', contrSource))
     return result
 
 

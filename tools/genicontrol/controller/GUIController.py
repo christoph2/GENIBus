@@ -80,7 +80,7 @@ class ControllerThread(threading.Thread):
     def onPumpStatus(self, msg):
         group, item = msg.topic
 	data = msg.data
-	#print "Pump-Status: ", group, item, data
+	print group, item, data
 
 class GUIController(IController):
     def __init__(self, modelCls, view):

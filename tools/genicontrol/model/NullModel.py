@@ -44,7 +44,7 @@ from genicontrol.utils import dumpHex
 class NullModel(ModelIf.IModel):
     logger = logging.getLogger("genicontrol")
     TYPE = "Simulator"
-    SPECIAL_DATAPOINTS = ('act_mode1', 'act_mode2', 'act_mode3')
+    SPECIAL_DATAPOINTS = ('act_mode1', 'act_mode2', 'act_mode3', 'contr_source')
 
     def initialize(self, quitEvent):
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues']):
@@ -123,7 +123,6 @@ class NullModel(ModelIf.IModel):
 		 msg = "PUMP_STATUS.%s"
                  datapoints = dissectPumpStatus(key, value)
 		 for key, value in datapoints:
-		        print msg % key
 		 	self.sendMessage(msg % key, str(value))
 	    else:
                  info = self.getInfo(defs.ADPUClass.MEASURERED_DATA, key)
