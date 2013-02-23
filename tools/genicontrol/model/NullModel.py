@@ -117,7 +117,6 @@ class NullModel(ModelIf.IModel):
 
     def updateMeasurements(self, measurements):
 	items = measurements.items()
-        msg = "MEASURERED_DATA.%s"
         for key, value in items:
             if key in NullModel.SPECIAL_DATAPOINTS:
 		 # Special handling of bit fields.
@@ -126,18 +125,18 @@ class NullModel(ModelIf.IModel):
 		 for key, value in datapoints:
 		        print msg % key
 		 	self.sendMessage(msg % key, str(value))
-		 continue
-
-            info = self.getInfo(defs.ADPUClass.MEASURERED_DATA, key)
-            scalingInfo = getScalingInfo(info)
-            if value == 0xff:
-                scaledValue = 'n/a'
-            else:
-                if (info.head & 0x02) == 2:
-                    scaledValue = "%.2f" % conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor)
-                else:
-                     scaledValue = str(value) # Unscaled.
-                self.sendMessage(msg % key, scaledValue)
+	    else:
+                 info = self.getInfo(defs.ADPUClass.MEASURERED_DATA, key)
+                 scalingInfo = getScalingInfo(info)
+                 if value == 0xff:
+                     scaledValue = 'n/a'
+                 else:
+                     if (info.head & 0x02) == 2:
+                         scaledValue = "%.2f" % conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor)
+                     else:
+                         scaledValue = str(value) # Unscaled.
+		     msg = "MEASURERED_DATA.%s"
+                     self.sendMessage(msg % key, scaledValue)
 
     def updateReferences(self, references):
         msg = "REFERENCE_VALUES.%s"
