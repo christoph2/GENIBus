@@ -38,8 +38,8 @@ void setup(void)
 void frameReceived(uint8 * buffer, uint8 len)
 {
 
-    Serial.print("Frame completed!");
-    Serial.print("\n\r");
+    //Serial.print("Frame completed!");
+    //Serial.print("\n\r");
 
     // TAP#4 - If we reach this point, TestClient should be able to receive an display the completed frame.
     client.write(buffer, len);
@@ -48,7 +48,7 @@ void frameReceived(uint8 * buffer, uint8 len)
 
 void errorCallout(Gb_Error error, uint8 * buffer, uint8 len)  //  Needs latest software version to compile!!!
 {
-    Serial.print("CRC-Error\n\r"); // Only a single cause of error right now.
+    //Serial.print("CRC-Error\n\r"); // Only a single cause of error right now.
     client.write(buffer, len);
     client.stop();
 }
@@ -64,8 +64,8 @@ void loop(void)
 
     if (client) {
 
-        Serial.print(" server available ");
-        Serial.print("\n\r");
+        //Serial.print(" server available ");
+        //Serial.print("\n\r");
         //delay(500);
 
         // TAP#1 - Indicates basic TCP/IP connectivity.
@@ -125,8 +125,8 @@ void readRequest(EthernetClient client)
 
                 if (remainingBytes == 0) {
 
-                    Serial.print("TCP frame completed");
-                    Serial.print("\n\r");
+                    //Serial.print("TCP frame completed");
+                    //Serial.print("\n\r");
                     link.reset();
                     // TAP#2 - Complete telegram received from TestClient.
                     return;
