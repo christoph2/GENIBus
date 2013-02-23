@@ -116,8 +116,18 @@ class NullModel(ModelIf.IModel):
         pass
 
     def updateMeasurements(self, measurements):
+	items = measurements.items()
         msg = "MEASURERED_DATA.%s"
-        for key, value in measurements.items():
+        for key, value in items:
+            if key in NullModel.SPECIAL_DATAPOINTS:
+		 # Special handling of bit fields.
+		 msg = "PUMP_STATUS.%s"
+                 datapoints = dissectControlMode(key, value)
+		 for key, value in datapoints:
+		        print msg % key
+		 	self.sendMessage(msg % key, str(value))
+		 continue
+
             info = self.getInfo(defs.ADPUClass.MEASURERED_DATA, key)
             scalingInfo = getScalingInfo(info)
             if value == 0xff:
@@ -126,12 +136,7 @@ class NullModel(ModelIf.IModel):
                 if (info.head & 0x02) == 2:
                     scaledValue = "%.2f" % conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor)
                 else:
-                    if key in NullModel.SPECIAL_DATAPOINTS:
-                        #print "SPECIAL: %s" % key,
-                        #print dissectControlMode(key, value)
-                        scaledValue = str(value)
-                    else:
-                        scaledValue = str(value) # Unscaled.
+                     scaledValue = str(value) # Unscaled.
                 self.sendMessage(msg % key, scaledValue)
 
     def updateReferences(self, references):

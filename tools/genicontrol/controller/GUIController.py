@@ -46,6 +46,7 @@ class ControllerThread(threading.Thread):
         self.quitEvent = quitEvent
         self.setName(self.__class__.__name__)
         Publisher().subscribe(self.onInfoUpdate, 'INFO')
+	Publisher().subscribe(self.onPumpStatus, 'PUMP_STATUS')
         for klass in defs.ADPUClass.nameDict.values():
             Publisher().subscribe(self.onChange, klass)
 
@@ -75,6 +76,11 @@ class ControllerThread(threading.Thread):
         if group == 'MEASURERED_DATA':
             self._view.notebook.mcPanel.setValue(item, msg.data)
 
+
+    def onPumpStatus(self, msg):
+        group, item = msg.topic
+	data = msg.data
+	#print "Pump-Status: ", group, item, data
 
 class GUIController(IController):
     def __init__(self, modelCls, view):
