@@ -154,3 +154,6 @@ class MCPanel(ScrolledPanel):
                     if item == 'f_act':
                         value = int(value)
                     control.SetValue(value)
+
+    def setPumpStatus(self, item, value):
+	pass

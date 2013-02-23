@@ -80,7 +80,7 @@ class ControllerThread(threading.Thread):
     def onPumpStatus(self, msg):
         group, item = msg.topic
 	data = msg.data
-	print group, item, data
+	self._view.notebook.mcPanel.setPumpStatus(item, data)
 
 class GUIController(IController):
     def __init__(self, modelCls, view):
