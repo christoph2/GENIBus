@@ -30,24 +30,26 @@ import locale
 import logging
 logger = logging.getLogger("genicontrol")
 
+from decimal import Decimal as D
+
 locale.setlocale(locale.LC_ALL, '')
 
 def asLocaleString(value):
     return locale.format("%0.2f", value, True)
 
 def convertForward8(x, zero, range, unit):
-    return (zero + ((x & 0xff) * (range / 254.0))) * unit
+    return (D(zero) + (D(x & 0xff) * (D(range) / D('254.0')))) * D(unit)
 
 
 def convertReverse8(x, zero, range, unit):
-    return (254.0 / (range * unit)) * ((-zero * unit) + x)
+    return (D('254.0') / (D(range) * D(unit))) * ((D(-zero) * D(unit)) + D(x))
 
 
 def convertForward16(x, zero, range, unit):
-    return (zero + ((x & 0xffff) * (range / (254.0 * 256.0)))) * unit
+    return (D(zero) + (D(x & 0xffff) * (D(range) / (D('254.0') * D('256.0'))))) * D(unit)
 
 
 def convertReverse16(x, zero, range, unit):
-    return ((254.0 * 256.0)/ (range * unit)) * ((-zero * unit) + x)
+    return ((D('254.0') * D('256.0'))/ (D(range) * D(unit))) * ((D(-zero) * D(unit)) + D(x))
 
 
