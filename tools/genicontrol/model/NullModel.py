@@ -38,7 +38,7 @@ from genicontrol.dissect import dissectPumpStatus
 import genicontrol.dataitems as dataitems
 import genicontrol.defs as defs
 from genicontrol.simu.Simulator import SimulationServer
-from genicontrol.utils import dumpHex
+from genicontrol.utils import dumpHex, makeWord
 
 
 class NullModel(ModelIf.IModel):
@@ -59,7 +59,7 @@ class NullModel(ModelIf.IModel):
         self._infoDict = createDataDictionary()
         self._values = dict()
         #self._connection = SimulationServer()
-	self.connected = False
+        self.connected = False
         self._modelThread = RequestorThread(self)
         self._requestQueue = self._modelThread.requestQueue
         self._modelThread.start()
@@ -79,14 +79,14 @@ class NullModel(ModelIf.IModel):
         return resp
 
     def connect(self, toDriver = True):
-	if toDriver:
-	     res = self._connection.connect()
-	     self.connected = res
-	     if not res:
-	          self._connection.close()
-	else:
+        if toDriver:
+             res = self._connection.connect()
+             self.connected = res
+             if not res:
+                  self._connection.close()
+        else:
              pdu = apdu.createConnectRequestPDU(0x01)
-	     self._modelThread.request(pdu)
+             self._modelThread.request(pdu)
 
     def disconnect(self):
         pass
@@ -116,15 +116,26 @@ class NullModel(ModelIf.IModel):
         pass
 
     def updateMeasurements(self, measurements):
-	items = measurements.items()
+        items = measurements.items()
         for key, value in items:
             if key in NullModel.SPECIAL_DATAPOINTS:
-		 # Special handling of bit fields.
-		 msg = "PUMP_STATUS.%s"
+                 # Special handling of bit fields.
+                 msg = "PUMP_STATUS.%s"
                  datapoints = dissectPumpStatus(key, value)
-		 for key, value in datapoints:
-		 	self.sendMessage(msg % key, str(value))
-	    else:
+                 for key, value in datapoints:
+                        self.sendMessage(msg % key, str(value))
+            elif key.endswith('_lo'):
+                continue
+            elif key.endswith('_hi'):
+                key = key[ : key.index('_hi')]
+                #print "16Bit", key,
+                value_hi = value
+                value_lo = measurements[key + '_lo']
+                value = makeWord(value_hi, value_lo)
+                scaledValue = "%.2f" % conversion.convertForward16(value, info.zero, info.range, scalingInfo.factor)
+                msg = "MEASURERED_DATA.%s"
+                self.sendMessage(msg % key + '_hi', scaledValue)
+            else:
                  info = self.getInfo(defs.ADPUClass.MEASURERED_DATA, key)
                  scalingInfo = getScalingInfo(info)
                  if value == 0xff:
@@ -134,7 +145,7 @@ class NullModel(ModelIf.IModel):
                          scaledValue = "%.2f" % conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor)
                      else:
                          scaledValue = str(value) # Unscaled.
-		     msg = "MEASURERED_DATA.%s"
+                     msg = "MEASURERED_DATA.%s"
                      self.sendMessage(msg % key, scaledValue)
 
     def updateReferences(self, references):

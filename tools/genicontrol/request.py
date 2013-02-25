@@ -73,7 +73,7 @@ class WorkerThread(threading.Thread):
 class RequestorThread(threading.Thread):
     STATE_IDLE          = 0
     STATE_CONNECT_LL    = 1
-    STATE_CONNECT_HL	= 2
+    STATE_CONNECT_HL    = 2
     STATE_REQ_INFO      = 3
     STATE_REQ_REFS      = 4
     STATE_REQ_PARAM     = 5
@@ -114,14 +114,14 @@ class RequestorThread(threading.Thread):
         self.logger.info("Starting %s." % name)
         while True:
             if self.getState() == RequestorThread.STATE_IDLE:
-                
+
                 self.logger.info('Trying to connect to %s.' % self._model._connection.getDriver())
                 self._currentRetry += 1
                 self._model.connect(toDriver = True)
-		if self._model.connected:
-		     self.setState(RequestorThread.STATE_CONNECT_HL)
-	    elif self.getState() == RequestorThread.STATE_CONNECT_HL:
-		    self._model.connect(toDriver = False)
+                if self._model.connected:
+                     self.setState(RequestorThread.STATE_CONNECT_HL)
+            elif self.getState() == RequestorThread.STATE_CONNECT_HL:
+                    self._model.connect(toDriver = False)
             elif self.getState() == RequestorThread.STATE_REQ_INFO:
                 if self._infoRequests:
                     req, self._requestedDatapoints = self._infoRequests.pop()
@@ -145,7 +145,9 @@ class RequestorThread(threading.Thread):
                     )
                     self.request(req)
             elif self.getState() == RequestorThread.STATE_OPERATIONAL:
-                self._requestedDatapoints = ('speed', 'h', 'q', 'p', 'f_act', 'act_mode1', 'act_mode2', 'act_mode3', 'contr_source')
+                self._requestedDatapoints = ('speed', 'h', 'q', 'p', 'f_act', 'act_mode1', 'act_mode2', 'act_mode3',
+                    'contr_source', 'energy_hi', 'energy_lo', 't_2hour_hi', 't_2hour_lo'
+                )
                 req = apdu.createGetValuesPDU(
                     apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x04),
                     measurements = self._requestedDatapoints
