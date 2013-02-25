@@ -115,6 +115,9 @@ def dissectPumpStatus(dp, value):
             om = 'MIN'
         elif operationMode == 0x03:
             om = 'MAX'
+        else:
+            logger.info('FIX-ME: operationMode "%u"' % operationMode)
+
         result.append(('operationMode', om, ))
 
         if controlMode == 0x00:
@@ -134,20 +137,33 @@ def dissectPumpStatus(dp, value):
         result.append(('buttonsOnPump', buttonsOnPump))
         result.append(('minimumCurve', minimumCurve))
     elif dp == 'act_mode3':
-        pass
+        sm = value & 0x07
+        if sm == 0:
+            systemMode = 'Normal'
+        elif sm == 3:
+            systemMode = 'Survive'
+        elif sm == 4:
+            systemMode = 'Alarm Standby'
+        else:
+            systemMode = '???'
+        result.append(('systemMode', systemMode))
+        pendingAlarm = (value & 0x08) >> 3
+        result.append(('pendingAlarm', pendingAlarm))
+        sourceMode = (value & 0xc0) >> 6
+        result.append(('sourceMode', sourceMode))
     elif dp == 'contr_source':
-	cs = (value & 0x0f) >> 4
-	if cs == 0b0001:
-	    contrSource = "Buttons"
-   	elif cs == 0b0010:
-	    contrSource = "GENIBus"
-      	elif cs == 0b0011:
-	    contrSource = "GENILink"
-   	elif cs == 0b0100:
-	    contrSource = "External control"   
-	else:
-	    contrSource = '---'
-	result.append(('activeSource', contrSource))
+        cs = (value & 0x0f) >> 4
+        if cs == 0b0001:
+            contrSource = "Buttons"
+        elif cs == 0b0010:
+            contrSource = "GENIBus"
+        elif cs == 0b0011:
+            contrSource = "GENILink"
+        elif cs == 0b0100:
+            contrSource = "External control"
+        else:
+            contrSource = '---'
+        result.append(('activeSource', contrSource))
     return result
 
 
