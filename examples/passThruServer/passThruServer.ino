@@ -104,7 +104,7 @@ void readRequest(EthernetClient client)
     while (client.connected()) {
         if (client.available()) {
             ch = client.read();
-            //link.write(ch);
+            link.write(ch);
 
             //Serial.print("ch: ");
             //Serial.print(ch);
