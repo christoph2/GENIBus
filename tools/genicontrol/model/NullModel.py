@@ -26,6 +26,8 @@
 ##
 ##
 
+
+import math
 import threading
 import logging
 import genicontrol.apdu as apdu
@@ -115,6 +117,9 @@ class NullModel(ModelIf.IModel):
     def sendCommand(self, command):
         pass
 
+    def roundValue(self, value):
+        return int(math.ceil(value * 100))/100.00
+
     def updateMeasurements(self, measurements):
         items = measurements.items()
         for key, value in items:
@@ -132,7 +137,7 @@ class NullModel(ModelIf.IModel):
                 value_hi = value
                 value_lo = measurements[key + '_lo']
                 value = makeWord(value_hi, value_lo)
-                scaledValue = "%.2f" % conversion.convertForward16(value, info.zero, info.range, scalingInfo.factor)
+                scaledValue = "%.2f" % self.roundValue(conversion.convertForward16(value, info.zero, info.range, scalingInfo.factor))
                 msg = "MEASURERED_DATA.%s"
                 self.sendMessage(msg % key + '_hi', scaledValue)
             else:
@@ -141,12 +146,12 @@ class NullModel(ModelIf.IModel):
                  if value == 0xff:
                      scaledValue = 'n/a'
                  else:
-                     if (info.head & 0x02) == 2:
-                         scaledValue = "%.2f" % conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor)
-                     else:
-                         scaledValue = str(value) # Unscaled.
-                     msg = "MEASURERED_DATA.%s"
-                     self.sendMessage(msg % key, scaledValue)
+                    if (info.head & 0x02) == 2:
+                        scaledValue = "%.2f" % self.roundValue(conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor))
+                    else:
+                        scaledValue = str(value) # Unscaled.
+                    msg = "MEASURERED_DATA.%s"
+                    self.sendMessage(msg % key, scaledValue)
 
     def updateReferences(self, references):
         msg = "REFERENCE_VALUES.%s"
