@@ -10,12 +10,13 @@ IPAddress subnet = (255, 255, 255, 0);
 #define LOCAL_PORT  6734
 
 /* TODO: The IP-configuration has to be adjusted to your needs!!! */
-IPAddress myIP(192, 168, 1, 3);        // for Linux users: adjust the two first line on the file /etc/hosts:
-IPAddress serverIP(192, 168, 1, 2);    // IP address of "localhost" must be the same as "IPAddress serverIP", for example "192.168.1.2  localhost"
-//IPAddress gateway = (192,168, 1, 1);    // and, 2nd line, "192.168.1.2   'my computer name'"
-
-#define LED_PIN  9  /* Pin 13 has an LED connected on most Arduino boards, otherwise this should be changed. */
-                    /* Pin 9: led connected on Arduino Ethernet board*/
+IPAddress myIP(192, 168, 1, 3);         // for Linux users: adjust the two first line on the file /etc/hosts:
+IPAddress serverIP(192, 168, 1, 2);     // IP address of "localhost" must be the same as "IPAddress serverIP", for example "192.168.1.2  localhost"
+//IPAddress gateway = (192,168, 1, 1);  // and, 2nd line, "192.168.1.2   'my computer name'"
+int EN = 2;                             // RS485 has a enable/disable pin to transmit or receive data.
+                                        // Arduino Digital Pin 2 = Rx/Tx 'Enable'; High to Transmit, Low to Receive
+int LED_PIN = 9;                        /* Pin 13 has an LED connected on most Arduino boards, otherwise this should be changed. */
+                                        /* Pin 9: led connected on Arduino Ethernet board*/
 
 EthernetServer server(LOCAL_PORT);
 EthernetClient client;
@@ -31,17 +32,17 @@ void setup(void)
 
     Serial.begin(9600);
 
-    pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, LOW);
+     pinMode(EN, OUTPUT);
+     pinMode(LED_PIN, OUTPUT);
+     setTxMode();
 }
 
 void frameReceived(uint8 * buffer, uint8 len)
 {
+    setTxMode();    // Switch back to TX mode.
+    delay(500);
+    digitalWrite(LED_PIN, LOW);
 
-    //Serial.print("Frame completed!");
-    //Serial.print("\n\r");
-
-    // TAP#4 - If we reach this point, TestClient should be able to receive an display the completed frame.
     client.write(buffer, len);
     client.stop();
 }
@@ -49,6 +50,10 @@ void frameReceived(uint8 * buffer, uint8 len)
 void errorCallout(Gb_Error error, uint8 * buffer, uint8 len)  //  Needs latest software version to compile!!!
 {
     //Serial.print("CRC-Error\n\r"); // Only a single cause of error right now.
+    setTxMode();    // Switch back to TX mode.
+    delay(500);
+    digitalWrite(LED_PIN, LOW);
+
     client.write(buffer, len);
     client.stop();
 }
@@ -63,7 +68,8 @@ void loop(void)
     client = server.available();
 
     if (client) {
-
+        setTxMode();    // We need to be able to write the received telegram later on.
+        digitalWrite(LED_PIN, HIGH);    // Toggle LED before receiving.
         //Serial.print(" server available ");
         //Serial.print("\n\r");
         //delay(500);
@@ -77,10 +83,8 @@ void loop(void)
 
 void serialEvent(void)
 {
-    //Serial.print(" OK 1 ");
-    //Serial.print("\n\r");
-    //delay(500);
-
+    // receive data
+    //digitalWrite(LED_PIN, LOW);
     // TAP#3 - Pump received a correct request and is now answering.
     link.feed();
 }
@@ -90,10 +94,8 @@ void writeToClient(EthernetClient client, byte const * data, byte len)
 {
     client.write(data, len);
     client.stop();
-    //Serial.print(" OK 2 ");
-    //Serial.print("\n\r");
-    //delay(500);
 }
+
 
 void readRequest(EthernetClient client)
 {
@@ -106,38 +108,35 @@ void readRequest(EthernetClient client)
             ch = client.read();
             link.write(ch);
 
-            //Serial.print("ch: ");
-            //Serial.print(ch);
-            //Serial.print(" OK 3 ");
-            //Serial.print("\n\r");
-
             if (totalLength == 0x01) {  // Length byte.
                 remainingBytes = (byte)ch + 2;
 
-                //Serial.print(" OK 4 ");
-                //Serial.print("\n\r");
-
             } else if (totalLength > 1) {
                 remainingBytes -= 1;
-
-                //Serial.print(" OK 5 ");
-                //Serial.print("\n\r");
 
                 if (remainingBytes == 0) {
 
                     //Serial.print("TCP frame completed");
                     //Serial.print("\n\r");
                     link.reset();
-                    // TAP#2 - Complete telegram received from TestClient.
+                    setRxMode();    // TCP frame completely received and written to RS485, now receiving response.
                     return;
                 }
             }
             totalLength += 1;
-
-            //Serial.print(" OK 7 ");
-            //Serial.print("\n\r");
-
         }
     }
+}
+
+void setRxMode(void)
+{
+    digitalWrite(EN, LOW);//Enable RS485 Receiving Data
+    digitalWrite(LED_PIN, LOW);
+}
+
+void setTxMode(void)
+{
+    digitalWrite(EN, HIGH);//Enable RS485 Receiving Data
+    digitalWrite(LED_PIN, LOW);
 }
 
