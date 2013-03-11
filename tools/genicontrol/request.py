@@ -177,28 +177,29 @@ class RequestorThread(threading.Thread):
                 response = dissectResponse(data)
             except Exception as e:
                 print str(e), data
-            if self.getState() == RequestorThread.STATE_CONNECT_HL:
-                 if  self._model._connection.connected:
-                     self.setState(RequestorThread.STATE_REQ_INFO)
-                     self.processConnectResp(response)
-                     self._infoRequests = createInfoRequestTelegrams(self._model.getUnitAddress())
-            elif self.getState() == RequestorThread.STATE_REQ_INFO:
-                result = interpreteInfoResponse(response, self._requestedDatapoints)
-                self._model.updateInfoDict(result)
-            elif self.getState() == RequestorThread.STATE_REQ_REFS:
-                result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.REFERENCE_VALUES]
-                self.setState(RequestorThread.STATE_REQ_PARAM)
-                #self._model.updateReferences(result)
-            elif self.getState() == RequestorThread.STATE_REQ_PARAM:
-                result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.CONFIGURATION_PARAMETERS]
-                self._model.updateParameter(result)
-                self.setState(RequestorThread.STATE_OPERATIONAL)
-                self._cycleTime = CYCLE_TIME_OPERATIONAL
-            elif self.getState() == RequestorThread.STATE_OPERATIONAL:
-                result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.MEASURERED_DATA]
-                self._model.updateMeasurements(result)
             else:
-                pass
+                if self.getState() == RequestorThread.STATE_CONNECT_HL:
+                     if  self._model._connection.connected:
+                         self.setState(RequestorThread.STATE_REQ_INFO)
+                         self.processConnectResp(response)
+                         self._infoRequests = createInfoRequestTelegrams(self._model.getUnitAddress())
+                elif self.getState() == RequestorThread.STATE_REQ_INFO:
+                    result = interpreteInfoResponse(response, self._requestedDatapoints)
+                    self._model.updateInfoDict(result)
+                elif self.getState() == RequestorThread.STATE_REQ_REFS:
+                    result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.REFERENCE_VALUES]
+                    self.setState(RequestorThread.STATE_REQ_PARAM)
+                    #self._model.updateReferences(result)
+                elif self.getState() == RequestorThread.STATE_REQ_PARAM:
+                    result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.CONFIGURATION_PARAMETERS]
+                    self._model.updateParameter(result)
+                    self.setState(RequestorThread.STATE_OPERATIONAL)
+                    self._cycleTime = CYCLE_TIME_OPERATIONAL
+                elif self.getState() == RequestorThread.STATE_OPERATIONAL:
+                    result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.MEASURERED_DATA]
+                    self._model.updateMeasurements(result)
+                else:
+                    pass
 
     def processConnectResp(self, response):
         unitAddress = response.sa
