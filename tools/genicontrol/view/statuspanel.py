@@ -198,6 +198,7 @@ class PumpOperationPanel(wx.Panel):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
         self.items = (
             ("Operation Mode", "", controlids.ID_OPERATION_MODE),
+            ("System Mode", "", controlids.ID_SYSTEM_MODE),
             ("Control Source", "", controlids.ID_CONTROL_SOURCE),
 
             ("Ext. Analogue", "%", controlids.ID_EXT_ANALOGUE),
@@ -206,6 +207,9 @@ class PumpOperationPanel(wx.Panel):
             ("Setpoint", "m", controlids.ID_SETPOINT),
             ("Acual Setpoint", "m", controlids.ID_ACTUAL_SETPOINT),
         )
+        self.itemDict = {}
+        for item in self.items:
+            self.itemDict[item[0]] = item
         staticBox = wx.StaticBox(self, label = 'Pump operation')
         groupSizer = wx.StaticBoxSizer(staticBox)
 
@@ -213,6 +217,15 @@ class PumpOperationPanel(wx.Panel):
 
         groupSizer.Add(sizer)
         self.SetSizerAndFit(groupSizer)
+
+    def getControl(self, name):
+        _, _, ctrlId = self.itemDict[name]
+        return self.FindWindowById(ctrlId)
+
+    def setValue(self, item ,value):
+        ctrl = self.getControl(item)
+        ctrl.SetValue(value)
+
 
     def addValues(self):
         sizer = wx.GridBagSizer(5, 45)

@@ -67,6 +67,7 @@ ID_MEAS_HOURS_UNIT          = wx.NewId()
 ID_MEAS_PERFORMACE_UNIT     = wx.NewId()
 
 ID_OPERATION_MODE           = wx.NewId()
+ID_SYSTEM_MODE              = wx.NewId()
 ID_CONTROL_SOURCE           = wx.NewId()
 ID_EXT_ANALOGUE             = wx.NewId()
 ID_TOTAL_INFLUENCE          = wx.NewId()

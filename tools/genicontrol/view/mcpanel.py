@@ -155,5 +155,29 @@ class MCPanel(ScrolledPanel):
                         value = int(value)
                     control.SetValue(value)
 
+
+
     def setPumpStatus(self, item, value):
-	pass
+        #print "PS: ", item ,value
+        itemMap = {
+            'activeSource': "Control Source",
+            'operationMode': "Operation Mode",
+            'systemMode': "System Mode"
+        }
+
+        if itemMap.has_key(item):
+            name = itemMap[item]
+            self.pumpOperationPanel.setValue(name, value)
+
+"""
+systemMode
+pendingAlarm
+sourceMode
+temperatureInfluence
+buttonsOnPump
+minimumCurve
+nightReduction
+operationMode
+controlMode
+activeSource
+"""
