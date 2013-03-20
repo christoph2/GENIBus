@@ -218,12 +218,12 @@ class PumpOperationPanel(wx.Panel):
         groupSizer.Add(sizer)
         self.SetSizerAndFit(groupSizer)
 
-    def getControl(self, name):
+    def getControlByName(self, name):
         _, _, ctrlId = self.itemDict[name]
         return self.FindWindowById(ctrlId)
 
     def setValue(self, item ,value):
-        ctrl = self.getControl(item)
+        ctrl = self.getControlByName(item)
         ctrl.SetValue(value)
 
 
