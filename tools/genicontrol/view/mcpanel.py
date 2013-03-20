@@ -79,6 +79,7 @@ class Controls(wx.Panel):
 
         self.enableControls((controlids.ID_CMD_MAX, controlids.ID_CMD_MIN))
 
+
     def toggledbutton(self, event):
         # Active State
         if event.EventObject.GetValue() == True:
@@ -166,8 +167,10 @@ class MCPanel(ScrolledPanel):
         }
 
         if itemMap.has_key(item):
-            name = itemMap[item]
-            self.pumpOperationPanel.setValue(name, value)
+            self.pumpOperationPanel.setValue(itemMap[item], value)
+        if item == 'operationMode':
+            pass    # Set buttons according to control-mode.#
+            self.controlsPanel
 
 """
 systemMode

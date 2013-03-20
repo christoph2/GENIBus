@@ -36,6 +36,17 @@ from genicontrol.controller.ControllerIF import IController
 from wx.lib.pubsub import Publisher as Publisher
 
 
+class InfoWriter(object):
+    def __init__(self, fname):
+        self._file = file(fname, 'w')
+
+    def __del__(self):
+        self._file.close()
+
+    def write(self, data):
+        self._file.write(data)
+
+
 class ControllerThread(threading.Thread):
     logger = logging.getLogger("genicontrol")
 
@@ -65,6 +76,7 @@ class ControllerThread(threading.Thread):
                 svalue = getScalingInfo(value)
                 self._view.notebook.infoPanel.setItem(key, svalue.physEntity, str(svalue.factor), svalue.unit, str(value.zero), str(value.range))
                 self._view.notebook.infoPanel.grid.Fit()
+        #print msg.data.values()
 
     def onChange(self, msg):
         if len(msg.topic) == 1:
@@ -82,6 +94,7 @@ class ControllerThread(threading.Thread):
         data = msg.data
         #print "***PS***", item, data
         self._view.notebook.mcPanel.setPumpStatus(item, data)
+
 
 class GUIController(IController):
     def __init__(self, modelCls, view):

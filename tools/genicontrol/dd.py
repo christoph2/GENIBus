@@ -48,9 +48,5 @@ def loadDeviceInfo(family, type_, version):
 def saveDeviceInfo(family, type_, version, info):
     pass
 
-def main():
-    print deviceInfoExists(0x03, 0x01, 0x42)
 
-if __name__ == '__main__':
-    main()
 
