@@ -29,6 +29,23 @@
 import wx
 
 
+myEVT_BUTTON_CHANGED = wx.NewEventType()
+EVT_BUTTON_CHANGED = wx.PyEventBinder(myEVT_BUTTON_CHANGED, 1)
+
+
+class MyEvent(wx.PyCommandEvent):
+    def __init__(self, evtType, id):
+        wx.PyCommandEvent.__init__(self, evtType, id)
+        self._state = None
+
+    def setState(self, val):
+        self._state = val
+
+    def getState(self):
+        return self._state
+
+
+
 class MultipleChoiceButtons(wx.Panel):
     def __init__(self, parent, buttons, label = '', horizontal = True, default = None):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
@@ -81,5 +98,45 @@ class MultipleChoiceButtons(wx.Panel):
             self._activeButton.SetValue(False)
             self._activeButton = button
             self.callHandler(self.getActiveButtonName())
+
+
+class ToggleButton(wx.ToggleButton):
+    """Extends wx.ToggleButton with active/inactive labels.
+    """
+    def __init__(self, parent, labelOn, labelOff, bgColorOn = wx.Color(0, 255, 0)):
+        wx.ToggleButton.__init__(self, parent = parent, label = labelOn, id = wx.ID_ANY)
+        self.labelOn = labelOn
+        self.labelOff = labelOff
+        self.bgColorOff = self.GetBackgroundColour()
+        self.bgColorOn = bgColorOn
+
+        #sizer.Add(btn, 1, wx.ALL, 5)
+        #setattr(parent, buttonDesc.attrName, btn)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.buttonToggled)
+        self._handler = None
+
+    def setHandler(self, handler):
+        self._handler = handler
+
+    def callHandler(self, value):
+        if self._handler:
+            self._handler(value)
+
+    def buttonToggled(self, event):
+        state = event.EventObject.GetValue()
+
+        if state == True:       # Active State.
+            event.EventObject.SetLabel(event.EventObject.labelOff)
+            event.EventObject.SetBackgroundColour(event.EventObject.bgColorOn)
+        elif state == False:    # Inactive State.
+            event.EventObject.SetLabel(event.EventObject.labelOn)
+            event.EventObject.SetBackgroundColour(event.EventObject.bgColorOff)
+
+        evt = MyEvent(myEVT_BUTTON_CHANGED, self.GetId())
+        evt.setState(state)
+        self.GetEventHandler().ProcessEvent(evt)
+        event.Skip()
+
+ToggleButton.EVT_BUTTON_CHANGED = EVT_BUTTON_CHANGED
 
 

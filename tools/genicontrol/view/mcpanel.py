@@ -33,6 +33,7 @@ import genicontrol.controlids as controlids
 from genicontrol.model.config import DataitemConfiguration, MEAS_VALUES_DICT
 import genicontrol.dataitems as dataitems
 from genicontrol.view.statuspanel import StatusPanel, AlarmPanel, PumpOperationPanel
+import genicontrol.view.buttons as buttons
 
 ToggleButton = namedtuple('ToggleButton', 'id, labelOn, labelOff attrName')
 
@@ -49,7 +50,7 @@ def createToggleButton(parent, buttonDesc, sizer):
 class Controls(wx.Panel):
     def __init__(self, parent):
         self.toggleButtons = (
-            ToggleButton(controlids.ID_CMD_REMOTE_LOCAL, 'Remote', 'Local', 'btnRemoteLocal'),
+            #ToggleButton(controlids.ID_CMD_REMOTE_LOCAL, 'Remote', 'Local', 'btnRemoteLocal'),
             ToggleButton(controlids.ID_CMD_START_STOP, 'Start', 'Stop', 'btnStartStop'),
         )
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
@@ -65,8 +66,13 @@ class Controls(wx.Panel):
         sizer1.Add(sizer3)#, 1, wx.ALL, 5)
 
         sizer2 = wx.BoxSizer(wx.HORIZONTAL)
-        for btn in self.toggleButtons:
-            createToggleButton(self, btn, sizer2)
+        btnRemoteLocal = buttons.ToggleButton(self, 'Remote', 'Local')
+        sizer2.Add(btnRemoteLocal, 1, wx.ALL, 5)
+        btnStartStop = buttons.ToggleButton(self, 'Start', 'Stop')
+        sizer2.Add(btnStartStop, 1, wx.ALL, 5)
+
+        #for btn in self.toggleButtons:
+        #    createToggleButton(self, btn, sizer2)
 
         btn = wx.Button(self, label = 'Min', id = controlids.ID_CMD_MIN)
         sizer2.Add(btn, 1, wx.ALL, 5)
