@@ -278,6 +278,8 @@ def createInfoRequestTelegrams(destAddr):
                 telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x04), references = slice)
             elif klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
                 telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x04), parameter = slice)
+
+            #print "IR", telegram
             result.append((telegram, slice, ))
     return result
 

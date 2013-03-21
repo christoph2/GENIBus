@@ -33,9 +33,9 @@ myEVT_BUTTON_CHANGED = wx.NewEventType()
 EVT_BUTTON_CHANGED = wx.PyEventBinder(myEVT_BUTTON_CHANGED, 1)
 
 
-class MyEvent(wx.PyCommandEvent):
-    def __init__(self, evtType, id):
-        wx.PyCommandEvent.__init__(self, evtType, id)
+class ButtonChangedEvent(wx.PyCommandEvent):
+    def __init__(self, evtType, _id):
+        super(ButtonChangedEvent, self).__init__(evtType, _id)
         self._state = None
 
     def setState(self, val):
@@ -110,17 +110,14 @@ class ToggleButton(wx.ToggleButton):
         self.bgColorOff = self.GetBackgroundColour()
         self.bgColorOn = bgColorOn
 
-        #sizer.Add(btn, 1, wx.ALL, 5)
-        #setattr(parent, buttonDesc.attrName, btn)
         self.Bind(wx.EVT_TOGGLEBUTTON, self.buttonToggled)
-        self._handler = None
 
-    def setHandler(self, handler):
-        self._handler = handler
+    def setState(self, state):
+        self.SetValue(state)
+        #wx.PostEvent(self, EVT_BUTTON_CHANGED)
 
-    def callHandler(self, value):
-        if self._handler:
-            self._handler(value)
+    def getState(self):
+        return self.GetValue()
 
     def buttonToggled(self, event):
         state = event.EventObject.GetValue()
@@ -132,7 +129,7 @@ class ToggleButton(wx.ToggleButton):
             event.EventObject.SetLabel(event.EventObject.labelOn)
             event.EventObject.SetBackgroundColour(event.EventObject.bgColorOff)
 
-        evt = MyEvent(myEVT_BUTTON_CHANGED, self.GetId())
+        evt = ButtonChangedEvent(myEVT_BUTTON_CHANGED, self.GetId())
         evt.setState(state)
         self.GetEventHandler().ProcessEvent(evt)
         event.Skip()

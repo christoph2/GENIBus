@@ -89,8 +89,8 @@ class BusmonitorPanel(wx.Panel):
     def appendLine(self, rxTx, telegram):
         formattedTelegram = self.formatTelegram(rxTx, telegram)
         self.tc.AppendText(formattedTelegram)
-	if self.logFile:
-	     self.logFile.write(formattedTelegram)
+        if self.logFile:
+            self.logFile.write(formattedTelegram)
 
 class TestNB(wx.Notebook):
     def __init__(self, parent, id):

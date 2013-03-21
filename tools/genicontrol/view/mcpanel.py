@@ -35,25 +35,10 @@ import genicontrol.dataitems as dataitems
 from genicontrol.view.statuspanel import StatusPanel, AlarmPanel, PumpOperationPanel
 import genicontrol.view.buttons as buttons
 
-ToggleButton = namedtuple('ToggleButton', 'id, labelOn, labelOff attrName')
-
-def createToggleButton(parent, buttonDesc, sizer):
-    btn = wx.ToggleButton(parent, label = buttonDesc.labelOn, id = buttonDesc.id)
-    btn.labelOn = buttonDesc.labelOn
-    btn.labelOff = buttonDesc.labelOff
-    btn.bgColor = btn.GetBackgroundColour()
-    sizer.Add(btn, 1, wx.ALL, 5)
-    setattr(parent, buttonDesc.attrName, btn)
-    btn.Bind(wx.EVT_TOGGLEBUTTON, parent.toggledbutton)
-    return btn
-
 class Controls(wx.Panel):
     def __init__(self, parent):
-        self.toggleButtons = (
-            #ToggleButton(controlids.ID_CMD_REMOTE_LOCAL, 'Remote', 'Local', 'btnRemoteLocal'),
-            ToggleButton(controlids.ID_CMD_START_STOP, 'Start', 'Stop', 'btnStartStop'),
-        )
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
+
         sizer1 = wx.BoxSizer(wx.VERTICAL)
 
         sizer3 = wx.BoxSizer(wx.HORIZONTAL)
@@ -67,12 +52,12 @@ class Controls(wx.Panel):
 
         sizer2 = wx.BoxSizer(wx.HORIZONTAL)
         btnRemoteLocal = buttons.ToggleButton(self, 'Remote', 'Local')
+        self.Bind(btnRemoteLocal.EVT_BUTTON_CHANGED, self.OnMyEvent, id = btnRemoteLocal.GetId())
+
         sizer2.Add(btnRemoteLocal, 1, wx.ALL, 5)
         btnStartStop = buttons.ToggleButton(self, 'Start', 'Stop')
         sizer2.Add(btnStartStop, 1, wx.ALL, 5)
-
-        #for btn in self.toggleButtons:
-        #    createToggleButton(self, btn, sizer2)
+        #btnStartStop.setState(False)
 
         btn = wx.Button(self, label = 'Min', id = controlids.ID_CMD_MIN)
         sizer2.Add(btn, 1, wx.ALL, 5)
@@ -86,15 +71,8 @@ class Controls(wx.Panel):
         self.enableControls((controlids.ID_CMD_MAX, controlids.ID_CMD_MIN))
 
 
-    def toggledbutton(self, event):
-        # Active State
-        if event.EventObject.GetValue() == True:
-            event.EventObject.SetLabel(event.EventObject.labelOff)
-            event.EventObject.SetBackgroundColour(wx.Color(0, 255, 0))
-        # Inactive State
-        if event.EventObject.GetValue() == False:
-            event.EventObject.SetLabel(event.EventObject.labelOn)
-            event.EventObject.SetBackgroundColour(event.EventObject.bgColor)
+    def OnMyEvent(self, event):
+        print "Toggle-Button: %s\n" % (event.getState(), )
 
     def setRemoteMode(self):
         pass
