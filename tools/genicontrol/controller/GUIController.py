@@ -33,6 +33,7 @@ from genicontrol.model.config import DataitemConfiguration
 import genicontrol.defs as defs
 from genicontrol.scaling import getScalingInfo
 from genicontrol.controller.ControllerIF import IController
+import genicontrol.dd as dd
 from wx.lib.pubsub import Publisher as Publisher
 
 
@@ -55,12 +56,12 @@ class ControllerThread(threading.Thread):
         self._model = model
         self._view = view
         self.quitEvent = quitEvent
+        self.infoRecords = []
         self.setName(self.__class__.__name__)
         Publisher().subscribe(self.onInfoUpdate, 'INFO')
         Publisher().subscribe(self.onPumpStatus, 'PUMP_STATUS')
         for klass in defs.ADPUClass.nameDict.values():
             Publisher().subscribe(self.onChange, klass)
-
 
     def run(self):
         name = self.getName()
@@ -68,6 +69,14 @@ class ControllerThread(threading.Thread):
         while True:
             if self.quitEvent.wait(0.5):
                 break
+
+        unitFamily = self._model.getValue(defs.ADPUClass.MEASURERED_DATA, 'unit_family')
+        unitType = self._model.getValue(defs.ADPUClass.MEASURERED_DATA, 'unit_type')
+        #unitVersion = self._model.getValue(defs.ADPUClass.MEASURERED_DATA, 'unit_version') ## TODO: Fixme!
+
+        with file(dd.getDeviceFilePath(unitFamily, unitType, 1), 'w') as outf:
+            outf.write(str(self.infoRecords))
+
         print "Exiting %s." % name
 
     def onInfoUpdate(self, msg):
@@ -76,6 +85,7 @@ class ControllerThread(threading.Thread):
                 svalue = getScalingInfo(value)
                 self._view.notebook.infoPanel.setItem(key, svalue.physEntity, str(svalue.factor), svalue.unit, str(value.zero), str(value.range))
                 self._view.notebook.infoPanel.grid.Fit()
+        self.infoRecords.append(values)
         #print msg.data.values()
 
     def onChange(self, msg):
