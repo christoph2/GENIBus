@@ -55,13 +55,13 @@ REF_VALUES = (
 )
 
 PARAMETERS = (
-    (u"unit_addr",          u"GENIbus/GENIlink unit address", controlids.ID_PARAM_UNIT_ADDR ),
-    (u"group_addr",         u"GENIbus group address", controlids.ID_PARAM_GROUP_ADDR ),
-    (u"min_curve_no",       u"Minimum curve No.", controlids.ID_PARAM_MIN_CURVE_NO ),
-    (u"h_const_ref_min",    u"Constant Pressure Mode minimum reference", controlids.ID_PARAM_H_CONST_REF_MIN ),
-    (u"h_const_ref_max",    u"Constant Pressure Mode maximum reference", controlids.ID_PARAM_H_CONST_REF_MAX ),
-    (u"h_prop_ref_min",     u"Proportional Pressure Mode minimum reference", controlids.ID_PARAM_H_PROP_REF_MIN ),
-    (u"h_prop_ref_max",     u"Proportional Pressure Mode maximum reference", controlids.ID_PARAM_H_PROP_REF_MAX ),
+    (u"unit_addr",          u"Busunit address", "", controlids.ID_PARAM_UNIT_ADDR ),
+    (u"group_addr",         u"Group address", "", controlids.ID_PARAM_GROUP_ADDR ),
+    (u"min_curve_no",       u"Minimum curve no.", "", controlids.ID_PARAM_MIN_CURVE_NO ),
+    (u"h_const_ref_min",    u"Const. pressure min. reference", "", controlids.ID_PARAM_H_CONST_REF_MIN ),
+    (u"h_const_ref_max",    u"Const. pressure max. reference", "", controlids.ID_PARAM_H_CONST_REF_MAX ),
+    (u"h_prop_ref_min",     u"Prop. pressure min. reference", "", controlids.ID_PARAM_H_PROP_REF_MIN ),
+    (u"h_prop_ref_max",     u"Prop. pressure max. reference", "", controlids.ID_PARAM_H_PROP_REF_MAX ),
     #(u"ref_steps",          u"No. of discrete reference steps", controlids.ID_PARAM_REF_STEPS ),
 )
 
@@ -158,6 +158,7 @@ DataitemConfiguration = {
     "MeasurementValues":    MEAS_VALUES,
     "ReferenceValues":      REF_VALUES,
     "StringValues":         STRING_VALUES,
-    "InfoValues":           INFO_VALUES
+    "InfoValues":           INFO_VALUES,
+    "Parameters":           PARAMETERS
 }
 
