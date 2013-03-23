@@ -57,7 +57,7 @@ class Controls(wx.Panel):
         sizer2.Add(btnRemoteLocal, 1, wx.ALL, 5)
         btnStartStop = buttons.ToggleButton(self, 'Start', 'Stop')
         sizer2.Add(btnStartStop, 1, wx.ALL, 5)
-        #btnStartStop.setState(False)
+        btnStartStop.setState(False)
 
         btn = wx.Button(self, label = 'Min', id = controlids.ID_CMD_MIN)
         sizer2.Add(btn, 1, wx.ALL, 5)

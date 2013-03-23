@@ -114,6 +114,7 @@ class ToggleButton(wx.ToggleButton):
 
     def setState(self, state):
         self.SetValue(state)
+        #self.GetEventHandler().ProcessEvent(EVT_BUTTON_CHANGED)
         #wx.PostEvent(self, EVT_BUTTON_CHANGED)
 
     def getState(self):
