@@ -48,22 +48,6 @@ from genicontrol.utils import dumpHex
 
 TR = wx.GetTranslation
 
-class TabPanel(wx.Panel):
-    def __init__(self, parent):
-        wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
-
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        txtOne = wx.TextCtrl(self, wx.ID_ANY, "")
-        txtTwo = wx.TextCtrl(self, wx.ID_ANY, "")
-
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(txtOne, 0, wx.ALL, 5)
-        sizer.Add(txtTwo, 0, wx.ALL, 5)
-
-        #sizer.Add(bmp, 0, wx.ALL, 5)
-
-        self.SetSizer(sizer)
-
 
 class BusmonitorPanel(wx.Panel):
     def __init__(self, parent):
@@ -96,7 +80,6 @@ class BusmonitorPanel(wx.Panel):
 class TestNB(wx.Notebook):
     def __init__(self, parent, id):
         wx.Notebook.__init__(self, parent, id, size = (21, 21), style = wx.BK_DEFAULT | wx.BK_BOTTOM)
-        tabOne = TabPanel(self)
         self.mcPanel = MCPanel(self)
         self.AddPage(self.mcPanel, "Measurement + Control")
         self.bmPanel = BusmonitorPanel(self)
