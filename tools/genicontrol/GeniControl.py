@@ -36,6 +36,7 @@ import genicontrol.dataitems as dataitems
 from genicontrol.view.mcpanel import MCPanel
 from genicontrol.view.infopanel import InfoPanel
 from genicontrol.view.refpanel import RefPanel
+from genicontrol.view.parampanel import ParamPanel
 from genicontrol.model.NullModel import NullModel
 from genicontrol.model.config import DataitemConfiguration
 from genicontrol.controller.GUIController import GUIController
@@ -102,7 +103,8 @@ class TestNB(wx.Notebook):
         self.AddPage(self.bmPanel, "Busmonitor")
         self.refPanel = RefPanel(self)
         self.AddPage(self.refPanel, "References")
-        self.AddPage(tabOne, "Parameters")
+        self.paramPanel = ParamPanel(self)
+        self.AddPage(self.paramPanel, "Parameters")
         self.infoPanel = InfoPanel(self)
         self.AddPage(self.infoPanel, "Info")
 
