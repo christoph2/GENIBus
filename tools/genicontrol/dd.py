@@ -39,6 +39,9 @@ logger = logging.getLogger("genicontrol")
 def getDeviceFileName(family, type_, version):
     return "GeniBus-%s.%s.%s.info" % (family, type_, version)
 
+def getDeviceFilePath(family, type_, version):
+    return absConfigurationFilename(getDeviceFileName(family, type_, version))
+
 def deviceInfoExists(family, type_, version):
     return os.access(absConfigurationFilename(getDeviceFileName(family, type_, version)), os.F_OK)
 
