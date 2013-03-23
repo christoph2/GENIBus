@@ -54,6 +54,17 @@ REF_VALUES = (
     (u'ref_att_rem',    u'Ext. Analogue',   u'%'),
 )
 
+PARAMETERS = (
+    (u"unit_addr",          u"GENIbus/GENIlink unit address", controlids.ID_PARAM_UNIT_ADDR ),
+    (u"group_addr",         u"GENIbus group address", controlids.ID_PARAM_GROUP_ADDR ),
+    (u"min_curve_no",       u"Minimum curve No.", controlids.ID_PARAM_MIN_CURVE_NO ),
+    (u"h_const_ref_min",    u"Constant Pressure Mode minimum reference", controlids.ID_PARAM_H_CONST_REF_MIN ),
+    (u"h_const_ref_max",    u"Constant Pressure Mode maximum reference", controlids.ID_PARAM_H_CONST_REF_MAX ),
+    (u"h_prop_ref_min",     u"Proportional Pressure Mode minimum reference", controlids.ID_PARAM_H_PROP_REF_MIN ),
+    (u"h_prop_ref_max",     u"Proportional Pressure Mode maximum reference", controlids.ID_PARAM_H_PROP_REF_MAX ),
+    #(u"ref_steps",          u"No. of discrete reference steps", controlids.ID_PARAM_REF_STEPS ),
+)
+
 STRING_VALUES = (
     (u"product_name",    u"Product name"      , controlids.ID_STR_PRODUCT_NAME),
     (u"software_name1",  u"Software name"     , controlids.ID_STR_SOFTWARE_NAME1),
