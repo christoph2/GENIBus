@@ -87,6 +87,7 @@ ID_REF_ATT_REM              = wx.NewId()
 
 ID_PARAM_UNIT_ADDR          = wx.NewId()
 ID_PARAM_GROUP_ADDR         = wx.NewId()
+ID_PARAM_MIN_CURVE_NO       = wx.NewId()
 ID_PARAM_H_CONST_REF_MIN    = wx.NewId()
 ID_PARAM_H_CONST_REF_MAX    = wx.NewId()
 ID_PARAM_H_PROP_REF_MIN     = wx.NewId()
