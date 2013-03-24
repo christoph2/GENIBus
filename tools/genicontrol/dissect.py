@@ -108,13 +108,13 @@ def dissectPumpStatus(dp, value):
 
         result.append(('nightReduction', nightReduction, ))
         if operationMode == 0x00:
-            om = 'START'
+            om = 'Start'
         elif operationMode == 0x01:
-            om = 'STOP'
+            om = 'Stop'
         elif operationMode == 0x02:
-            om = 'MIN'
+            om = 'Min'
         elif operationMode == 0x03:
-            om = 'MAX'
+            om = 'Max'
         else:
             logger.info('FIX-ME: operationMode "%u"' % operationMode)
 
