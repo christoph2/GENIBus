@@ -114,22 +114,24 @@ class ToggleButton(wx.ToggleButton):
 
     def setState(self, state):
         self.SetValue(state)
-        #self.GetEventHandler().ProcessEvent(EVT_BUTTON_CHANGED)
-        #wx.PostEvent(self, EVT_BUTTON_CHANGED)
+        self._setStateInternal(state)
 
     def getState(self):
         return self.GetValue()
 
+    def _setStateInternal(self, state):
+        if state == True:       # Active State.
+            self.SetLabel(self.labelOff)
+            self.SetBackgroundColour(self.bgColorOn)
+        elif state == False:    # Inactive State.
+            self.SetLabel(self.labelOn)
+            self.SetBackgroundColour(self.bgColorOff)
+
+
     def buttonToggled(self, event):
         state = event.EventObject.GetValue()
 
-        if state == True:       # Active State.
-            event.EventObject.SetLabel(event.EventObject.labelOff)
-            event.EventObject.SetBackgroundColour(event.EventObject.bgColorOn)
-        elif state == False:    # Inactive State.
-            event.EventObject.SetLabel(event.EventObject.labelOn)
-            event.EventObject.SetBackgroundColour(event.EventObject.bgColorOff)
-
+        self._setStateInternal(state)
         evt = ButtonChangedEvent(myEVT_BUTTON_CHANGED, self.GetId())
         evt.setState(state)
         self.GetEventHandler().ProcessEvent(evt)

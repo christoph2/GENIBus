@@ -56,7 +56,6 @@ class StatusPanel(wx.Panel):
         self.SetSizerAndFit(groupSizer)
         self.itemDict = dict([(x[0], x[1:]) for x in DataitemConfiguration['MeasurementValues']])
 
-        self.setValue('speed', 47.15)
 
     def addValues(self):
         sizer = wx.GridBagSizer(5, 45)
