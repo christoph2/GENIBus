@@ -66,9 +66,12 @@ class ControllerThread(threading.Thread):
         controls = self._view.notebook.mcPanel.controlsPanel
         controls.btnOperationMode.Bind(controls.btnOperationMode.EVT_BUTTON_CHANGED, self.onOperationModeChanged)
         controls.btnRemoteLocal.Bind(controls.btnRemoteLocal.EVT_BUTTON_CHANGED, self.onRemoteLocalChanged)
-
         controls.btnRefUp.Bind(wx.EVT_BUTTON, self.onRefUp)
         controls.btnRefDown.Bind(wx.EVT_BUTTON, self.onRefDown)
+
+        controls = self._view.notebook.mcPanel.alarmPanel
+        controls.btnResetAlarm.Bind(wx.EVT_BUTTON, self.onResetAlarm)
+        controls.btnResetAlarmLog.Bind(wx.EVT_BUTTON, self.onResetAlarmLog)
 
     def run(self):
         name = self.getName()
@@ -113,15 +116,31 @@ class ControllerThread(threading.Thread):
 
     def onRemoteLocalChanged(self, event):
         print "Remote?: %s\n" % (event.getState(), )
+        cmd = 'REMOTE' if event.getState() else 'LOCAL'
+        self.sendCommand(cmd)
 
     def onOperationModeChanged(self, event):
         print "Operation-Mode changed: '%s'" % event.getState()
+        self.sendCommand(event.getState().upper())
 
     def onRefUp(self, event):
         print "RefUp"
+        self.sendCommand('REF_UP')
 
     def onRefDown(self, event):
         print "RefDown"
+        self.sendCommand('REF_DOWN')
+
+    def onResetAlarm(self, event):
+        print "ResetAlarm"
+        self.sendCommand('RESET_ALARM')
+
+    def onResetAlarmLog(self, event):
+        print "ResetAlarmLog"
+        self.sendCommand('RESET_ALARM_LOG')
+
+    def sendCommand(self, command):
+        print "Command requested:", command
 
 
 class GUIController(IController):

@@ -118,8 +118,8 @@ class AlarmPanel(wx.Panel):
         sizer.Add(ctrl, 1, wx.ALL | wx.ALIGN_LEFT, 5)
 
         sizer.Add(wx.StaticText(self, label = ''), 1, wx.ALL | wx.ALIGN_LEFT, 5)
-        btn = wx.Button(self, controlids.ID_CMD_RESET_ALARM, "Reset Alarm")
-        sizer.Add(btn, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        self.btnResetAlarm = wx.Button(self, controlids.ID_CMD_RESET_ALARM, "Reset Alarm")
+        sizer.Add(self.btnResetAlarm, 1, wx.ALL | wx.ALIGN_LEFT, 5)
 
         for controlId, name, label in ALARM_LOGS:
             ditem =  dataitems.MEASUREMENT_VALUES[name]
@@ -131,8 +131,8 @@ class AlarmPanel(wx.Panel):
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         sizer.Add(wx.StaticText(self, label = ''), 1, wx.ALL | wx.ALIGN_LEFT, 5)
-        btn = wx.Button(self, controlids.ID_CMD_RESET_ALARM_LOG, "Reset Alarm Log")
-        sizer.Add(btn, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        self.btnResetAlarmLog = wx.Button(self, controlids.ID_CMD_RESET_ALARM_LOG, "Reset Alarm Log")
+        sizer.Add(self.btnResetAlarmLog, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         groupSizer.Add(sizer)
         self.SetSizerAndFit(groupSizer)
 
