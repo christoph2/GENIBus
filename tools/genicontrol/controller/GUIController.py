@@ -63,6 +63,10 @@ class ControllerThread(threading.Thread):
         for klass in defs.ADPUClass.nameDict.values():
             Publisher().subscribe(self.onChange, klass)
 
+        controls = self._view.notebook.mcPanel.controlsPanel
+        controls.btnOperationMode.Bind(controls.btnOperationMode.EVT_BUTTON_CHANGED, self.onOperationModeChanged)
+        controls.btnRemoteLocal.Bind(controls.btnRemoteLocal.EVT_BUTTON_CHANGED, self.onRemoteLocalChanged)
+
     def run(self):
         name = self.getName()
         print "Starting %s." % name
@@ -98,12 +102,17 @@ class ControllerThread(threading.Thread):
         if group == 'MEASURERED_DATA':
             self._view.notebook.mcPanel.setValue(item, msg.data)
 
-
     def onPumpStatus(self, msg):
         group, item = msg.topic
         data = msg.data
         #print "***PS***", item, data
         self._view.notebook.mcPanel.setPumpStatus(item, data)
+
+    def onRemoteLocalChanged(self, event):
+        print "Remote?: %s\n" % (event.getState(), )
+
+    def onOperationModeChanged(self, event):
+        print "Operation-Mode changed: '%s'" % event.getState()
 
 
 class GUIController(IController):

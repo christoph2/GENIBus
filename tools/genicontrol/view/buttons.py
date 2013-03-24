@@ -91,6 +91,7 @@ class MultipleChoiceButtons(wx.Panel):
         else:
             self._activeButton.SetValue(False)
             self._activeButton = button
+            button.SetValue(True)
 
 
 class ToggleButton(wx.ToggleButton):

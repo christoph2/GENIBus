@@ -42,9 +42,9 @@ class Controls(wx.Panel):
         sizer1 = wx.BoxSizer(wx.VERTICAL)
         sizer2 = wx.BoxSizer(wx.HORIZONTAL)
 
-        btnRemoteLocal = buttons.ToggleButton(self, 'Remote', 'Local')
-        btnRemoteLocal.Bind(btnRemoteLocal.EVT_BUTTON_CHANGED, self.onRemoteLocalChanged, id = btnRemoteLocal.GetId())
-        sizer2.Add(btnRemoteLocal, 1, wx.ALL, 5)
+        self.btnRemoteLocal = buttons.ToggleButton(self, 'Remote', 'Local')
+        self.btnRemoteLocal.Bind(self.btnRemoteLocal.EVT_BUTTON_CHANGED, self.onRemoteLocalChanged, id = self.btnRemoteLocal.GetId())
+        sizer2.Add(self.btnRemoteLocal, 1, wx.ALL, 5)
 
         self.btnRefUp = wx.Button(self, label = '+', id = controlids.ID_CMD_REF_UP)
         sizer2.Add(self.btnRefUp, 1, wx.ALL | wx.GROW, 5)
@@ -53,9 +53,10 @@ class Controls(wx.Panel):
         sizer2.Add(self.btnRefDown, 1, wx.ALL | wx.GROW, 5)
         sizer1.Add(sizer2)
 
-        btnOperationMode = buttons.MultipleChoiceButtons(self, ('Start', 'Stop', 'Min', 'Max'))
-        btnOperationMode.Bind(btnOperationMode.EVT_BUTTON_CHANGED, self.onOperationModeChanged)
-        sizer1.Add(btnOperationMode, 1, wx.ALL)
+        self.btnOperationMode = buttons.MultipleChoiceButtons(self, ('Start', 'Stop', 'Min', 'Max'))
+        #self.btnOperationMode.Bind(self.btnOperationMode.EVT_BUTTON_CHANGED, self.onOperationModeChanged)
+        #self.btnOperationMode.setActiveButtonByName('Min')
+        sizer1.Add(self.btnOperationMode, 1, wx.ALL)
 
         self.SetSizerAndFit(sizer1)
 
@@ -87,18 +88,13 @@ class Controls(wx.Panel):
             control = self.FindWindowById(controlID)
             control.Enable(False)
 
+
 class MCPanel(ScrolledPanel):
     def __init__(self, parent):
         ScrolledPanel.__init__(self, parent = parent, id = wx.ID_ANY)
 
         sizer = wx.FlexGridSizer(rows = 2, cols = 3, hgap = 5, vgap = 5)
-##
-##        sizer.AddGrowableRow(0, 1)
-##        sizer.AddGrowableRow(1, 1)
-##        sizer.AddGrowableCol(0, 1)
-##        sizer.AddGrowableCol(1, 1)
-##
-        #sizer.SetFlexibleDirection(wx.BOTH)
+
         self.statusPanel = StatusPanel(self)
         sizer.Add(self.statusPanel, 1, wx.ALIGN_LEFT | wx.ALIGN_TOP | wx.EXPAND, 5)
         self.pumpOperationPanel = PumpOperationPanel(self)
@@ -144,8 +140,8 @@ class MCPanel(ScrolledPanel):
         if itemMap.has_key(item):
             self.pumpOperationPanel.setValue(itemMap[item], value)
         if item == 'operationMode':
-            pass    # Set buttons according to control-mode.#
-            self.controlsPanel
+            # Set buttons according to control-mode.#
+            self.controlsPanel.btnOperationMode.setActiveButtonByName(value)
 
 """
 systemMode
