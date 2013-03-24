@@ -43,7 +43,7 @@ class Controls(wx.Panel):
         sizer2 = wx.BoxSizer(wx.HORIZONTAL)
 
         btnRemoteLocal = buttons.ToggleButton(self, 'Remote', 'Local')
-        self.Bind(btnRemoteLocal.EVT_BUTTON_CHANGED, self.OnMyEvent, id = btnRemoteLocal.GetId())
+        btnRemoteLocal.Bind(btnRemoteLocal.EVT_BUTTON_CHANGED, self.onRemoteLocalChanged, id = btnRemoteLocal.GetId())
         sizer2.Add(btnRemoteLocal, 1, wx.ALL, 5)
 
         self.btnRefUp = wx.Button(self, label = '+', id = controlids.ID_CMD_REF_UP)
@@ -53,13 +53,17 @@ class Controls(wx.Panel):
         sizer2.Add(self.btnRefDown, 1, wx.ALL | wx.GROW, 5)
         sizer1.Add(sizer2)
 
-        btnOperationMode = buttons.MultipleChoiceButtons(self, ('Start', 'Stop', 'Mix', 'Max'))
+        btnOperationMode = buttons.MultipleChoiceButtons(self, ('Start', 'Stop', 'Min', 'Max'))
+        btnOperationMode.Bind(btnOperationMode.EVT_BUTTON_CHANGED, self.onOperationModeChanged)
         sizer1.Add(btnOperationMode, 1, wx.ALL)
 
         self.SetSizerAndFit(sizer1)
 
-    def OnMyEvent(self, event):
-        print "Toggle-Button: %s\n" % (event.getState(), )
+    def onRemoteLocalChanged(self, event):
+        print "Remote?: %s\n" % (event.getState(), )
+
+    def onOperationModeChanged(self, event):
+        print "Operation-Mode changed: '%s'" % event.getState()
 
     def setRemoteMode(self):
         pass
