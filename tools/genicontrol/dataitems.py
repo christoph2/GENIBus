@@ -192,7 +192,28 @@ DATAITEMS_FOR_CLASS = {
     defs.ADPUClass.ASCII_STRINGS:               STRINGS
 }
 
-#print MEASUREMENT_VALUES
+dataItemsById = lambda klass : dict([(v[2], (k, v[3], v[4])) for k, v in DATAITEMS_FOR_CLASS[klass].items()])
+dataItemsByName = lambda klass : dict([(k, (v[2], v[3], v[4])) for k, v in DATAITEMS_FOR_CLASS[klass].items()])
+
+DATAITEMS_BY_ID = {
+    defs.ADPUClass.PROTOCOL_DATA:               dataItemsById(defs.ADPUClass.PROTOCOL_DATA),
+    defs.ADPUClass.MEASURERED_DATA:             dataItemsById(defs.ADPUClass.MEASURERED_DATA),
+    defs.ADPUClass.COMMANDS:                    dataItemsById(defs.ADPUClass.COMMANDS),
+    defs.ADPUClass.CONFIGURATION_PARAMETERS:    dataItemsById(defs.ADPUClass.CONFIGURATION_PARAMETERS),
+    defs.ADPUClass.REFERENCE_VALUES:            dataItemsById(defs.ADPUClass.REFERENCE_VALUES),
+    defs.ADPUClass.ASCII_STRINGS:               dataItemsById(defs.ADPUClass.ASCII_STRINGS),
+}
+
+DATAITEMS_BY_NAME = {
+    defs.ADPUClass.PROTOCOL_DATA:               dataItemsByName(defs.ADPUClass.PROTOCOL_DATA),
+    defs.ADPUClass.MEASURERED_DATA:             dataItemsByName(defs.ADPUClass.MEASURERED_DATA),
+    defs.ADPUClass.COMMANDS:                    dataItemsByName(defs.ADPUClass.COMMANDS),
+    defs.ADPUClass.CONFIGURATION_PARAMETERS:    dataItemsByName(defs.ADPUClass.CONFIGURATION_PARAMETERS),
+    defs.ADPUClass.REFERENCE_VALUES:            dataItemsByName(defs.ADPUClass.REFERENCE_VALUES),
+    defs.ADPUClass.ASCII_STRINGS:               dataItemsByName(defs.ADPUClass.ASCII_STRINGS),
+}
+
+
 """
 Code Alarm Group Alarm Cause
 2  Missing Phase
