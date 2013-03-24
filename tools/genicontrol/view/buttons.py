@@ -51,7 +51,7 @@ class MultipleChoiceButtons(wx.Panel):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
 
         staticBox = wx.StaticBox(self, label = ' %s ' % label.strip())
-        groupSizer = wx.StaticBoxSizer(staticBox)
+        staticBoxSizer = wx.StaticBoxSizer(staticBox, wx.HORIZONTAL)
 
         sizer = wx.BoxSizer(wx.HORIZONTAL if horizontal else wx.VERTICAL)
 
@@ -59,31 +59,27 @@ class MultipleChoiceButtons(wx.Panel):
 
         for buttonName in buttons:
             btnID = wx.NewId()
-            btn = wx.ToggleButton(parent, label = buttonName, id = btnID)
+            btn = wx.ToggleButton(self, label = buttonName, id = btnID)
             btn.Bind(wx.EVT_TOGGLEBUTTON, self.buttonClicked)
-            sizer.Add(btn, 1, wx.ALL, 5)
+            sizer.Add(btn, 1, wx.ALL | wx.ALIGN_BOTTOM, 5)
             self.buttonDict[buttonName] = btn
 
         if not default:
             default = buttons[0]
         self._activeButton = self.buttonDict[default]
         self._activeButton.SetValue(True)
-        self._handler = None
 
-        groupSizer.Add(sizer)
-        self.SetSizerAndFit(groupSizer)
-
-
-    def setHandler(self, handler):
-        self._handler = handler
-
-    def callHandler(self, value):
-        if self._handler:
-            self._handler(value)
+        staticBoxSizer.Add(sizer)
+        self.SetSizerAndFit(staticBoxSizer)
 
     def buttonClicked(self, event):
         button = event.GetEventObject()
+
         self.setActiveButton(button)
+        evt = ButtonChangedEvent(myEVT_BUTTON_CHANGED, self.GetId())
+        evt.setState(button)
+        self.GetEventHandler().ProcessEvent(evt)
+        event.Skip()
 
     def getActiveButtonName(self):
         return self._activeButton.GetLabel()
@@ -97,7 +93,6 @@ class MultipleChoiceButtons(wx.Panel):
         else:
             self._activeButton.SetValue(False)
             self._activeButton = button
-            self.callHandler(self.getActiveButtonName())
 
 
 class ToggleButton(wx.ToggleButton):

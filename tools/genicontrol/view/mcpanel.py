@@ -40,36 +40,23 @@ class Controls(wx.Panel):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
 
         sizer1 = wx.BoxSizer(wx.VERTICAL)
-
-        sizer3 = wx.BoxSizer(wx.HORIZONTAL)
-
-        sizer3.Add(wx.StaticText(self, -1, ''), 1, wx.ALL, 5)
-        self.btnRefUp = wx.Button(self, label = '+', id = controlids.ID_CMD_REF_UP)
-        sizer3.Add(self.btnRefUp, 1, wx.ALL | wx.GROW, 5)
-        self.btnRefDown = wx.Button(self, label = '-', id = controlids.ID_CMD_REF_DOWN)
-        sizer3.Add(self.btnRefDown, 1, wx.ALL | wx.GROW, 5)
-        sizer1.Add(sizer3)#, 1, wx.ALL, 5)
-
         sizer2 = wx.BoxSizer(wx.HORIZONTAL)
+
         btnRemoteLocal = buttons.ToggleButton(self, 'Remote', 'Local')
         self.Bind(btnRemoteLocal.EVT_BUTTON_CHANGED, self.OnMyEvent, id = btnRemoteLocal.GetId())
-
         sizer2.Add(btnRemoteLocal, 1, wx.ALL, 5)
-        btnStartStop = buttons.ToggleButton(self, 'Start', 'Stop')
-        sizer2.Add(btnStartStop, 1, wx.ALL, 5)
-        btnStartStop.setState(False)
 
-        btn = wx.Button(self, label = 'Min', id = controlids.ID_CMD_MIN)
-        sizer2.Add(btn, 1, wx.ALL, 5)
-        btn = wx.Button(self, label = 'Max', id = controlids.ID_CMD_MAX)
-        sizer2.Add(btn, 1, wx.ALL, 5)
+        self.btnRefUp = wx.Button(self, label = '+', id = controlids.ID_CMD_REF_UP)
+        sizer2.Add(self.btnRefUp, 1, wx.ALL | wx.GROW, 5)
 
+        self.btnRefDown = wx.Button(self, label = '-', id = controlids.ID_CMD_REF_DOWN)
+        sizer2.Add(self.btnRefDown, 1, wx.ALL | wx.GROW, 5)
         sizer1.Add(sizer2)
 
+        btnOperationMode = buttons.MultipleChoiceButtons(self, ('Start', 'Stop', 'Mix', 'Max'))
+        sizer1.Add(btnOperationMode, 1, wx.ALL)
+
         self.SetSizerAndFit(sizer1)
-
-        self.enableControls((controlids.ID_CMD_MAX, controlids.ID_CMD_MIN))
-
 
     def OnMyEvent(self, event):
         print "Toggle-Button: %s\n" % (event.getState(), )
