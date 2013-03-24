@@ -149,7 +149,8 @@ def dissectPumpStatus(dp, value):
         result.append(('systemMode', systemMode))
         pendingAlarm = (value & 0x08) >> 3
         result.append(('pendingAlarm', pendingAlarm))
-        sourceMode = (value & 0xc0) >> 6
+        sm = (value & 0x10) >> 4
+        sourceMode = 'Local' if sm == 1 else 'Remote'
         result.append(('sourceMode', sourceMode))
     elif dp == 'contr_source':
         cs = (value & 0x0f) >> 4

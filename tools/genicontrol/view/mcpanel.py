@@ -129,11 +129,16 @@ class MCPanel(ScrolledPanel):
             'systemMode': "System Mode"
         }
 
-        if itemMap.has_key(item):
-            self.pumpOperationPanel.setValue(itemMap[item], value)
         if item == 'operationMode':
-            # Set buttons according to control-mode.#
+            # Set buttons according to control-mode.
             self.controlsPanel.btnOperationMode.setActiveButtonByName(value)
+            self.pumpOperationPanel.setValue("Operation Mode", value)
+        elif item == 'sourceMode':
+            state = True if value == 'Remote' else False
+            self.controlsPanel.btnRemoteLocal.setState(state)
+        else:
+            if itemMap.has_key(item):
+                self.pumpOperationPanel.setValue(itemMap[item], value)
 
 """
 systemMode
