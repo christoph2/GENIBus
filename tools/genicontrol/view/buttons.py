@@ -74,10 +74,10 @@ class MultipleChoiceButtons(wx.Panel):
     def buttonClicked(self, event):
         button = event.GetEventObject()
 
-        self.setActiveButton(button)
-        evt = ButtonChangedEvent(myEVT_BUTTON_CHANGED, self.GetId())
-        evt.setState(button.GetLabel())
-        self.GetEventHandler().ProcessEvent(evt)
+        if self.setActiveButton(button):
+            evt = ButtonChangedEvent(myEVT_BUTTON_CHANGED, self.GetId())
+            evt.setState(button.GetLabel())
+            self.GetEventHandler().ProcessEvent(evt)
 
     def getActiveButtonName(self):
         return self._activeButton.GetLabel()
@@ -88,10 +88,12 @@ class MultipleChoiceButtons(wx.Panel):
     def setActiveButton(self, button):
         if button == self._activeButton:
             button.SetValue(True)
+            return False    # Avoid unnecessary firing of events.
         else:
             self._activeButton.SetValue(False)
             self._activeButton = button
             button.SetValue(True)
+            return True
 
 
 class ToggleButton(wx.ToggleButton):
