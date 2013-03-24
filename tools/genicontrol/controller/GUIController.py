@@ -67,6 +67,9 @@ class ControllerThread(threading.Thread):
         controls.btnOperationMode.Bind(controls.btnOperationMode.EVT_BUTTON_CHANGED, self.onOperationModeChanged)
         controls.btnRemoteLocal.Bind(controls.btnRemoteLocal.EVT_BUTTON_CHANGED, self.onRemoteLocalChanged)
 
+        controls.btnRefUp.Bind(wx.EVT_BUTTON, self.onRefUp)
+        controls.btnRefDown.Bind(wx.EVT_BUTTON, self.onRefDown)
+
     def run(self):
         name = self.getName()
         print "Starting %s." % name
@@ -113,6 +116,12 @@ class ControllerThread(threading.Thread):
 
     def onOperationModeChanged(self, event):
         print "Operation-Mode changed: '%s'" % event.getState()
+
+    def onRefUp(self, event):
+        print "RefUp"
+
+    def onRefDown(self, event):
+        print "RefDown"
 
 
 class GUIController(IController):
