@@ -58,8 +58,7 @@ class MultipleChoiceButtons(wx.Panel):
         self.buttonDict = dict()
 
         for buttonName in buttons:
-            btnID = wx.NewId()
-            btn = wx.ToggleButton(self, label = buttonName, id = btnID)
+            btn = wx.ToggleButton(self, label = buttonName, id =  wx.NewId())
             btn.Bind(wx.EVT_TOGGLEBUTTON, self.buttonClicked)
             sizer.Add(btn, 1, wx.ALL | wx.ALIGN_BOTTOM, 5)
             self.buttonDict[buttonName] = btn
@@ -77,9 +76,8 @@ class MultipleChoiceButtons(wx.Panel):
 
         self.setActiveButton(button)
         evt = ButtonChangedEvent(myEVT_BUTTON_CHANGED, self.GetId())
-        evt.setState(button)
+        evt.setState(button.GetLabel())
         self.GetEventHandler().ProcessEvent(evt)
-        event.Skip()
 
     def getActiveButtonName(self):
         return self._activeButton.GetLabel()
@@ -130,8 +128,7 @@ class ToggleButton(wx.ToggleButton):
         evt = ButtonChangedEvent(myEVT_BUTTON_CHANGED, self.GetId())
         evt.setState(state)
         self.GetEventHandler().ProcessEvent(evt)
-        event.Skip()
 
 ToggleButton.EVT_BUTTON_CHANGED = EVT_BUTTON_CHANGED
-
+MultipleChoiceButtons.EVT_BUTTON_CHANGED = EVT_BUTTON_CHANGED
 
