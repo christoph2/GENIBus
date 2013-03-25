@@ -119,6 +119,7 @@ void readRequest(EthernetClient client)
                     //Serial.print("TCP frame completed");
                     //Serial.print("\n\r");
                     link.reset();
+		    delay(2); 	    // !!!
                     setRxMode();    // TCP frame completely received and written to RS485, now receiving response.
                     return;
                 }
