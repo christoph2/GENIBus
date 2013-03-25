@@ -18,5 +18,5 @@ setup(
 		'GeniControl = genicontrol.GeniControl:main',
         ],
     },
-    install_requires = ['mako']	# pyserial
+    install_requires = ['mako', 'pyserial']
 )
