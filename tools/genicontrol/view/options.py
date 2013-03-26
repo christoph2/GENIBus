@@ -30,13 +30,18 @@
 import wx
 from wx.lib.masked import ipaddrctrl
 from wx.lib.masked import TextCtrl
+from genicontrol.serialport import serialAvailable
 from genicontrol.configuration import Config
 
-ID_IPADDR   = wx.NewId()
-ID_SUBNET   = wx.NewId()
-ID_PORT     = wx.NewId()
-ID_POLL     = wx.NewId()
-ID_LB_CONN  = wx.NewId()
+ID_IPADDR       = wx.NewId()
+ID_SUBNET       = wx.NewId()
+ID_PORT         = wx.NewId()
+ID_POLL         = wx.NewId()
+ID_SERIAL_PORT  = wx.NewId()
+
+ID_RB_TCPIP     = wx.NewId()
+ID_RB_SERIAL    = wx.NewId()
+ID_RB_SIM       = wx.NewId()
 
 
 def fixIP(addr):
@@ -45,32 +50,70 @@ def fixIP(addr):
 class Options(wx.Dialog):
     def __init__(self, parent):
         wx.Dialog.__init__(self, parent, wx.ID_ANY, u'Options')
+        self.tcpControls = []
+        self.serialControls = []
+        self.simControls = []
+
         config = Config()
-        #config.loadConfiguration()
+        config.loadConfiguration()
+
+        self.driver = int(config.networkDriver)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-        gridsizer = wx.FlexGridSizer(5,2)
+
+        gridsizer = wx.FlexGridSizer(3 ,2)
+
+        staticBox = wx.StaticBoxSizer(wx.StaticBox(self, -1, " Driver " ), wx.VERTICAL )
+
+        radioTcp = wx.RadioButton(self, ID_RB_TCPIP, " Arduino / TCP ", style = wx.RB_GROUP)
+        gridsizer.Add(radioTcp, 1, wx.ALL, 5)
+        gridsizer2 = wx.FlexGridSizer(3 ,2)
+
         st = wx.StaticText(self, label = 'Server IP-address')
-        gridsizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        gridsizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         addr = ipaddrctrl.IpAddrCtrl(self, id = ID_IPADDR)
-        gridsizer.Add(addr, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+        self.tcpControls.append(addr)
+        gridsizer2.Add(addr, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         st = wx.StaticText(self, label = 'Subnet-mask')
-        gridsizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        gridsizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         mask = ipaddrctrl.IpAddrCtrl(self, id = ID_SUBNET)
-        gridsizer.Add(mask, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+        self.tcpControls.append(mask)
+        gridsizer2.Add(mask, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         st = wx.StaticText(self, label = 'Server-port')
-        gridsizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        gridsizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         port = TextCtrl(self, id = ID_PORT, mask = '#####')
-        gridsizer.Add(port, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
-        sizer.Add(gridsizer, 1, wx.ALL, 5)
+        self.tcpControls.append(port)
+        gridsizer2.Add(port, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+        gridsizer.Add(gridsizer2, 1, wx.ALL | wx.ALIGN_TOP, 5)
+
+        radioSerial = wx.RadioButton(self, ID_RB_SERIAL, " Serial Port ")
+        gridsizer.Add(radioSerial, 1, wx.ALL, 5)
+
+        boxSizer3 = wx.BoxSizer(wx.HORIZONTAL)
+
+        st = wx.StaticText(self, label = 'Port')
+        boxSizer3.Add(st, 1, wx.ALL, 5)
+        serialPort = TextCtrl(self, id = ID_SERIAL_PORT)
+        self.serialControls.append(serialPort)
+        boxSizer3.Add(serialPort, 1, wx.ALL, 5)
+
+        gridsizer.Add(boxSizer3, 1, wx.ALL, 5)
+
+        radioSim = wx.RadioButton(self, ID_RB_SIM, " Simulator ")
+        gridsizer.Add(radioSim, 1, wx.ALL, 5)
+        st = wx.StaticText(self, label = '')
+        gridsizer.Add(st, 1, wx.ALL, 5)
+
+        staticBox.Add(gridsizer)
+        sizer.Add(staticBox, 1, wx.ALL, 5)
+
+        boxSizer2 = wx.BoxSizer(wx.HORIZONTAL)
         st = wx.StaticText(self, label = 'Polling interval')
-        gridsizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        boxSizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         poll = TextCtrl(self, id = ID_POLL, mask = '#####')
-        gridsizer.Add(poll, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
-        st = wx.StaticText(self, label = 'Driver')
-        gridsizer.Add(st, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        self.lbConn = wx.ComboBox(self, id = ID_LB_CONN, choices = ['Simulator', 'Arduino / TCP'], style = wx.CB_READONLY)
-        gridsizer.Add(self.lbConn, 0, wx.ALIGN_RIGHT | wx.ALL, 5)
+        boxSizer2.Add(poll, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+        sizer.Add(boxSizer2)
+
         line = wx.StaticLine(self, style = wx.LI_HORIZONTAL)
         sizer.Add(line, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
         btnsizer = wx.StdDialogButtonSizer()
@@ -81,21 +124,36 @@ class Options(wx.Dialog):
         btnsizer.AddButton(cancelButton)
         btnsizer.Realize()
         sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
-        self.SetSizer(sizer)
-        sizer.Fit(self)
+
+        if not serialAvailable:
+            radioSerial.Enable(False)
+
+        self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, radioTcp)
+        self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, radioSerial)
+        self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, radioSim)
+
+        self.SetSizerAndFit(sizer)
+
         config.serverIP = fixIP(config.serverIP)
         addr.SetValue(config.serverIP)
         config.subnetMask = fixIP(config.subnetMask)
         mask.SetValue(config.subnetMask)
         port.SetValue(config.serverPort)
         poll.SetValue(str(config.pollingInterval))
-        if config.networkDriver == '0':
+        serialPort.SetValue(config.serialPort)
+        if self.driver == 0:
             value = 'Simulator'
-        else:
+            button = radioSim
+        elif self.driver == 1:
             value = 'Arduino / TCP'
-        self.lbConn.SetValue(value)
-        addr.SetFocus()
-        #self.SetValues()
+            button = radioTcp
+        elif self.driver == 2:
+            value = 'Serial'
+            button = radioSerial
+
+        button.SetValue(True)
+        self.enableRadioButton(button.GetId())
+        #addr.SetFocus()
         self.Centre()
         retval = self.ShowModal()
         retval = wx.ID_OK
@@ -104,13 +162,42 @@ class Options(wx.Dialog):
             config.subnetMaskP = fixIP(mask.GetValue())
             config.serverPortP = port.GetValue()
             config.pollingInterval = poll.GetValue()
-            value = self.lbConn.GetValue()
-            if value == 'Simulator':
-                config.networkDriver = '0'
-            else:
-                config.networkDriver = '1'
-        self.lbConn.SetValue(value)
+            config.networkDriver = str(self.driver)
+            config.serialPort = serialPort.GetValue()
         self.Destroy()
+
+    def onDriverSelected(self, event):
+        self.enableRadioButton(event.GetId())
+
+    def enableRadioButton(self, controlId):
+        if controlId == ID_RB_TCPIP:
+            self.enableTcpControls(True)
+            self.enableSerialControls(False)
+            self.enableSimControls(False)
+            self.driver = 1
+        elif controlId == ID_RB_SERIAL:
+            self.enableTcpControls(False)
+            self.enableSerialControls(True)
+            self.enableSimControls(False)
+            self.driver = 2
+        elif controlId == ID_RB_SIM:
+            self.enableTcpControls(False)
+            self.enableSerialControls(False)
+            self.enableSimControls(True)
+            self.driver = 0
+
+    def enableControls(self, controls, enable):
+        for control in controls:
+            control.Enable(enable)
+
+    def enableTcpControls(self, enable):
+        self.enableControls(self.tcpControls, enable)
+
+    def enableSerialControls(self, enable):
+        self.enableControls(self.serialControls, enable)
+
+    def enableSimControls(self, enable):
+        self.enableControls(self.simControls, enable)
 
 
 def showOptionsDialogue(parent):
