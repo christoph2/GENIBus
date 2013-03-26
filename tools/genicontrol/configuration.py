@@ -74,6 +74,10 @@ class Config(object):
                 self.networkDriver = config.get('network', 'driver')
             except:
                 self.networkDriver = '1'
+            if not config.has_section('serial'):
+                config.add_section('serial')
+                config.set('serial', 'serialPort', '')
+            self.serialPort = config.get('serial', 'serialPort')
             if not config.has_section('window'):
                 config.add_section('window')
                 config.set('window', 'sizeX', '800')
@@ -99,6 +103,7 @@ class Config(object):
             config.set('network', 'subnetMask', str(self.subnetMask))
             config.set('network', 'serverPort', str(self.serverPort))
             config.set('network', 'driver', str(self.networkDriver))
+            config.set('serial', 'serialPort', str(self.serialPort))
             config.write(fout)
 
 
