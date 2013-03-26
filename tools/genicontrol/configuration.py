@@ -41,6 +41,7 @@ CFG_FILE_NAME = absConfigurationFilename('.GeniControl.cfg')
 class Config(object):
     _lock = threading.Lock()
     logger = logging.getLogger("genicontrol")
+    loaded = False
 
     def __new__(cls):
         try:
@@ -52,36 +53,38 @@ class Config(object):
         return cls._instance
 
     def loadConfiguration(self):
-        self.config = configparser.ConfigParser()
-        config = self.config
-        config.read([CFG_FILE_NAME])
-        if not config.has_section('general'):
-            config.add_section('general')
-            config.set('general', 'pollingInterval', '2')
-        self.pollingInterval = config.getint('general', 'pollingInterval')
-        if not config.has_section('network'):
-            config.add_section('network')
-            config.set('network', 'serverIP', '192.168.100.10')
-            config.set('network', 'subnetMask', '255.255.255.0')
-            config.set('network', 'serverPort', '6734')
-            config.set('network', 'driver', '1')
-        self.serverIP = config.get('network', 'serverIP')
-        self.serverPort = config.get('network', 'serverPort')
-        self.subnetMask = config.get('network', 'subnetMask')
-        try:
-            self.networkDriver = config.get('network', 'driver')
-        except:
-            self.networkDriver = '1'
-        if not config.has_section('window'):
-            config.add_section('window')
-            config.set('window', 'sizeX', '800')
-            config.set('window', 'sizeY', '600')
-            config.set('window', 'posX', 0)
-            config.set('window', 'posY', 0)
-        self.posX = config.getint('window', 'posx')
-        self.posY = config.getint('window', 'posy')
-        self.sizeX = config.getint('window', 'sizex')
-        self.sizeY = config.getint('window', 'sizey')
+        if not self.loaded:
+            self.config = configparser.ConfigParser()
+            config = self.config
+            config.read([CFG_FILE_NAME])
+            if not config.has_section('general'):
+                config.add_section('general')
+                config.set('general', 'pollingInterval', '2')
+            self.pollingInterval = config.getint('general', 'pollingInterval')
+            if not config.has_section('network'):
+                config.add_section('network')
+                config.set('network', 'serverIP', '192.168.100.10')
+                config.set('network', 'subnetMask', '255.255.255.0')
+                config.set('network', 'serverPort', '6734')
+                config.set('network', 'driver', '1')
+            self.serverIP = config.get('network', 'serverIP')
+            self.serverPort = config.get('network', 'serverPort')
+            self.subnetMask = config.get('network', 'subnetMask')
+            try:
+                self.networkDriver = config.get('network', 'driver')
+            except:
+                self.networkDriver = '1'
+            if not config.has_section('window'):
+                config.add_section('window')
+                config.set('window', 'sizeX', '800')
+                config.set('window', 'sizeY', '600')
+                config.set('window', 'posX', 0)
+                config.set('window', 'posY', 0)
+            self.posX = config.getint('window', 'posx')
+            self.posY = config.getint('window', 'posy')
+            self.sizeX = config.getint('window', 'sizex')
+            self.sizeY = config.getint('window', 'sizey')
+            self.loaded = True
 
     def saveConfiguration(self):
         print "Saving configuration..."

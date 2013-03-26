@@ -120,7 +120,6 @@ class MCPanel(ScrolledPanel):
                     control.SetValue(value)
 
 
-
     def setPumpStatus(self, item, value):
         #print "PS: ", item ,value
         itemMap = {
