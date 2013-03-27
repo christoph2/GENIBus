@@ -64,11 +64,14 @@ class IController(object):
 
 def connectionFactory(driver):
     from genicontrol.simu.Simulator import SimulationServer
-    from genicontrol.tcpclient import Connector 
+    from genicontrol.tcpclient import Connector
+    from genicontrol.serialport import SerialPort, serialAvailable
 
     ip = config.serverIP
     port = config.serverPort
     if driver == '1':
         return Connector(ip, port)
+    elif driver == '2' and serialAvailable:
+        return SerialPort(9600, timeout = 0.5)
     else:
         return SimulationServer()
