@@ -28,43 +28,35 @@
 
 import logging
 import threading
+from genicontrol.connection import ConnectionIF
+
+logger = logging.getLogger("genicontrol")
 
 try:
     import serial
 except ImportError:
-    print "pySerial not installed."
+    logger.debug("pySerial not installed.")
     serialAvailable = False
 else:
     serialAvailable = True
 
-class SerialPort(object):
+class SerialPort(ConnectionIF):
     _lock = threading.Lock()
-    _logger = logging.getLogger("genicontrol")
+    _logger = logger
 
-##
-##    def __new__(cls):
-##        try:
-##            cls._lock.acquire()
-##            if not hasattr(cls, '_instance'):
-##                cls._instance = super(cls.__class__, cls).__new__(cls)
-##        finally:
-##            cls._lock.release()
-##        return cls._instance
-##
-
-    def __init__(self, portNum, baudrate = 19200, bytesize = serial.EIGHTBITS,
+    def __init__(self, port, baudrate = 19200, bytesize = serial.EIGHTBITS,
                  parity = serial.PARITY_NONE, stopbits = serial.STOPBITS_ONE, timeout = 0.1):
-        self._portNum = portNum
+        self._port = port
         self._baudrate = baudrate
         self._bytesize = bytesize
         self._parity = parity
         self._stopbits = stopbits
         self._timeout = timeout
 
-    def open(self):
-        self._logger.debug("Trying to open serial port #%u.", self._portNum)
+    def connect(self):
+        self._logger.debug("Trying to open serial port #%u.", self._port)
         try:
-            self._port = serial.Serial(self._portNum, self._baudrate , self._bytesize, self._parity,
+            self._port = serial.Serial(self._port, self._baudrate , self._bytesize, self._parity,
                 self._stopbits, self._timeout
             )
         except serial.SerialException as e:
@@ -82,9 +74,11 @@ class SerialPort(object):
         print result
         return result
 
-    def close(self):
+    def disconnect(self):
         if self._port.isOpen() == True:
             self._port.close()
+
+    close = disconnect
 
     @property
     def displayName(self):
