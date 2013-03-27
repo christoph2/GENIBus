@@ -32,6 +32,8 @@ import threading
 from wx.lib.pubsub import Publisher as Publisher
 from genicontrol.configuration import Config
 
+logger = logging.getLogger("genicontrol")
+
 DATA_NOT_AVAILABLE = None
 config = Config()
 
@@ -72,6 +74,10 @@ def connectionFactory(driver):
     if driver == '1':
         return Connector(ip, port)
     elif driver == '2' and serialAvailable:
-        return SerialPort(9600, timeout = 0.5)
+        if not config.serialPort:
+            logger.error("Serial port not specified.")
+            return SimulationServer()   ## Fallback to simulator.
+        else:
+            return SerialPort(port = config.serialPort, baudrate = 9600, timeout = 0.5)
     else:
         return SimulationServer()
