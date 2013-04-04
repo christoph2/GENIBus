@@ -7,12 +7,12 @@
 
 byte macAddress[] = { 0x90, 0xa2, 0xda, 0x00, 0x69, 0x4b  };
 
-IPAddress subnet = (255, 255, 255, 0);
+static uint8_t subnet[] = { 255, 255, 255, 0 };
 #define LOCAL_PORT  6734
 
 /* TODO: The IP-configuration has to be adjusted to your needs!!! */
-IPAddress myIP(192, 168, 1, 3);         // for Linux users: adjust the two first line on the file /etc/hosts:
-IPAddress serverIP(192, 168, 1, 2);     // IP address of "localhost" must be the same as "IPAddress serverIP", for example "192.168.1.2  localhost"
+static uint8_t myIP[] = { 192, 168, 1, 3 };         // for Linux users: adjust the two first line on the file /etc/hosts:
+static uint8_t serverIP[] = { 192, 168, 1, 2 };     // IP address of "localhost" must be the same as "IPAddress serverIP", for example "192.168.1.2  localhost"
 //IPAddress gateway = (192,168, 1, 1);  // and, 2nd line, "192.168.1.2   'my computer name'"
 int EN = 2;                             // RS485 has a enable/disable pin to transmit or receive data.
                                         // Arduino Digital Pin 2 = Rx/Tx 'Enable'; High to Transmit, Low to Receive
@@ -28,6 +28,8 @@ boolean alreadyConnected = false;
 void setup(void)
 {
     es.ES_enc28j60SpiInit();
+    es.ES_enc28j60Init(macAddress);
+    es.ES_init_ip_arp_udp_tcp(macAddress, myIP, LOCAL_PORT);
 
     delay(1000); // give the Ethernet shield a second to initialize:.
 
@@ -91,14 +93,16 @@ void serialEvent(void)
 }
 
 
+/*
 void writeToClient(EthernetClient client, byte const * data, byte len)
 {
     client.write(data, len);
     client.stop();
 }
+*/
 
 
-void readRequest(EthernetClient client)
+void readRequest(EtherShield client)
 {
     byte totalLength = 0;
     byte remainingBytes;
