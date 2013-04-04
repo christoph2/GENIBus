@@ -5,6 +5,9 @@
 
 #define GB_MASTER_ADDRESS  0x01
 
+#define BUFFER_SIZE 550
+static uint8_t buffer[BUFFER_SIZE + 1];
+
 byte macAddress[] = { 0x90, 0xa2, 0xda, 0x00, 0x69, 0x4b  };
 
 static uint8_t subnet[] = { 255, 255, 255, 0 };
@@ -68,9 +71,10 @@ byte apdus[0xff];
 
 void loop(void)
 {
-    client = server.available();
+    uint16__t dataPointer;
+    dataPointer = es.ES_packetloop_icmp_tcp(buffer, es.ES_enc28j60PacketReceive(BUFFER_SIZE, buffer));
 
-    if (client) {
+    if (dataPointer > 0) {
         setTxMode();    // We need to be able to write the received telegram later on.
         digitalWrite(LED_PIN, HIGH);    // Toggle LED before receiving.
         //Serial.print(" server available ");
