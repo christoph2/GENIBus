@@ -43,25 +43,27 @@ void setup(void)
     setTxMode();
 }
 
-void frameReceived(uint8 * buffer, uint8 len)
+void frameReceived(uint8 * rcvBuffer, uint8 len)
 {
+    uint16_t dataPointer;
     setTxMode();    // Switch back to TX mode.
     delay(500);
     digitalWrite(LED_PIN, LOW);
-
-    client.write(buffer, len);
-    client.stop();
+    
+    dataPointer = es.ES_fill_tcp_data_len(buffer, 0, (const char *)rcvBuffer, len);
+    es.ES_www_server_reply(buffer, dataPointer);
 }
 
-void errorCallout(Gb_Error error, uint8 * buffer, uint8 len)  //  Needs latest software version to compile!!!
+void errorCallout(Gb_Error error, uint8 * rcvBuffer, uint8 len)  //  Needs latest software version to compile!!!
 {
+    uint16_t dataPointer;
     //Serial.print("CRC-Error\n\r"); // Only a single cause of error right now.
     setTxMode();    // Switch back to TX mode.
     delay(500);
     digitalWrite(LED_PIN, LOW);
-
-    client.write(buffer, len);
-    client.stop();
+    
+    dataPointer = es.ES_fill_tcp_data_len(buffer, 0, (const char *)rcvBuffer, len);
+    es.ES_www_server_reply(buffer, dataPointer);
 }
 
 GB_Datalink link(Serial, frameReceived, errorCallout);
@@ -71,7 +73,7 @@ byte apdus[0xff];
 
 void loop(void)
 {
-    uint16__t dataPointer;
+    uint16_t dataPointer;
     dataPointer = es.ES_packetloop_icmp_tcp(buffer, es.ES_enc28j60PacketReceive(BUFFER_SIZE, buffer));
 
     if (dataPointer > 0) {
@@ -82,7 +84,7 @@ void loop(void)
         //delay(500);
 
         // TAP#1 - Indicates basic TCP/IP connectivity.
-        readRequest(client);
+        readRequest(es);
     }
     delay(50);
 }
@@ -97,14 +99,13 @@ void serialEvent(void)
 }
 
 
-/*
-void writeToClient(EthernetClient client, byte const * data, byte len)
+void writeToClient(char const * data, byte len)
 {
-    client.write(data, len);
-    client.stop();
+    uint16_t dataPointer;
+    
+    dataPointer = es.ES_fill_tcp_data_len(buffer, 0, data, len);
+    es.ES_www_server_reply(buffer, dataPointer);
 }
-*/
-
 
 void readRequest(EtherShield client)
 {
