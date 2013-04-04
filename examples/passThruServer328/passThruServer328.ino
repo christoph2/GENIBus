@@ -1,3 +1,4 @@
+
 #include <EtherShield.h>
 #include <GB_Datalink.h>
 #include <Genibus.h>
@@ -45,7 +46,7 @@ void setup(void)
 
 void frameReceived(uint8 * rcvBuffer, uint8 len)
 {
-    uint16_t dataPointer;
+    uint16 dataPointer;
     setTxMode();    // Switch back to TX mode.
     delay(500);
     digitalWrite(LED_PIN, LOW);
@@ -56,7 +57,7 @@ void frameReceived(uint8 * rcvBuffer, uint8 len)
 
 void errorCallout(Gb_Error error, uint8 * rcvBuffer, uint8 len)  //  Needs latest software version to compile!!!
 {
-    uint16_t dataPointer;
+    uint16 dataPointer;
     //Serial.print("CRC-Error\n\r"); // Only a single cause of error right now.
     setTxMode();    // Switch back to TX mode.
     delay(500);
@@ -73,18 +74,17 @@ byte apdus[0xff];
 
 void loop(void)
 {
-    uint16_t dataPointer;
-    dataPointer = es.ES_packetloop_icmp_tcp(buffer, es.ES_enc28j60PacketReceive(BUFFER_SIZE, buffer));
+    uint16 dataPointer;
+    uint16 length;
+    
+    length = es.ES_enc28j60PacketReceive(BUFFER_SIZE, buffer);
+    dataPointer = es.ES_packetloop_icmp_tcp(buffer, length);
 
     if (dataPointer > 0) {
         setTxMode();    // We need to be able to write the received telegram later on.
-        digitalWrite(LED_PIN, HIGH);    // Toggle LED before receiving.
-        //Serial.print(" server available ");
-        //Serial.print("\n\r");
-        //delay(500);
-
+        digitalWrite(LED_PIN, HIGH);
         // TAP#1 - Indicates basic TCP/IP connectivity.
-        readRequest(es);
+        processRequest(dataPointer, length);
     }
     delay(50);
 }
@@ -107,17 +107,16 @@ void writeToClient(char const * data, byte len)
     es.ES_www_server_reply(buffer, dataPointer);
 }
 
-void readRequest(EtherShield client)
+void processRequest(uint16_t offset, uint16_t length)
 {
     byte totalLength = 0;
     byte remainingBytes;
     char ch;
-
-    while (client.connected()) {
-        if (client.available()) {
-            ch = client.read();
-            link.write(ch);
-
+    uint16_t idx;
+    
+    for (idx = 0; idx < length; ++idx) {
+      ch = buffer[offset+idx];
+      link.write(ch);      
             if (totalLength == 0x01) {  // Length byte.
                 remainingBytes = (byte)ch + 2;
 
@@ -134,9 +133,8 @@ void readRequest(EtherShield client)
                     return;
                 }
             }
-            totalLength += 1;
-        }
-    }
+            totalLength += 1;      
+    }           
 }
 
 void setRxMode(void)
