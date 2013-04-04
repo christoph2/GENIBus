@@ -31,8 +31,7 @@ extern "C"
 
 
 #include "Crc.h"
-#include "Pdu.h"
-#include "GB_Datalink.h"	
+#include "GB_Datalink.h"
 
 
 #if defined(__cplusplus)
