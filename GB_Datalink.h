@@ -34,13 +34,6 @@ extern "C"
 {
 #endif  /* __cplusplus */
 
-/*
-** Start-delimiters.
-*/
-#define GB_SD_REPLY     ((uint8)0x24)
-#define GB_SD_MESSAGE   ((uint8)0x26)
-#define GB_SD_REQUEST   ((uint8)0x27)
-
 typedef enum tagDl_State {
     DL_IDLE,
     DL_SENDING,
