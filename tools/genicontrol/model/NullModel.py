@@ -57,10 +57,10 @@ class NullModel(ModelIf.IModel):
         self.dataAvailable = False
         self._quitEvent = quitEvent
         self._setValueLock = threading.RLock()
+        self._concurrentAccess = threading.Lock()
         self._valueDict = createDataDictionary()
         self._infoDict = createDataDictionary()
         self._values = dict()
-        #self._connection = SimulationServer()
         self.connected = False
         self._modelThread = RequestorThread(self)
         self._requestQueue = self._modelThread.requestQueue
@@ -115,7 +115,9 @@ class NullModel(ModelIf.IModel):
         pass
 
     def sendCommand(self, command):
-        pass
+        self._concurrentAccess.acquire()
+        print "Command requested:", command
+        self._concurrentAccess.release()
 
     def roundValue(self, value):
         return int(math.ceil(value * 100))/100.00

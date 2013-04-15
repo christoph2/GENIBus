@@ -140,7 +140,7 @@ class ControllerThread(threading.Thread):
         self.sendCommand('RESET_ALARM_LOG')
 
     def sendCommand(self, command):
-        print "Command requested:", command
+        self._model.sendCommand(command)
 
 
 class GUIController(IController):

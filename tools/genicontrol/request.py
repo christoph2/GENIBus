@@ -113,6 +113,7 @@ class RequestorThread(threading.Thread):
         name = self.getName()
         self.logger.info("Starting %s." % name)
         while True:
+            self._model._concurrentAccess.acquire()
             if self.getState() == RequestorThread.STATE_IDLE:
 
                 self.logger.info('Trying to connect to %s.' % self._model._connection.getDriver())
@@ -159,6 +160,7 @@ class RequestorThread(threading.Thread):
             if res:
                 self.logger.info("Exiting %s." % name)
                 break
+            self._model._concurrentAccess.release()
 
     def request(self, req):
         RequestorThread._currentRequest = req
