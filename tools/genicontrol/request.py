@@ -114,6 +114,7 @@ class RequestorThread(threading.Thread):
         self.logger.info("Starting %s." % name)
         while True:
             self._model._concurrentAccess.acquire()
+
             if self.getState() == RequestorThread.STATE_IDLE:
 
                 self.logger.info('Trying to connect to %s.' % self._model._connection.getDriver())
@@ -180,6 +181,11 @@ class RequestorThread(threading.Thread):
             except Exception as e:
                 print str(e), data
             else:
+                if self._model._commandRequested:
+                    self._model._commandRequested = False
+                    #print "COMMAND_RESP", response
+                    return
+
                 if self.getState() == RequestorThread.STATE_CONNECT_HL:
                      if  self._model._connection.connected:
                          self.setState(RequestorThread.STATE_REQ_INFO)

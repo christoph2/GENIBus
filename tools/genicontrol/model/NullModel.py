@@ -58,6 +58,7 @@ class NullModel(ModelIf.IModel):
         self._quitEvent = quitEvent
         self._setValueLock = threading.RLock()
         self._concurrentAccess = threading.Lock()
+        self._commandRequested = False
         self._valueDict = createDataDictionary()
         self._infoDict = createDataDictionary()
         self._values = dict()
@@ -117,6 +118,12 @@ class NullModel(ModelIf.IModel):
     def sendCommand(self, command):
         self._concurrentAccess.acquire()
         print "Command requested:", command
+        self._commandRequested = True
+        req = apdu.createSetCommandsPDU(
+            apdu.Header(defs.SD_DATA_REQUEST, self.getUnitAddress(), 0x04),
+            [command]
+        )
+        self.writeToServer(req)
         self._concurrentAccess.release()
 
     def roundValue(self, value):
