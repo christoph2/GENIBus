@@ -117,7 +117,7 @@ class RequestorThread(threading.Thread):
 
             if self.getState() == RequestorThread.STATE_IDLE:
 
-                self.logger.info('Trying to connect to %s.' % self._model._connection.getDriver())
+                self.logger.info('Trying to connect to %s.' % self._model._connection.displayName)
                 self._currentRetry += 1
                 self._model.connect(toDriver = True)
                 if self._model.connected:
