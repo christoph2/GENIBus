@@ -26,6 +26,7 @@
 ##
 ##
 
+import array
 import logging
 import threading
 from genicontrol.connection import ConnectionIF
@@ -43,10 +44,12 @@ else:
 class SerialPort(ConnectionIF):
     _lock = threading.Lock()
     _logger = logger
+    counter = 0
 
-    def __init__(self, port, baudrate = 19200, bytesize = serial.EIGHTBITS,
+    def __init__(self, portName, baudrate = 19200, bytesize = serial.EIGHTBITS,
                  parity = serial.PARITY_NONE, stopbits = serial.STOPBITS_ONE, timeout = 0.1):
-        self._port = port
+        self._portName = portName
+        self._port = None
         self._baudrate = baudrate
         self._bytesize = bytesize
         self._parity = parity
@@ -54,9 +57,11 @@ class SerialPort(ConnectionIF):
         self._timeout = timeout
 
     def connect(self):
-        self._logger.debug("Trying to open serial port #%u.", self._port)
+        print "*** CONNECTING '%s' %u" % (self._portName, SerialPort.counter)
+        SerialPort.counter += 1
+        self._logger.debug("Trying to open serial port %s.", self._portName)
         try:
-            self._port = serial.Serial(self._port, self._baudrate , self._bytesize, self._parity,
+            self._port = serial.Serial(self._portName, self._baudrate , self._bytesize, self._parity,
                 self._stopbits, self._timeout
             )
         except serial.SerialException as e:
@@ -64,14 +69,15 @@ class SerialPort(ConnectionIF):
             #self._logger.exception(e)
             raise
         self._logger.info("Serial port openend as '%s' @ %d Bits/Sec.", self._port.portstr, self._port.baudrate)
+        return True
 
     def write(self, data):
         #print list(data)
         self._port.write(bytearray(list(data)))
 
     def read(self, length):
-        result = self._port.read(length)
-        print result
+        result = array.array('B', self._port.read(length))
+        #print result
         return result
 
     def disconnect(self):
