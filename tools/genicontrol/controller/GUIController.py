@@ -80,12 +80,15 @@ class ControllerThread(threading.Thread):
             if self.quitEvent.wait(0.5):
                 break
 
-        unitFamily = self._model.getValue(defs.ADPUClass.MEASURERED_DATA, 'unit_family')
-        unitType = self._model.getValue(defs.ADPUClass.MEASURERED_DATA, 'unit_type')
+        try:
+            unitFamily = self._model.getValue(defs.ADPUClass.MEASURERED_DATA, 'unit_family')
+            unitType = self._model.getValue(defs.ADPUClass.MEASURERED_DATA, 'unit_type')
+        except KeyError:
+            self.logger.debug("unitFamily and unitType not available.")
         #unitVersion = self._model.getValue(defs.ADPUClass.MEASURERED_DATA, 'unit_version') ## TODO: Fixme!
-
-        with file(dd.getDeviceFilePath(unitFamily, unitType, 1), 'w') as outf:
-            outf.write(str(self.infoRecords))
+        else:
+            with file(dd.getDeviceFilePath(unitFamily, unitType, 1), 'w') as outf:
+                outf.write(str(self.infoRecords))
 
         print "Exiting %s." % name
 

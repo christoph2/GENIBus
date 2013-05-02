@@ -77,7 +77,7 @@ class NullModel(ModelIf.IModel):
         self._controller.trace(False, req)
 
     def readFromServer(self):
-        resp = self._connection.read()
+        resp = self._connection.read(0x100)
         self._controller.trace(True, resp)
         return resp
 

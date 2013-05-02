@@ -78,6 +78,6 @@ def connectionFactory(driver):
             logger.error("Serial port not specified.")
             return SimulationServer()   ## Fallback to simulator.
         else:
-            return SerialPort(port = config.serialPort, baudrate = 9600, timeout = 0.5)
+            return SerialPort(portName = config.serialPort, baudrate = 9600, timeout = 0.5)
     else:
         return SimulationServer()
