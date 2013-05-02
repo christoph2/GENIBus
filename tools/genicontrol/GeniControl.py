@@ -26,6 +26,7 @@
 ##
 ##
 
+import array
 import logging
 import os
 import wx
@@ -66,9 +67,12 @@ class BusmonitorPanel(wx.Panel):
             self.logFile.close()
 
     def formatTelegram(self, rxTx, telegram):
-        rt = "Rx" if rxTx else "Tx"
-        formattedTelegram = ' '.join(["0x%02x" % x for x in telegram])
         timestamp = time.strftime("%d/%b/%Y %H:%M:%S")
+        rt = "Rx" if rxTx else "Tx"
+        if not isinstance(telegram, (list, tuple, array.array)):
+            #print "WARNING '%s' isn't a correct telegram!"
+            return "[%s] %s - INVALID!\n"  % (timestamp, rt, )
+        formattedTelegram = ' '.join(["0x%02x" % x for x in telegram])
         return "[%s] %s - %s\n" % (timestamp, rt, formattedTelegram)
 
     def appendLine(self, rxTx, telegram):
