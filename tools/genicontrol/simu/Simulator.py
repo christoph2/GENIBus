@@ -385,7 +385,7 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"act_mode2", 0x00,         Info(0x81, None, None, None)),
         Item(u"act_mode3", 0x10,         Info(0x81, None, None, None)),
         Item(u"led_contr", 0x01,         Info(0x81, None, None, None)),
-        Item(u"ref_act", 0xa5,           Info(0x82, 0x19, 0x00, None)),
+        Item(u"ref_act", 0xa5,           Info(0x82, 0x19, 0x00, 0x0b)),
         Item(u"ref_inf", 0xfe,           Info(0x82, 0x1e, 0x00, 0x64)),
         Item(u"ref_att_loc", 0xfe,       Info(0x82, 0x1e, 0x00, 0x64)),
         Item(u"ref_loc", 0x80,           Info(0x80, None, None, None)),
@@ -572,6 +572,7 @@ def createResponse(request):
         result.append(klass)
         result.append(apduLength & 0x3f)
         result.extend(pdu)
+
     crc = calcuteCrc(result)
     result.extend((utils.hiByte(crc), utils.loByte(crc), ))
     return bytearray(result)
