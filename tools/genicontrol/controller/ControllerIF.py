@@ -31,6 +31,7 @@ import logging
 import threading
 from wx.lib.pubsub import Publisher as Publisher
 from genicontrol.configuration import Config
+from wx import CallAfter
 
 logger = logging.getLogger("genicontrol")
 
@@ -60,7 +61,8 @@ class IController(object):
 
     def trace(self, rxTx, telegram):
         self._sync.acquire()
-        self._view.updateBusmonitor(rxTx, telegram)
+        #self._view.updateBusmonitor(rxTx, telegram)
+        CallAfter(self._view.updateBusmonitor, rxTx, telegram)
         self._sync.release()
 
 
