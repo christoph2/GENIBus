@@ -29,6 +29,7 @@
 import array
 import logging
 import os
+import Queue
 import wx
 from wx.lib.pubsub import Publisher as Publisher
 import time
@@ -125,13 +126,17 @@ class GBFrame(wx.Frame):
         self._model = model
         self.notebook.mcPanel.setLEDState(0, True)
         self._quitEvent = quitEvent
-        self._guiThread = GUIThread(model, self, self._quitEvent)
+        self._messageQueue = Queue.Queue()
+        self._guiThread = GUIThread(model, self, self._messageQueue, self._quitEvent)
         self._guiThread.start()
         return self._guiThread
 
     def quit(self):
         self._quitEvent.set()
         self._guiThread.join()
+
+    def post(self, category, message):
+        self._messageQueue.put_nowait((category, message))
 
     def updateLanguage(self, lang):
         if self.locale:
@@ -220,20 +225,33 @@ class GBFrame(wx.Frame):
 class GUIThread(threading.Thread):
     logger = logging.getLogger("genicontrol")
 
-    def __init__(self, model, view, quitEvent):
+    def __init__(self, model, view, messageQueue, quitEvent):
         super(GUIThread, self).__init__()
         self._model = model
         self._view = view
+        self._messageQueue = messageQueue
         self.quitEvent = quitEvent
         self.setName(self.__class__.__name__)
 
     def run(self):
         name = self.getName()
         self.logger.info("Starting %s." % name)
+        counter = 0
         while True:
-            if self.quitEvent.wait(0.5):
+            counter += 1
+            if self.quitEvent.wait(0.1):
                 break
-            self._view.notebook.mcPanel.setLEDState(0, not self._view.notebook.mcPanel.getLEDState(0))
+##
+##            try:
+##                category, message = self._messageQueue.get_nowait()
+##            except Queue.Empty as e:
+##                pass
+##            else:
+##                print "*** QUEUE-GET: %s ==> %s", (category, message.data.values())
+##
+            if (counter % 5) == 0:
+                self._view.notebook.mcPanel.setLEDState(0, not self._view.notebook.mcPanel.getLEDState(0))
+                counter = 0
         self.logger.info("Exiting %s." % name)
 
 

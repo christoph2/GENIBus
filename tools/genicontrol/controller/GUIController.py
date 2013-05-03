@@ -35,6 +35,7 @@ from genicontrol.scaling import getScalingInfo
 from genicontrol.controller.ControllerIF import IController
 import genicontrol.dd as dd
 from wx.lib.pubsub import Publisher as Publisher
+from wx import CallAfter
 
 
 class InfoWriter(object):
@@ -93,11 +94,14 @@ class ControllerThread(threading.Thread):
         print "Exiting %s." % name
 
     def onInfoUpdate(self, msg):
+        #self._view.post('INFO_UPDATE', msg)
         for values in msg.data.values():
             for key, value in values.items():
                 svalue = getScalingInfo(value)
-                self._view.notebook.infoPanel.setItem(key, svalue.physEntity, str(svalue.factor), svalue.unit, str(value.zero), str(value.range))
-                self._view.notebook.infoPanel.grid.Fit()
+                CallAfter(self._view.notebook.infoPanel.setItem, key, svalue.physEntity, str(svalue.factor), svalue.unit, str(value.zero), str(value.range))
+                CallAfter(self._view.notebook.infoPanel.grid.Fit)
+                #self._view.notebook.infoPanel.setItem(key, svalue.physEntity, str(svalue.factor), svalue.unit, str(value.zero), str(value.range))
+                #self._view.notebook.infoPanel.grid.Fit()
         self.infoRecords.append(values)
         #print msg.data.values()
 
@@ -109,13 +113,15 @@ class ControllerThread(threading.Thread):
             group, item = msg.topic
         #print "Update: '%s' Item:'%s' Data: '%s'" % (group, item, msg.data)
         if group == 'MEASURERED_DATA':
-            self._view.notebook.mcPanel.setValue(item, msg.data)
+            CallAfter(self._view.notebook.mcPanel.setValue, item, msg.data)
+            #self._view.notebook.mcPanel.setValue(item, msg.data)
 
     def onPumpStatus(self, msg):
         group, item = msg.topic
         data = msg.data
         #print "***PS***", item, data
-        self._view.notebook.mcPanel.setPumpStatus(item, data)
+        CallAfter(self._view.notebook.mcPanel.setPumpStatus, item, data)
+        #self._view.notebook.mcPanel.setPumpStatus(item, data)
 
     def onRemoteLocalChanged(self, event):
         print "Remote?: %s\n" % (event.getState(), )
