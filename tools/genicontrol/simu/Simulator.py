@@ -30,6 +30,7 @@
 ## Some known-good telegrams from spec.
 ##
 
+import array
 from collections import namedtuple
 import logging
 import unittest
@@ -583,28 +584,31 @@ class SimulationServer(ConnectionIF):
     def __init__(self, *args, **kwargs):
         self._request = None
         self._response = None
-	self.connected = False
+        self.connected = False
 
     def connect(self):
         self.connected = True
-	return True
+        return True
 
     def disconnect(self):
-	self.connected = False
+        self.connected = False
 
     def close(self):
-	self.connected = False
+        self.connected = False
 
     def write(self, req):
-	if self.connected:
+        if self.connected:
              resp = createResponse(dissectResponse(req))
              self._response = resp
 
-    def read(self):
-	if self.connected:
-             resp = self._response
+    def read(self, numBytes):
+        if self.connected:
+             resp = array.array('B', self._response)
              self._response = None
              return resp
+    @property
+    def displayName(self):
+        return "Simulator"
 
 
 def testResponse(telegram, datapoints, valueInterpretation):
