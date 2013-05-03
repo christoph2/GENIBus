@@ -55,6 +55,7 @@ class SerialPort(ConnectionIF):
         self._parity = parity
         self._stopbits = stopbits
         self._timeout = timeout
+        self.connected = False
 
     def connect(self):
         print "*** CONNECTING '%s' %u" % (self._portName, SerialPort.counter)
@@ -69,6 +70,7 @@ class SerialPort(ConnectionIF):
             #self._logger.exception(e)
             raise
         self._logger.info("Serial port openend as '%s' @ %d Bits/Sec.", self._port.portstr, self._port.baudrate)
+        self.connected = True
         return True
 
     def write(self, data):
