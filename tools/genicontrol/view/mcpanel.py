@@ -116,8 +116,12 @@ class MCPanel(ScrolledPanel):
                 control = self.statusPanel.FindWindowById(controlID)
                 if control:
                     if item == 'f_act':
-                        float = int(value)
-                    control.SetValue(value)
+                        value = float(value)
+                    try:
+                        control.SetValue(value)
+                    except Exception as e:
+                        print str(e)
+                        control.SetValue(int(value))
 
 
     def setPumpStatus(self, item, value):
