@@ -95,4 +95,3 @@ def calcuteCrc(frame):
         crc.update(frame[idx])
     return crc.get()
 
-

@@ -116,7 +116,7 @@ class MCPanel(ScrolledPanel):
                 control = self.statusPanel.FindWindowById(controlID)
                 if control:
                     if item == 'f_act':
-                        value = int(value)
+                        float = int(value)
                     control.SetValue(value)
 
 
