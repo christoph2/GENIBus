@@ -180,7 +180,10 @@ class NullModel(ModelIf.IModel):
         self._setValueLock.release()
 
     def getValue(self, group, datapoint):
-        return self._valueDict[group][datapoint]
+        group = self._valueDict.get(group, None)
+        if not group:
+            return None
+        return group.get(datapoint, None)
 
     def getUnitAddress(self):
         return self.getValue(defs.ADPUClass.CONFIGURATION_PARAMETERS, 'unit_addr')
