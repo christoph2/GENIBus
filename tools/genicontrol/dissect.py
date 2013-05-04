@@ -163,7 +163,7 @@ def dissectPumpStatus(dp, value):
         elif cs == 0b0100:
             contrSource = "External control"
         else:
-            contrSource = '---'
+            contrSource = 'Buttons' # ???
         result.append(('activeSource', contrSource))
     return result
 

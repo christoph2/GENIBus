@@ -35,6 +35,10 @@ import genicontrol.dataitems as dataitems
 from genicontrol.view.statuspanel import StatusPanel, AlarmPanel, PumpOperationPanel
 import genicontrol.view.buttons as buttons
 
+LED_OFF     = 0
+LED_ON      = 1
+LED_BLINK   = 2
+
 class Controls(wx.Panel):
     def __init__(self, parent):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
@@ -85,6 +89,10 @@ class MCPanel(ScrolledPanel):
     def __init__(self, parent):
         ScrolledPanel.__init__(self, parent = parent, id = wx.ID_ANY)
 
+        self._ledState = 0x00
+        #self._ledGreen = LED_OFF
+        #self._ledRed = LED_OFF
+
         sizer = wx.FlexGridSizer(rows = 2, cols = 3, hgap = 5, vgap = 5)
 
         self.statusPanel = StatusPanel(self)
@@ -100,6 +108,27 @@ class MCPanel(ScrolledPanel):
         self.SetupScrolling()
         sizer.Layout()
 
+    def updateLED(self, ledState):
+        if not ledState:
+            return
+        self._ledState = ledState
+        ledRed = (ledState & 0x0C) >> 2
+        ledGreen = ledState  & 0x03
+
+        if ledGreen == LED_ON:
+            self.setLEDState(0, True)
+        elif ledGreen == LED_OFF:
+            self.setLEDState(0, False)
+        elif ledGreen == LED_BLINK:
+            self.setLEDState(0, not self.getLEDState(0))
+
+        if ledRed == LED_ON:
+            self.setLEDState(1, True)
+        elif ledRed == LED_OFF:
+            self.setLEDState(1, False)
+        elif ledRed == LED_BLINK:
+            self.setLEDState(1, not self.getLEDState(1))
+
     def setLEDState(self, num ,on):
         self.statusPanel.ledControl.setState(num, on)
 
@@ -107,11 +136,11 @@ class MCPanel(ScrolledPanel):
         return self.statusPanel.ledControl.getState(num)
 
     def setValue(self, item ,value):
-        #print "MCP: %s %s" % (item, value)
+        if item == 'led_contr': ## LED are special...
+            self.updateLED(int(value))
         entry = MEAS_VALUES_DICT.get(item, None)
         if entry:
             _, _, controlID, _ = entry
-            #print entry
             if controlID:
                 control = self.statusPanel.FindWindowById(controlID)
                 if control:

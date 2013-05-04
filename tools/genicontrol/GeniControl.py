@@ -32,6 +32,7 @@ import os
 import Queue
 import wx
 from wx.lib.pubsub import Publisher as Publisher
+from wx import CallAfter
 import time
 import threading
 import genicontrol.dataitems as dataitems
@@ -236,22 +237,17 @@ class GUIThread(threading.Thread):
     def run(self):
         name = self.getName()
         self.logger.info("Starting %s." % name)
-        counter = 0
+        #counter = 0
         while True:
-            counter += 1
+            #counter += 1
             if self.quitEvent.wait(0.1):
                 break
 ##
-##            try:
-##                category, message = self._messageQueue.get_nowait()
-##            except Queue.Empty as e:
-##                pass
-##            else:
-##                print "*** QUEUE-GET: %s ==> %s", (category, message.data.values())
+##            if (counter % 5) == 0:
+##                ledState = self._model.getValue('MEASURERED_DATA', 'led_contr')
+##                CallAfter(self._view.notebook.mcPanel.updateLED, ledState)
+##                counter = 0
 ##
-            if (counter % 5) == 0:
-                self._view.notebook.mcPanel.setLEDState(0, not self._view.notebook.mcPanel.getLEDState(0))
-                counter = 0
         self.logger.info("Exiting %s." % name)
 
 
