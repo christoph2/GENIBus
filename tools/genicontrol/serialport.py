@@ -82,6 +82,9 @@ class SerialPort(ConnectionIF):
         #print result
         return result
 
+    def flush(self):
+        self._port.flush()
+
     def disconnect(self):
         if self._port.isOpen() == True:
             self._port.close()
