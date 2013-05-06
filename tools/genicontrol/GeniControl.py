@@ -128,13 +128,9 @@ class GBFrame(wx.Frame):
         self.notebook.mcPanel.setLEDState(0, True)
         self._quitEvent = quitEvent
         self._messageQueue = Queue.Queue()
-        self._guiThread = GUIThread(model, self, self._messageQueue, self._quitEvent)
-        self._guiThread.start()
-        return self._guiThread
 
     def quit(self):
-        self._quitEvent.set()
-        self._guiThread.join()
+        pass
 
     def post(self, category, message):
         self._messageQueue.put_nowait((category, message))
@@ -221,34 +217,6 @@ class GBFrame(wx.Frame):
 
     def updateBusmonitor(self, rxTx, telegram):
         self.notebook.bmPanel.appendLine(rxTx, telegram)
-
-
-class GUIThread(threading.Thread):
-    logger = logging.getLogger("genicontrol")
-
-    def __init__(self, model, view, messageQueue, quitEvent):
-        super(GUIThread, self).__init__()
-        self._model = model
-        self._view = view
-        self._messageQueue = messageQueue
-        self.quitEvent = quitEvent
-        self.setName(self.__class__.__name__)
-
-    def run(self):
-        name = self.getName()
-        self.logger.info("Starting %s." % name)
-        #counter = 0
-        while True:
-            #counter += 1
-            if self.quitEvent.wait(0.1):
-                break
-##
-##            if (counter % 5) == 0:
-##                ledState = self._model.getValue('MEASURERED_DATA', 'led_contr')
-##                CallAfter(self._view.notebook.mcPanel.updateLED, ledState)
-##                counter = 0
-##
-        self.logger.info("Exiting %s." % name)
 
 
 class GeniControlApp(wx.PySimpleApp):
