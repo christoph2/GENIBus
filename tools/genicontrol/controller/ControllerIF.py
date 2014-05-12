@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -48,7 +48,7 @@ class IController(object):
         self._pub = Publisher()
         self._view = viewClass  # (self, model)
         self._waitingPoint = threading.Event()
-        connection = connectionFactory(config.networkDriver)
+        connection = connectionFactory(config.get('network', 'driver'))
         self._model = modelCls(self._waitingPoint, connection)
         setattr(self._model, '_controller', self)
         self._viewThread = self._view.initialize(self._model, IController.quitViewEvent)
@@ -71,8 +71,8 @@ def connectionFactory(driver):
     from genicontrol.tcpclient import Connector
     from genicontrol.serialport import SerialPort, serialAvailable
 
-    ip = config.serverIP
-    port = config.serverPort
+    ip = config.get('network', 'serverip')
+    port = config.get('network', 'serverport')
     if driver == '1':
         return Connector(ip, port)
     elif driver == '2' and serialAvailable:

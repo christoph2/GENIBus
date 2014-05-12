@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -210,10 +210,10 @@ class GBFrame(wx.Frame):
         size = self.Size
         pos = self.Position
         config = Config()
-        config.posX = pos.x
-        config.posY = pos.y
-        config.sizeX = size.x
-        config.sizeY = size.y
+        config.set('window', 'posy', pos.x)
+        config.set('window', 'posy', pos.y)
+        config.set('window', 'sizex', size.x)
+        config.set('window', 'sizey', size.y)
 
     def updateBusmonitor(self, rxTx, telegram):
         self.notebook.bmPanel.appendLine(rxTx, telegram)
@@ -226,9 +226,9 @@ class GeniControlApp(wx.PySimpleApp):
 def main():
     logger = logging.getLogger("genicontrol")
     config = Config()
-    config.loadConfiguration()
-    size = wx.Size(config.sizeX, config.sizeY)
-    pos = wx.Point(config.posX, config.posY)
+    config.load()
+    size = wx.Size(config.get('window', 'sizex'), config.get('window', 'sizey'))
+    pos = wx.Point(config.get('window', 'posx'), config.get('window', 'posy'))
     app = GeniControlApp()
     frame = GBFrame(None, size, pos)
 
@@ -236,7 +236,7 @@ def main():
 
     frame.Show(True)
     app.MainLoop()
-    config.saveConfiguration()
+    config.save()
 
 if __name__ == '__main__':
     main()

@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -36,74 +36,73 @@ import os
 import threading
 from genicontrol.utils import absConfigurationFilename
 
+from genicontrol.utils.configprocessor import ConfigProcessor
+
 CFG_FILE_NAME = absConfigurationFilename('.GeniControl.cfg')
+
+
+CONFIG_META = ( # TODO: Meta-data should be stored in files!?
+    ('general',
+        (
+            ('pollinginterval', 2),
+        )
+    ),
+    ('network',
+        (
+            ('serverip',        '192.168.100.10'),
+            ('subnetmask',      '255.255.255.0'),
+            ('serverport',      8080),  # 6734
+            ('driver',          1),
+        )
+    ),
+    ('window',
+        (
+            ('sizex',           800),
+            ('sizey',           600),
+            ('posx',            0),
+            ('posy',            0),
+        )
+    ),
+    ('serial',
+        (
+            ('serialport',      ''),
+        )
+    ),
+)
+
 
 class Config(object):
     _lock = threading.Lock()
-    logger = logging.getLogger("genicontrol")
     loaded = False
 
     def __new__(cls):
-        try:
-            cls._lock.acquire()
-            if not hasattr(cls, '_instance'):
-                cls._instance = super(cls.__class__, cls).__new__(cls)
-        finally:
-            cls._lock.release()
+        # Double-Checked Locking
+        if not hasattr(cls, '_instance'):
+            try:
+                cls._lock.acquire()
+                if not hasattr(cls, '_instance'):
+                    cls._instance = super(cls.__class__, cls).__new__(cls)
+                    cls.cp = ConfigProcessor(CONFIG_META)
+            finally:
+                cls._lock.release()
         return cls._instance
 
-    def loadConfiguration(self):
+    def __init__(self):
+        pass
+
+    def load(self):
         if not self.loaded:
-            self.config = configparser.ConfigParser()
-            config = self.config
-            config.read([CFG_FILE_NAME])
-            if not config.has_section('general'):
-                config.add_section('general')
-                config.set('general', 'pollingInterval', '2')
-            self.pollingInterval = config.getint('general', 'pollingInterval')
-            if not config.has_section('network'):
-                config.add_section('network')
-                config.set('network', 'serverIP', '192.168.100.10')
-                config.set('network', 'subnetMask', '255.255.255.0')
-                config.set('network', 'serverPort', '6734')
-                config.set('network', 'driver', '1')
-            self.serverIP = config.get('network', 'serverIP')
-            self.serverPort = config.get('network', 'serverPort')
-            self.subnetMask = config.get('network', 'subnetMask')
-            try:
-                self.networkDriver = config.get('network', 'driver')
-            except:
-                self.networkDriver = '1'
-            if not config.has_section('serial'):
-                config.add_section('serial')
-                config.set('serial', 'serialPort', '')
-            self.serialPort = config.get('serial', 'serialPort')
-            if not config.has_section('window'):
-                config.add_section('window')
-                config.set('window', 'sizeX', '800')
-                config.set('window', 'sizeY', '600')
-                config.set('window', 'posX', 0)
-                config.set('window', 'posY', 0)
-            self.posX = config.getint('window', 'posx')
-            self.posY = config.getint('window', 'posy')
-            self.sizeX = config.getint('window', 'sizex')
-            self.sizeY = config.getint('window', 'sizey')
-            self.loaded = True
+            if os.access(CFG_FILE_NAME, os.F_OK):
+                self.cp.read(open(CFG_FILE_NAME))
+                self.loaded = True
+        # else: we are working with default values.
 
-    def saveConfiguration(self):
-        print "Saving configuration..."
-        config = self.config
-        with open(CFG_FILE_NAME, 'w') as fout:
-            config.set('window', 'sizex', str(self.sizeX))
-            config.set('window', 'sizey', str(self.sizeY))
-            config.set('window', 'posx', str(self.posX))
-            config.set('window', 'posy', str(self.posY))
-            config.set('general', 'pollingInterval', str(self.pollingInterval))
-            config.set('network', 'serverIP', str(self.serverIP))
-            config.set('network', 'subnetMask', str(self.subnetMask))
-            config.set('network', 'serverPort', str(self.serverPort))
-            config.set('network', 'driver', str(self.networkDriver))
-            config.set('serial', 'serialPort', str(self.serialPort))
-            config.write(fout)
+    def save(self):
+        self.cp.write(open(CFG_FILE_NAME, 'w'))
 
+    def get(self, section, option):
+        return self.cp.get(section, option)
+
+    def set(self, section, option, value):
+        self.cp.set(section, option, value)
 

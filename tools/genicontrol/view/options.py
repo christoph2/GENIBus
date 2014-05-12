@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -55,9 +55,9 @@ class Options(wx.Dialog):
         self.simControls = []
 
         config = Config()
-        config.loadConfiguration()
+        config.load()
 
-        self.driver = int(config.networkDriver)
+        self.driver = config.get('network', 'driver')
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -134,13 +134,13 @@ class Options(wx.Dialog):
 
         self.SetSizerAndFit(sizer)
 
-        config.serverIP = fixIP(config.serverIP)
-        addr.SetValue(config.serverIP)
-        config.subnetMask = fixIP(config.subnetMask)
-        mask.SetValue(config.subnetMask)
-        port.SetValue(config.serverPort)
-        poll.SetValue(str(config.pollingInterval))
-        serialPort.SetValue(config.serialPort)
+        serverIP = fixIP(config.get('network', 'serverip'))
+        addr.SetValue(serverIP)
+        subnetMask = fixIP(config.get('network', 'subnetmask'))
+        mask.SetValue(subnetMask)
+        port.SetValue(str(config.get('network', 'serverport')))
+        poll.SetValue(str(config.get('general', 'pollinginterval')))
+        serialPort.SetValue(str(config.get('serial', 'serialport')))
         if self.driver == 0:
             value = 'Simulator'
             button = radioSim
@@ -158,12 +158,12 @@ class Options(wx.Dialog):
         retval = self.ShowModal()
         retval = wx.ID_OK
         if retval == wx.ID_OK:
-            config.serverIP = fixIP(addr.GetValue())
-            config.subnetMaskP = fixIP(mask.GetValue())
-            config.serverPortP = port.GetValue()
-            config.pollingInterval = poll.GetValue()
-            config.networkDriver = str(self.driver)
-            config.serialPort = serialPort.GetValue()
+            config.set('network', 'serverip', fixIP(addr.GetValue()))
+            config.set('network', 'subnetmask', fixIP(mask.GetValue()))
+            config.set('network', 'serverport',  port.GetValue())
+            config.set('general', 'pollinginterval',  poll.GetValue())
+            config.set('network', 'driver', self.driver)
+            config.set('serial', 'serialport', serialPort.GetValue())
         self.Destroy()
 
     def onDriverSelected(self, event):

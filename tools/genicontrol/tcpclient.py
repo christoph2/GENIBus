@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -40,7 +40,7 @@ logger = logging.getLogger("genicontrol")
 
 config = Config()
 
-config.loadConfiguration()  ## TEST!!!
+config.load()  ## TEST!!!
 
 #SERVER = '192.168.1.2'  # TODO: Adjust to the IP-address of your Arduino board!
 
@@ -67,38 +67,38 @@ class Connector(ConnectionIF):
     DRIVER = 'Arduino / TCP'
 
     def __init__(self, serverIP, serverPort):
-	self.serverIP = serverIP
-	self.serverPort = serverPort
-	self.connected = False
+        self.serverIP = serverIP
+        self.serverPort = serverPort
+        self.connected = False
 
     def connect(self):
-	try:
-	     self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
              self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
              self.sock.settimeout(0.5)
              self.connection = self.sock.connect((self.serverIP, int(self.serverPort)))
-	     self.connected = True
-	     return True
-	except Exception as e:
+             self.connected = True
+             return True
+        except Exception as e:
              print str(e)
-	     return False
+             return False
 
     def disconnect(self):
-	self.connected = False
+        self.connected = False
 
     def close(self):
-	self.connected = False
-	self.sock.close()
+        self.connected = False
+        self.sock.close()
 
     def __del__(self):
         self.close()
 
     def write(self, data):
-	if self.connected:
+        if self.connected:
              self.sock.send(bytearray(data))
 
     def read(self):
-	if self.connected:
+        if self.connected:
              data = bytearray(self.sock.recv(BUF_SIZE))
              return data
 
