@@ -67,10 +67,8 @@ class ConfigProcessor(object):
                     if not currentSection in self._sections:
                         self._sections[currentSection] = OrderedDict()
 
-                    if self._sections[currentSection].has_key(prop):    # TODO: getType
-                        type_ = type(self._sections[currentSection][prop])
-                    else:
-                        type_ = str
+                    type_ = self._getType(currentSection, prop)
+
                     self._sections[currentSection][prop] = type_(value)
 
                 else:
@@ -95,8 +93,9 @@ class ConfigProcessor(object):
         items = self._sections.get(section)
         return items.keys() if items else []
 
-    def set(self, section, option):
-        pass
+    def set(self, section, option, value):
+        type_ = self._getType(section, option)
+        self._sections[section][option] = type_(value)
 
     def has_option(self, section, option):
         if not section in self._sections:
@@ -107,6 +106,12 @@ class ConfigProcessor(object):
     def has_section(self, section):
         return section in self._sections
 
+    def _getType(self, section, option):
+        if self._sections[section].has_key(option):
+            return type(self._sections[section][option])
+        else:
+            return
+
     def __str__(self):
         return str(self._sections)
 
@@ -116,34 +121,4 @@ class ConfigProcessor(object):
         return self._sections.keys()
 
     sections = property(_getSections)
-
-
-CONFIG_META = ( # TODO: Meta-data should be stored in files!?
-    ('general',
-        (
-            ('pollinginterval', 2),
-        )
-    ),
-    ('network',
-        (
-            ('serverip',        '192.168.100.10'),
-            ('subnetmask',      '255.255.255.0'),
-            ('serverport',      8080),  # 6734
-            ('driver',          1),
-        )
-    ),
-    ('window',
-        (
-            ('sizex',           800),
-            ('sizey',           600),
-            ('posx',            0),
-            ('posy',            0),
-        )
-    ),
-    ('serial',
-        (
-            ('serialport',      ''),
-        )
-    ),
-)
 
