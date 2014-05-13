@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -58,7 +58,6 @@ class SerialPort(ConnectionIF):
         self.connected = False
 
     def connect(self):
-        print "*** CONNECTING '%s' %u" % (self._portName, SerialPort.counter)
         SerialPort.counter += 1
         self._logger.debug("Trying to open serial port %s.", self._portName)
         try:
@@ -67,19 +66,16 @@ class SerialPort(ConnectionIF):
             )
         except serial.SerialException as e:
             self._logger.error("%s", e)
-            #self._logger.exception(e)
             raise
         self._logger.info("Serial port openend as '%s' @ %d Bits/Sec.", self._port.portstr, self._port.baudrate)
         self.connected = True
         return True
 
     def write(self, data):
-        #print list(data)
         self._port.write(bytearray(list(data)))
 
     def read(self, length):
         result = array.array('B', self._port.read(length))
-        #print result
         return result
 
     def flush(self):
