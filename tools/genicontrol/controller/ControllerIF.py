@@ -73,13 +73,14 @@ def connectionFactory(driver):
 
     ip = config.get('network', 'serverip')
     port = config.get('network', 'serverport')
-    if driver == '1':
+    if driver == 1:
         return Connector(ip, port)
-    elif driver == '2' and serialAvailable:
-        if not config.serialPort:
+    elif driver == 2 and serialAvailable:
+        serialPort = config.get('serial', 'serialport')
+        if not serialPort:
             logger.error("Serial port not specified.")
             return SimulationServer()   ## Fallback to simulator.
         else:
-            return SerialPort(portName = config.serialPort, baudrate = 9600, timeout = 0.5)
+            return SerialPort(portName = serialPort, baudrate = 9600, timeout = 0.5)
     else:
         return SimulationServer()
