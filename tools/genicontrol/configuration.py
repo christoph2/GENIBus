@@ -31,8 +31,15 @@ try:
 except ImportError:
     import configparser # Python 3.x
 
+
+try:
+    import cStringIO as StringIO
+except ImportError:
+    import StringIO
+
 import logging
 import os
+import pkgutil
 import threading
 
 import yaml
@@ -47,39 +54,6 @@ def readConfigFile(project, fname):
     return pkgutil.get_data(project, 'config/%s' % fname)
 
 
-CONFIG_META = ( # TODO: Meta-data should be stored in files!?
-    ('general',
-        (
-            ('pollinginterval', 2),
-        )
-    ),
-    ('network',
-        (
-            ('serverip',        '192.168.100.10'),
-            ('subnetmask',      '255.255.255.0'),
-            ('serverport',      8080),  # 6734
-            ('driver',          1),
-        )
-    ),
-    ('window',
-        (
-            ('sizex',           800),
-            ('sizey',           600),
-            ('posx',            0),
-            ('posy',            0),
-        )
-    ),
-    ('serial',
-        (
-            ('serialport',      ''),
-        )
-    ),
-)
-
-import yaml
-
-#yaml.dump(CONFIG_META, open(r"C:\Users\christoph303\Documents\Arduino\libraries\Genibus\tools\genicontrol\config\default_config.yaml", "w"))
-
 class Config(object):
     _lock = threading.Lock()
     loaded = False
@@ -91,7 +65,8 @@ class Config(object):
                 cls._lock.acquire()
                 if not hasattr(cls, '_instance'):
                     cls._instance = super(cls.__class__, cls).__new__(cls)
-                    cls.cp = ConfigProcessor(readConfigFile("default_config.yaml", "genicontrol"))  CONFIG_META
+                    baz = yaml.load(StringIO.StringIO(readConfigFile("genicontrol", "default_config.yaml")))
+                    cls.cp = ConfigProcessor(baz)  #CONFIG_META
             finally:
                 cls._lock.release()
         return cls._instance
