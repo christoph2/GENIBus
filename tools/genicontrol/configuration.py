@@ -31,7 +31,6 @@ try:
 except ImportError:
     import configparser # Python 3.x
 
-
 try:
     import cStringIO as StringIO
 except ImportError:
@@ -66,7 +65,7 @@ class Config(object):
                 if not hasattr(cls, '_instance'):
                     cls._instance = super(cls.__class__, cls).__new__(cls)
                     baz = yaml.load(StringIO.StringIO(readConfigFile("genicontrol", "default_config.yaml")))
-                    cls.cp = ConfigProcessor(baz)  #CONFIG_META
+                    cls.cp = ConfigProcessor(baz)
             finally:
                 cls._lock.release()
         return cls._instance
