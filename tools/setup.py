@@ -1,6 +1,7 @@
 #!/bin/env/python
 
 from distutils.core import setup,Extension
+from glob import glob
 from setuptools import find_packages
 
 print find_packages()
@@ -18,5 +19,8 @@ setup(
 		'GeniControl = genicontrol.GeniControl:main',
         ],
     },
-    install_requires = ['mako', 'pyserial']
+    install_requires = ['mako', 'pyserial', 'pyyaml'],
+    data_files = [
+            ('genicontrol/config', glob('genicontrol/config/*.*')),
+    ]
 )

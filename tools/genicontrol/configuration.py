@@ -34,11 +34,17 @@ except ImportError:
 import logging
 import os
 import threading
-from genicontrol.utils import absConfigurationFilename
 
+import yaml
+
+from genicontrol.utils import absConfigurationFilename
 from genicontrol.utils.configprocessor import ConfigProcessor
 
 CFG_FILE_NAME = absConfigurationFilename('.GeniControl.cfg')
+
+
+def readConfigFile(project, fname):
+    return pkgutil.get_data(project, 'config/%s' % fname)
 
 
 CONFIG_META = ( # TODO: Meta-data should be stored in files!?
@@ -70,6 +76,9 @@ CONFIG_META = ( # TODO: Meta-data should be stored in files!?
     ),
 )
 
+import yaml
+
+#yaml.dump(CONFIG_META, open(r"C:\Users\christoph303\Documents\Arduino\libraries\Genibus\tools\genicontrol\config\default_config.yaml", "w"))
 
 class Config(object):
     _lock = threading.Lock()
@@ -82,7 +91,7 @@ class Config(object):
                 cls._lock.acquire()
                 if not hasattr(cls, '_instance'):
                     cls._instance = super(cls.__class__, cls).__new__(cls)
-                    cls.cp = ConfigProcessor(CONFIG_META)
+                    cls.cp = ConfigProcessor(readConfigFile("default_config.yaml", "genicontrol"))  CONFIG_META
             finally:
                 cls._lock.release()
         return cls._instance

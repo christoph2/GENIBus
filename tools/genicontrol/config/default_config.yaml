@@ -1,0 +1,23 @@
+!!python/tuple
+- !!python/tuple
+  - general
+  - !!python/tuple
+    - !!python/tuple [pollinginterval, 2]
+- !!python/tuple
+  - network
+  - !!python/tuple
+    - !!python/tuple [serverip, 192.168.100.10]
+    - !!python/tuple [subnetmask, 255.255.255.0]
+    - !!python/tuple [serverport, 8080]
+    - !!python/tuple [driver, 1]
+- !!python/tuple
+  - window
+  - !!python/tuple
+    - !!python/tuple [sizex, 800]
+    - !!python/tuple [sizey, 600]
+    - !!python/tuple [posx, 0]
+    - !!python/tuple [posy, 0]
+- !!python/tuple
+  - serial
+  - !!python/tuple
+    - !!python/tuple [serialport, '']
