@@ -1,0 +1,444 @@
+1: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Electrical current', 0.1, !!python/unicode 'A']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Electrical current']
+    - [factor, 0.1]
+    - [unit, !!python/unicode 'A']
+2: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Electrical current', 5, !!python/unicode 'A']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Electrical current']
+    - [factor, 5]
+    - [unit, !!python/unicode 'A']
+3: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Voltage', 0.1, !!python/unicode 'V']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Voltage']
+    - [factor, 0.1]
+    - [unit, !!python/unicode 'V']
+4: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Voltage', 1, !!python/unicode 'V']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Voltage']
+    - [factor, 1]
+    - [unit, !!python/unicode 'V']
+5: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Voltage', 5, !!python/unicode 'V']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Voltage']
+    - [factor, 5]
+    - [unit, !!python/unicode 'V']
+6: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Elec. resistance', 1, "\u03A9"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Elec. resistance']
+    - [factor, 1]
+    - [unit, "\u03A9"]
+7: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Power (active)', 1, !!python/unicode 'W']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Power (active)']
+    - [factor, 1]
+    - [unit, !!python/unicode 'W']
+8: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Power (active)', 10, !!python/unicode 'W']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Power (active)']
+    - [factor, 10]
+    - [unit, !!python/unicode 'W']
+9: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Power (active)', 100, !!python/unicode 'W']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Power (active)']
+    - [factor, 100]
+    - [unit, !!python/unicode 'W']
+10: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Power (apparent)', 1, !!python/unicode 'VA']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Power (apparent)']
+    - [factor, 1]
+    - [unit, !!python/unicode 'VA']
+11: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Power (apparent)', 10, !!python/unicode 'VA']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Power (apparent)']
+    - [factor, 10]
+    - [unit, !!python/unicode 'VA']
+12: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Power (apparent)', 100, !!python/unicode 'VA']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Power (apparent)']
+    - [factor, 100]
+    - [unit, !!python/unicode 'VA']
+13: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Power (reactive)', 1, !!python/unicode 'VAr']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Power (reactive)']
+    - [factor, 1]
+    - [unit, !!python/unicode 'VAr']
+14: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Power (reactive)', 10, !!python/unicode 'Var']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Power (reactive)']
+    - [factor, 10]
+    - [unit, !!python/unicode 'Var']
+15: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Power (reactive)', 100, !!python/unicode 'VAr']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Power (reactive)']
+    - [factor, 100]
+    - [unit, !!python/unicode 'VAr']
+16: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Frequency', 1, !!python/unicode 'Hz']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Frequency']
+    - [factor, 1]
+    - [unit, !!python/unicode 'Hz']
+17: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Frequency', 2.5, !!python/unicode 'Hz']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Frequency']
+    - [factor, 2.5]
+    - [unit, !!python/unicode 'Hz']
+18: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Rot. velocity', 12, !!python/unicode 'rpm']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Rot. velocity']
+    - [factor, 12]
+    - [unit, !!python/unicode 'rpm']
+19: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Rot. velocity', 100, !!python/unicode 'rpm']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Rot. velocity']
+    - [factor, 100]
+    - [unit, !!python/unicode 'rpm']
+20: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Temperature', 0.1, "\xB0C"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Temperature']
+    - [factor, 0.1]
+    - [unit, "\xB0C"]
+21: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Temperature', 1, "\xB0C"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Temperature']
+    - [factor, 1]
+    - [unit, "\xB0C"]
+22: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Flow', 0.1, "m\xB3/h"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Flow']
+    - [factor, 0.1]
+    - [unit, "m\xB3/h"]
+23: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Flow', 1, "m\xB3/h"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Flow']
+    - [factor, 1]
+    - [unit, "m\xB3/h"]
+24: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Head', 0.1, !!python/unicode 'm']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Head']
+    - [factor, 0.1]
+    - [unit, !!python/unicode 'm']
+25: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Head', 1, !!python/unicode 'm']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Head']
+    - [factor, 1]
+    - [unit, !!python/unicode 'm']
+26: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Head', 10, !!python/unicode 'm']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Head']
+    - [factor, 10]
+    - [unit, !!python/unicode 'm']
+27: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Pressure', 0.01, !!python/unicode 'bar']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Pressure']
+    - [factor, 0.01]
+    - [unit, !!python/unicode 'bar']
+28: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Pressure', 0.1, !!python/unicode 'bar']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Pressure']
+    - [factor, 0.1]
+    - [unit, !!python/unicode 'bar']
+29: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Pressure', 1, !!python/unicode 'bar']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Pressure']
+    - [factor, 1]
+    - [unit, !!python/unicode 'bar']
+30: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Percentage', 1, !!python/unicode '%']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Percentage']
+    - [factor, 1]
+    - [unit, !!python/unicode '%']
+31: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Energy', 1, !!python/unicode 'kWh']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Energy']
+    - [factor, 1]
+    - [unit, !!python/unicode 'kWh']
+32: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Energy', 10, !!python/unicode 'kWh']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Energy']
+    - [factor, 10]
+    - [unit, !!python/unicode 'kWh']
+33: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Energy', 100, !!python/unicode 'kWh']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Energy']
+    - [factor, 100]
+    - [unit, !!python/unicode 'kWh']
+34: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Ang. velocity', 2, !!python/unicode 'rad/s']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Ang. velocity']
+    - [factor, 2]
+    - [unit, !!python/unicode 'rad/s']
+35: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Time', 1, !!python/unicode 'h']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Time']
+    - [factor, 1]
+    - [unit, !!python/unicode 'h']
+36: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Time', 2, !!python/unicode 'min']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Time']
+    - [factor, 2]
+    - [unit, !!python/unicode 'min']
+37: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Time', 1, !!python/unicode 's']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Time']
+    - [factor, 1]
+    - [unit, !!python/unicode 's']
+38: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Frequency', 2, !!python/unicode 'Hz']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Frequency']
+    - [factor, 2]
+    - [unit, !!python/unicode 'Hz']
+39: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Time', 1024, !!python/unicode 'h']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Time']
+    - [factor, 1024]
+    - [unit, !!python/unicode 'h']
+40: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Energy', 512, !!python/unicode 'kWh']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Energy']
+    - [factor, 512]
+    - [unit, !!python/unicode 'kWh']
+41: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Flow', 5, "m\xB3/h"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Flow']
+    - [factor, 5]
+    - [unit, "m\xB3/h"]
+42: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Electrical current', 0.2, !!python/unicode 'A']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Electrical current']
+    - [factor, 0.2]
+    - [unit, !!python/unicode 'A']
+43: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Elec. resistance', 10, "k\u03A9"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Elec. resistance']
+    - [factor, 10]
+    - [unit, "k\u03A9"]
+44: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Power (active)', 1, !!python/unicode 'kW']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Power (active)']
+    - [factor, 1]
+    - [unit, !!python/unicode 'kW']
+45: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Power (active)', 10, !!python/unicode 'kW']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Power (active)']
+    - [factor, 10]
+    - [unit, !!python/unicode 'kW']
+46: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Energy', 1, !!python/unicode 'MWh']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Energy']
+    - [factor, 1]
+    - [unit, !!python/unicode 'MWh']
+47: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Energy', 10, !!python/unicode 'MWh']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Energy']
+    - [factor, 10]
+    - [unit, !!python/unicode 'MWh']
+48: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Energy', 100, !!python/unicode 'MWh']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Energy']
+    - [factor, 100]
+    - [unit, !!python/unicode 'MWh']
+49: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Ang. degrees', 1, "\xB0"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Ang. degrees']
+    - [factor, 1]
+    - [unit, "\xB0"]
+50: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Gain', 1, !!python/unicode '']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Gain']
+    - [factor, 1]
+    - [unit, !!python/unicode '']
+51: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Pressure', 0.001, !!python/unicode 'bar']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Pressure']
+    - [factor, 0.001]
+    - [unit, !!python/unicode 'bar']
+52: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Flow', 1, !!python/unicode 'l/s']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Flow']
+    - [factor, 1]
+    - [unit, !!python/unicode 'l/s']
+53: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Flow', 1, "m\xB3/s"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Flow']
+    - [factor, 1]
+    - [unit, "m\xB3/s"]
+54: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Flow', 1, !!python/unicode 'gpm']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Flow']
+    - [factor, 1]
+    - [unit, !!python/unicode 'gpm']
+55: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Pressure', 1, !!python/unicode 'psi']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Pressure']
+    - [factor, 1]
+    - [unit, !!python/unicode 'psi']
+56: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Head', 1, !!python/unicode 'ft']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Head']
+    - [factor, 1]
+    - [unit, !!python/unicode 'ft']
+57: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Temperature', 1, "\xB0F"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Temperature']
+    - [factor, 1]
+    - [unit, "\xB0F"]
+58: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Flow', 10, !!python/unicode 'gpm']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Flow']
+    - [factor, 10]
+    - [unit, !!python/unicode 'gpm']
+59: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Head', 10, !!python/unicode 'ft']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Head']
+    - [factor, 10]
+    - [unit, !!python/unicode 'ft']
+60: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Pressure', 10, !!python/unicode 'psi']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Pressure']
+    - [factor, 10]
+    - [unit, !!python/unicode 'psi']
+61: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Pressure', 1, !!python/unicode 'kPa']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Pressure']
+    - [factor, 1]
+    - [unit, !!python/unicode 'kPa']
+62: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Electrical current', 0.5, !!python/unicode 'A']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Electrical current']
+    - [factor, 0.5]
+    - [unit, !!python/unicode 'A']
+63: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Flow', 0.1, !!python/unicode 'l/s']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Flow']
+    - [factor, 0.1]
+    - [unit, !!python/unicode 'l/s']
+64: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Volume', 0.1, "m\xB3"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Volume']
+    - [factor, 0.1]
+    - [unit, "m\xB3"]
+65: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Volume', 1000, "m\xB3"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Volume']
+    - [factor, 1000]
+    - [unit, "m\xB3"]
+66: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Energy pr vol.', 10, "kWh/m\xB3"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Energy pr vol.']
+    - [factor, 10]
+    - [unit, "kWh/m\xB3"]
+67: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Volume', 256, "m\xB3"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Volume']
+    - [factor, 256]
+    - [unit, "m\xB3"]
+68: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Area', 1, "m\xB2"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Area']
+    - [factor, 1]
+    - [unit, "m\xB2"]
+69: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Flow', 0.1, !!python/unicode 'ml/h']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Flow']
+    - [factor, 0.1]
+    - [unit, !!python/unicode 'ml/h']
+70: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Volume', 0.1, !!python/unicode 'ml']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Volume']
+    - [factor, 0.1]
+    - [unit, !!python/unicode 'ml']
+71: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Volume', 1, !!python/unicode 'nl']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Volume']
+    - [factor, 1]
+    - [unit, !!python/unicode 'nl']
+72: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Time', 1024, !!python/unicode 'min']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Time']
+    - [factor, 1024]
+    - [unit, !!python/unicode 'min']
+73: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Flow', 0.5, !!python/unicode 'l/h']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Flow']
+    - [factor, 0.5]
+    - [unit, !!python/unicode 'l/h']
+74: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Energy pr vol.', 1, "Wh/m\xB3"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Energy pr vol.']
+    - [factor, 1]
+    - [unit, "Wh/m\xB3"]
