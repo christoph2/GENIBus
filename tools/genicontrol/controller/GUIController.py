@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -29,6 +29,7 @@
 import logging
 import threading
 import wx
+import yaml
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.defs as defs
 from genicontrol.scaling import getScalingInfo
@@ -89,7 +90,8 @@ class ControllerThread(threading.Thread):
         #unitVersion = self._model.getValue(defs.ADPUClass.MEASURERED_DATA, 'unit_version') ## TODO: Fixme!
         else:
             with file(dd.getDeviceFilePath(unitFamily, unitType, 1), 'w') as outf:
-                outf.write(str(self.infoRecords))
+                #outf.write(str(self.infoRecords))
+                yaml.dump(self.infoRecords, outf)
 
         print "Exiting %s." % name
 
