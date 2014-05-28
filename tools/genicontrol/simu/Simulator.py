@@ -29,15 +29,22 @@
 import array
 from collections import namedtuple
 import logging
-#import unittest
-#from genilib.crc import checkCrc, calcuteCrc
-from genicontrol.defs import Info, Item
-import genilib.utils as utils
+
 import genicontrol.apdu as apdu
-import genicontrol.defs as defs
-from genilib.utils import dumpHex
-import genicontrol.dataitems as dataitems
+import genicontrol.conversion as conversion
+from genicontrol.connection import ConnectionIF
 from genicontrol.dissect import dissectResponse
+import genicontrol.dataitems as dataitems
+import genicontrol.defs as defs
+from genicontrol.defs import Info, Item
+import genicontrol.units as units
+from genilib.crc import checkCrc, calcuteCrc
+import genilib.utils as utils
+from genilib.utils import dumpHex
+
+
+ValueType = namedtuple('ValueType', 'name unit value')
+AckType = namedtuple('AckType', 'klass ack')
 
 logger = logging.getLogger("GeniControl")
 
@@ -260,16 +267,6 @@ def createResponse(request):
     result.extend((utils.hiByte(crc), utils.loByte(crc), ))
     return bytearray(result)
 
-
-import genicontrol.conversion as conversion
-import genicontrol.units as units
-
-
-ValueType = namedtuple('ValueType', 'name unit value')
-AckType = namedtuple('AckType', 'klass ack')
-
-
-from genicontrol.connection import ConnectionIF
 
 class SimulationServer(ConnectionIF):
     DRIVER = 'Simulator'
