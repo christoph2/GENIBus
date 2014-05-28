@@ -34,7 +34,7 @@ import logging
 import os
 from genilib.utils import absConfigurationFilename
 
-logger = logging.getLogger("genicontrol")
+logger = logging.getLogger("GeniControl")
 
 def getDeviceFileName(family, type_, version):
     return "GeniBus-%s.%s.%s.info" % (family, type_, version)

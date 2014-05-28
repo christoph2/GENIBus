@@ -34,7 +34,7 @@ from gettext import ugettext as _TR
 import gettext
 
 
-logger = logging.getLogger("genicontrol")
+logger = logging.getLogger("GeniControl")
 
 ##t = gettext.translation('spam', '/usr/share/locale')
 ##_ = t.ugettext

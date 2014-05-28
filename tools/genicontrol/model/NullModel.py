@@ -44,7 +44,7 @@ from genilib.utils import dumpHex, makeWord
 
 
 class NullModel(ModelIf.IModel):
-    logger = logging.getLogger("genicontrol")
+    logger = logging.getLogger("GeniControl")
     TYPE = "Simulator"
     SPECIAL_DATAPOINTS = ('act_mode1', 'act_mode2', 'act_mode3', 'contr_source')
 

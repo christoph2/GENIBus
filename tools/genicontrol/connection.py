@@ -30,11 +30,11 @@
 import abc
 import logging
 
-logger = logging.getLogger("genicontrol")
+logger = logging.getLogger("GeniControl")
 
 class ConnectionIF(object):
     __metaclass__ = abc.ABCMeta
-    logger = logging.getLogger("genicontrol")
+    logger = logging.getLogger("GeniControl")
 
     @abc.abstractmethod
     def connect(self): pass

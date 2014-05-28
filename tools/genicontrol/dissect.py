@@ -33,7 +33,7 @@ import genilib.utils as utils
 import genicontrol.defs as defs
 from genilib.crc import Crc, CrcError
 
-logger = logging.getLogger("genicontrol")
+logger = logging.getLogger("GeniControl")
 
 ## dissecting states.
 APDU_HEADER0    = 0

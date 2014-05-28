@@ -28,7 +28,7 @@
 
 import locale
 import logging
-logger = logging.getLogger("genicontrol")
+logger = logging.getLogger("GeniControl")
 
 from decimal import Decimal as D
 

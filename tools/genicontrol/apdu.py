@@ -32,7 +32,7 @@ import genicontrol.defs as defs
 from genilib.crc import calcuteCrc
 from genilib.utils import bytes, dumpHex
 
-logger = logging.getLogger("genicontrol")
+logger = logging.getLogger("GeniControl")
 
 
 def createAPDUHeader(apdu, klass, operationSpecifier, length):

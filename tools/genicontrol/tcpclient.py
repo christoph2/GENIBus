@@ -36,7 +36,7 @@ import threading
 from genilib.configuration import Config
 from genicontrol.connection import ConnectionIF
 
-logger = logging.getLogger("genicontrol")
+logger = logging.getLogger("GeniControl")
 
 config = Config("GeniControl")
 

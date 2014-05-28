@@ -55,7 +55,7 @@ CYCLE_TIME_STARTUP      = 0.1
 CYCLE_TIME_OPERATIONAL  = 0.5
 
 class WorkerThread(threading.Thread):
-    logger = logging.getLogger("genicontrol")
+    logger = logging.getLogger("GeniControl")
 
     def __init__(self, request, requestorThread):
         super(WorkerThread, self).__init__()
@@ -85,7 +85,7 @@ class RequestorThread(threading.Thread):
     _requestQueue = queue.Queue()
     _currentRequest = None
     _currentResponse = None
-    logger = logging.getLogger("genicontrol")
+    logger = logging.getLogger("GeniControl")
 
     def __new__(cls, *args):
         try:

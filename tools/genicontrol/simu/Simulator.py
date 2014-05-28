@@ -42,7 +42,7 @@ from genilib.utils import dumpHex
 import genicontrol.dataitems as dataitems
 from genicontrol.dissect import dissectResponse
 
-logger = logging.getLogger("genicontrol")
+logger = logging.getLogger("GeniControl")
 
 
 ## Connect Req/Resp

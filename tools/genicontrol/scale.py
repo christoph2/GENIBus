@@ -33,7 +33,7 @@ from genicontrol.units import UnitTable
 from genicontrol.scaling import getScalingInfo, InfoTuple
 from genicontrol.conversion import convertForward8, convertForward16
 
-logger = logging.getLogger("genicontrol")
+logger = logging.getLogger("GeniControl")
 
 TestValues = (
     (InfoTuple(0x82, 0x3e, 0x39, 0x00), 0x7a),     # i_rst

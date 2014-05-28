@@ -31,7 +31,7 @@ import logging
 import threading
 from genicontrol.connection import ConnectionIF
 
-logger = logging.getLogger("genicontrol")
+logger = logging.getLogger("GeniControl")
 
 try:
     import serial

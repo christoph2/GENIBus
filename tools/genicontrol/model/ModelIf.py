@@ -35,13 +35,13 @@ DATA_NOT_AVAILABLE = None
 
 class IModel(object):
     __metaclass__ = abc.ABCMeta
-    logger = logging.getLogger("genicontrol")
+    logger = logging.getLogger("GeniControl")
 
     def __init__(self, waitingPoint, connection):
         #super(IModel, self).__init__(self)
         self._pub = Publisher()
         self._waitingPoint = waitingPoint
-	self._connection = connection
+        self._connection = connection
         #self.initialize()
 
     def sendMessage(self, topic, data):

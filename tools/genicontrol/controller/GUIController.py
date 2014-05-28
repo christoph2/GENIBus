@@ -51,7 +51,7 @@ class InfoWriter(object):
 
 
 class ControllerThread(threading.Thread):
-    logger = logging.getLogger("genicontrol")
+    logger = logging.getLogger("GeniControl")
 
     def __init__(self, model, view, quitEvent):
         super(ControllerThread, self).__init__()

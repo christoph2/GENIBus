@@ -224,7 +224,7 @@ class GeniControlApp(wx.PySimpleApp):
         super(GeniControlApp, self).__init__()
 
 def main():
-    logger = logging.getLogger("genicontrol")
+    logger = logging.getLogger("GeniControl")
     config = Config("GeniControl")
     config.load()
     size = wx.Size(config.get('window', 'sizex'), config.get('window', 'sizey'))

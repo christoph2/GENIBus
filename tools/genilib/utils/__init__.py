@@ -32,7 +32,7 @@ import logging
 import os
 from genicontrol.defs import CONFIGURATION_DIRECTORY
 
-logger = logging.getLogger("genicontrol")
+logger = logging.getLogger("GeniControl")
 
 def makeWord(bh, bl):
     return (bh <<8) | bl

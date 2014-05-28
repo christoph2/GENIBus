@@ -67,7 +67,7 @@ Crc_Table16 = (
 
 
 class Crc(object):
-    logger = logging.getLogger("genicontrol")
+    logger = logging.getLogger("GeniControl")
 
     def __init__(self, data):
         self.init(data)

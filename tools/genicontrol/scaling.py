@@ -32,7 +32,7 @@ import logging
 from genicontrol.units import UnitTable
 from genicontrol.conversion import convertForward8, convertForward16
 
-logger = logging.getLogger("genicontrol")
+logger = logging.getLogger("GeniControl")
 
 InfoTuple = namedtuple('InfoTuple', 'header unit range zero')
 ScalingTuple = namedtuple('ScalingTuple', 'physEntity factor unit valueInterpretation byteOrder scaleInformationFormat signOfZero')
@@ -48,18 +48,18 @@ def getScalingInfo(infoTuple):
         valueInterpretation = (header & 0x20) >> 5
         byteOrder = (header & 0x10) >> 6
         scaleInformationFormat = (header & 0x03)
-	if unit:
+        if unit:
              signOfZero = (unit & 0x80) >> 7
              unit &= 0x7f
              ut = UnitTable[unit]
-	     factor = ut.factor
-	     physEntity = ut.physEntity
-	     unt = ut.unit
-	else:
-	     factor = '-'
-	     physEntity = '-'
-	     unt = '-'
-	     signOfZero = '-'
+             factor = ut.factor
+             physEntity = ut.physEntity
+             unt = ut.unit
+        else:
+             factor = '-'
+             physEntity = '-'
+             unt = '-'
+             signOfZero = '-'
 
         return ScalingTuple(physEntity, factor, unt, valueInterpretation, byteOrder, scaleInformationFormat, signOfZero)
 
