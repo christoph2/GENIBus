@@ -36,7 +36,7 @@ from wx import CallAfter
 logger = logging.getLogger("genicontrol")
 
 DATA_NOT_AVAILABLE = None
-config = Config()
+config = Config("GeniControl")
 
 class IController(object):
     __metaclass__ = abc.ABCMeta

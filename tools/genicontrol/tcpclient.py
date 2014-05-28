@@ -38,7 +38,7 @@ from genicontrol.connection import ConnectionIF
 
 logger = logging.getLogger("genicontrol")
 
-config = Config()
+config = Config("GeniControl")
 
 config.load()  ## TEST!!!
 

@@ -209,7 +209,7 @@ class GBFrame(wx.Frame):
     def saveConfiguration(self):
         size = self.Size
         pos = self.Position
-        config = Config()
+        config = Config("GeniControl")
         config.set('window', 'posy', pos.x)
         config.set('window', 'posy', pos.y)
         config.set('window', 'sizex', size.x)
@@ -225,7 +225,7 @@ class GeniControlApp(wx.PySimpleApp):
 
 def main():
     logger = logging.getLogger("genicontrol")
-    config = Config()
+    config = Config("GeniControl")
     config.load()
     size = wx.Size(config.get('window', 'sizex'), config.get('window', 'sizey'))
     pos = wx.Point(config.get('window', 'posx'), config.get('window', 'posy'))

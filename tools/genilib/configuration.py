@@ -46,8 +46,6 @@ import yaml
 from genilib.utils import absConfigurationFilename
 from genilib.utils.configprocessor import ConfigProcessor
 
-CFG_FILE_NAME = absConfigurationFilename('.GeniControl.cfg')
-
 
 def readConfigFile(project, fname):
     return pkgutil.get_data(project, 'config/%s' % fname)
@@ -57,31 +55,34 @@ class Config(object):
     _lock = threading.Lock()
     loaded = False
 
-    def __new__(cls):
+    def __new__(cls, applicationName):
         # Double-Checked Locking
         if not hasattr(cls, '_instance'):
             try:
                 cls._lock.acquire()
                 if not hasattr(cls, '_instance'):
+                    cls.configurationFile = absConfigurationFilename(".%s.cfg" % applicationName)
+                    cls.defaultsFile = "%s_Defaults.yaml" % applicationName
+
                     cls._instance = super(cls.__class__, cls).__new__(cls)
-                    baz = yaml.load(StringIO.StringIO(readConfigFile("genicontrol", "default_config.yaml")))
+                    baz = yaml.load(StringIO.StringIO(readConfigFile("genicontrol", cls.defaultsFile)))
                     cls.cp = ConfigProcessor(baz)
             finally:
                 cls._lock.release()
         return cls._instance
 
-    def __init__(self): # TODO: Cfg. file as a parameter!!!
+    def __init__(self, *args):
         pass
 
     def load(self):
         if not self.loaded:
-            if os.access(CFG_FILE_NAME, os.F_OK):
-                self.cp.read(open(CFG_FILE_NAME))
+            if os.access(self.configurationFile, os.F_OK):
+                self.cp.read(open(self.configurationFile))
                 self.loaded = True
         # else: we are working with default values.
 
     def save(self):
-        self.cp.write(open(CFG_FILE_NAME, 'w'))
+        self.cp.write(open(self.configurationFile, 'w'))
 
     def get(self, section, option):
         return self.cp.get(section, option)
