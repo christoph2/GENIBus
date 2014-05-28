@@ -43,8 +43,8 @@ import threading
 
 import yaml
 
-from genicontrol.utils import absConfigurationFilename
-from genicontrol.utils.configprocessor import ConfigProcessor
+from genilib.utils import absConfigurationFilename
+from genilib.utils.configprocessor import ConfigProcessor
 
 CFG_FILE_NAME = absConfigurationFilename('.GeniControl.cfg')
 

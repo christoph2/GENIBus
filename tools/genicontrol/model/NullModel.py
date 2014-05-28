@@ -40,7 +40,7 @@ from genicontrol.dissect import dissectPumpStatus
 import genicontrol.dataitems as dataitems
 import genicontrol.defs as defs
 from genicontrol.simu.Simulator import SimulationServer
-from genicontrol.utils import dumpHex, makeWord
+from genilib.utils import dumpHex, makeWord
 
 
 class NullModel(ModelIf.IModel):

@@ -29,7 +29,7 @@
 from collections import namedtuple
 import logging
 
-import genicontrol.utils as utils
+import genilib.utils as utils
 import genicontrol.defs as defs
 from genicontrol.crc import Crc, CrcError
 

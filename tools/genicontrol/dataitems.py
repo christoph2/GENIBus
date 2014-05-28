@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -213,6 +213,9 @@ DATAITEMS_BY_NAME = {
     defs.ADPUClass.ASCII_STRINGS:               dataItemsByName(defs.ADPUClass.ASCII_STRINGS),
 }
 
+import yaml
+
+#yaml.dump(DATAITEMS, open(r'C:\Users\christoph303\Documents\Arduino\libraries\Genibus\tools\genicontrol\config\dataitems.yaml', 'w'))
 
 """
 Code Alarm Group Alarm Cause

@@ -30,7 +30,7 @@ import logging
 import genicontrol.dataitems as dataitems
 import genicontrol.defs as defs
 from genicontrol.crc import calcuteCrc
-from genicontrol.utils import bytes, dumpHex
+from genilib.utils import bytes, dumpHex
 
 logger = logging.getLogger("genicontrol")
 

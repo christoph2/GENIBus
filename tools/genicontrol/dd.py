@@ -32,7 +32,7 @@
 import csv
 import logging
 import os
-from genicontrol.utils import absConfigurationFilename
+from genilib.utils import absConfigurationFilename
 
 logger = logging.getLogger("genicontrol")
 

@@ -36,10 +36,10 @@ import logging
 import unittest
 from genicontrol.crc import checkCrc, calcuteCrc
 from genicontrol.defs import Info, Item
-import genicontrol.utils as utils
+import genilib.utils as utils
 import genicontrol.apdu as apdu
 import genicontrol.defs as defs
-from genicontrol.utils import dumpHex
+from genilib.utils import dumpHex
 import genicontrol.dataitems as dataitems
 from genicontrol.dissect import dissectResponse
 

@@ -47,7 +47,7 @@ import genicontrol.controlids as controlids
 import genicontrol.defs as defs
 from genicontrol.configuration import Config as Config
 from genicontrol.view.options import showOptionsDialogue
-from genicontrol.utils import dumpHex
+from genilib.utils import dumpHex
 
 TR = wx.GetTranslation
 

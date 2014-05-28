@@ -43,7 +43,7 @@ else:
 import genicontrol.apdu as apdu
 import genicontrol.defs as defs
 from genicontrol.dissect import dissectResponse
-from genicontrol.utils import dumpHex
+from genilib.utils import dumpHex
 import genicontrol.dataitems as dataitems
 
 class PendingRequestError(Exception): pass
