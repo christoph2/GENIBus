@@ -47,66 +47,66 @@ ID_RB_SIM       = wx.NewId()
 def fixIP(addr):
     return '.'.join(["%3s" % j for j in [i.strip() for i in addr.split('.')]])
 
-class Options(wx.Dialog):
-    def __init__(self, parent):
+
+class OptionsView(wx.Dialog):
+    def __init__(self, parent, controller, model):
         wx.Dialog.__init__(self, parent, wx.ID_ANY, u'Options')
         self.tcpControls = []
         self.serialControls = []
         self.simControls = []
+        self.controller = controller
+        self.model = model
+        #self.model.registerObserver(self)
 
-        config = Config("GeniControl")
-        config.load()
-
-        self.driver = config.get('network', 'driver')
-
+    def createControls(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         gridsizer = wx.FlexGridSizer(3 ,2)
 
         staticBox = wx.StaticBoxSizer(wx.StaticBox(self, -1, " Driver " ), wx.VERTICAL )
 
-        radioTcp = wx.RadioButton(self, ID_RB_TCPIP, " Arduino / TCP ", style = wx.RB_GROUP)
-        gridsizer.Add(radioTcp, 1, wx.ALL, 5)
+        self.radioTcp = wx.RadioButton(self, ID_RB_TCPIP, " Arduino / TCP ", style = wx.RB_GROUP)
+        gridsizer.Add(self.radioTcp, 1, wx.ALL, 5)
         gridsizer2 = wx.FlexGridSizer(3 ,2)
 
         st = wx.StaticText(self, label = 'Server IP-address')
         gridsizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
 
-        addr = ipaddrctrl.IpAddrCtrl(self, id = ID_IPADDR)
-        self.tcpControls.append(addr)
+        self.addr = ipaddrctrl.IpAddrCtrl(self, id = ID_IPADDR)
+        self.tcpControls.append(self.addr)
 
-        gridsizer2.Add(addr, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+        gridsizer2.Add(self.addr, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         st = wx.StaticText(self, label = 'Subnet-mask')
 
         gridsizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
-        mask = ipaddrctrl.IpAddrCtrl(self, id = ID_SUBNET)
-        self.tcpControls.append(mask)
+        self.mask = ipaddrctrl.IpAddrCtrl(self, id = ID_SUBNET)
+        self.tcpControls.append(self.mask)
 
-        gridsizer2.Add(mask, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+        gridsizer2.Add(self.mask, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         st = wx.StaticText(self, label = 'Server-port')
 
         gridsizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
-        port = TextCtrl(self, id = ID_PORT, mask = '#####')
-        self.tcpControls.append(port)
+        self.port = TextCtrl(self, id = ID_PORT, mask = '#####')
+        self.tcpControls.append(self.port)
 
-        gridsizer2.Add(port, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+        gridsizer2.Add(self.port, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         gridsizer.Add(gridsizer2, 1, wx.ALL | wx.ALIGN_TOP, 5)
 
-        radioSerial = wx.RadioButton(self, ID_RB_SERIAL, " Serial Port ")
-        gridsizer.Add(radioSerial, 1, wx.ALL, 5)
+        self.radioSerial = wx.RadioButton(self, ID_RB_SERIAL, " Serial Port ")
+        gridsizer.Add(self.radioSerial, 1, wx.ALL, 5)
 
         boxSizer3 = wx.BoxSizer(wx.HORIZONTAL)
 
         st = wx.StaticText(self, label = 'Port')
         boxSizer3.Add(st, 1, wx.ALL, 5)
 
-        serialPort = TextCtrl(self, id = ID_SERIAL_PORT)
-        self.serialControls.append(serialPort)
-        boxSizer3.Add(serialPort, 1, wx.ALL, 5)
+        self.serialPort = TextCtrl(self, id = ID_SERIAL_PORT)
+        self.serialControls.append(self.serialPort)
+        boxSizer3.Add(self.serialPort, 1, wx.ALL, 5)
         gridsizer.Add(boxSizer3, 1, wx.ALL, 5)
 
-        radioSim = wx.RadioButton(self, ID_RB_SIM, " Simulator ")
-        gridsizer.Add(radioSim, 1, wx.ALL, 5)
+        self.radioSim = wx.RadioButton(self, ID_RB_SIM, " Simulator ")
+        gridsizer.Add(self.radioSim, 1, wx.ALL, 5)
 
         st = wx.StaticText(self, label = '')
         gridsizer.Add(st, 1, wx.ALL, 5)
@@ -118,9 +118,9 @@ class Options(wx.Dialog):
         st = wx.StaticText(self, label = 'Polling interval')
 
         boxSizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
-        poll = TextCtrl(self, id = ID_POLL, mask = '#####')
+        self.poll = TextCtrl(self, id = ID_POLL, mask = '#####')
 
-        boxSizer2.Add(poll, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+        boxSizer2.Add(self.poll, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         sizer.Add(boxSizer2)
 
         line = wx.StaticLine(self, style = wx.LI_HORIZONTAL)
@@ -139,43 +139,34 @@ class Options(wx.Dialog):
         if not serialAvailable:
             radioSerial.Enable(False)
 
-        self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, radioTcp)
-        self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, radioSerial)
-        self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, radioSim)
+        self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, self.radioTcp)
+        self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, self.radioSerial)
+        self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, self.radioSim)
 
         self.SetSizerAndFit(sizer)
 
-        serverIP = fixIP(config.get('network', 'serverip'))
-        addr.SetValue(serverIP)
-        subnetMask = fixIP(config.get('network', 'subnetmask'))
-        mask.SetValue(subnetMask)
-        port.SetValue(str(config.get('network', 'serverport')))
-        poll.SetValue(str(config.get('general', 'pollinginterval')))
-        serialPort.SetValue(str(config.get('serial', 'serialport')))
+    def setInitialValues(self):
+        self.addr.SetValue(self.model.getServerIP())
+        self.mask.SetValue(self.model.getSubnetMask())
+        self.port.SetValue(self.model.getServerPort())
+        self.poll.SetValue(self.model.getPollingInterval())
+        self.serialPort.SetValue(self.model.getSerialPort())
+        self.driver = self.model.getNetworkDriver()
         if self.driver == 0:
             value = 'Simulator'
-            button = radioSim
+            button = self.radioSim
         elif self.driver == 1:
             value = 'Arduino / TCP'
-            button = radioTcp
+            button = self.radioTcp
         elif self.driver == 2:
             value = 'Serial'
-            button = radioSerial
-
+            button = self.radioSerial
         button.SetValue(True)
         self.enableRadioButton(button.GetId())
-        #addr.SetFocus()
+
+    def show(self):
         self.Centre()
-        retval = self.ShowModal()
-        retval = wx.ID_OK
-        if retval == wx.ID_OK:
-            config.set('network', 'serverip', fixIP(addr.GetValue()))
-            config.set('network', 'subnetmask', fixIP(mask.GetValue()))
-            config.set('network', 'serverport',  port.GetValue())
-            config.set('general', 'pollinginterval',  poll.GetValue())
-            config.set('network', 'driver', self.driver)
-            config.set('serial', 'serialport', serialPort.GetValue())
-        self.Destroy()
+        return self.ShowModal()
 
     def onDriverSelected(self, event):
         self.enableRadioButton(event.GetId())
@@ -211,8 +202,95 @@ class Options(wx.Dialog):
         self.enableControls(self.simControls, enable)
 
 
+class OptionsModel(object):
+
+    def __init__(self):
+        self.config = Config("GeniControl")
+
+    def initialize(self):
+        pass
+
+    def load(self):
+        self.config.load()
+        self.driver = self.config.get('network', 'driver')
+        self.serverIP = fixIP(self.config.get('network', 'serverip'))
+        self.subnetMask = fixIP(self.config.get('network', 'subnetmask'))
+        self.serverport = str(self.config.get('network', 'serverport'))
+        self.pollinginterval = str(self.config.get('general', 'pollinginterval'))
+        self.serialPort = self.config.get('serial', 'serialport')
+
+    def save(self):
+        pass
+
+    def getNetworkDriver(self):
+        return self.driver
+
+    def getServerIP(self):
+        return self.serverIP
+
+    def getSubnetMask(self):
+        return self.subnetMask
+
+    def getServerPort(self):
+        return self.serverport
+
+    def getPollingInterval(self):
+        return self.pollinginterval
+
+    def getSerialPort(self):
+        return self.serialPort
+
+    def setNetworkDriver(self, value):
+        self.config.set('network', 'driver', value)
+
+    def setServerIP(self, value):
+        self.config.set('network', 'serverip', fixIP(value))
+
+    def setSubnetMask(self, value):
+        self.config.set('network', 'subnetmask', fixIP(value))
+
+    def setServerPort(self, value):
+        self.config.set('network', 'serverport',  value)
+
+    def setPollingInterval(self, value):
+        self.config.set('general', 'pollinginterval', value)
+
+    def setSerialPort(self, value):
+        self.config.set('serial', 'serialport', value)
+
+
+class OptionsController(object):
+
+    def __init__(self, parent, model):
+        self.model = model
+        self.view = OptionsView(parent, self, model)
+        self.model.initialize()
+        self.model.load()
+        self.view.createControls()
+        self.view.setInitialValues()
+
+    def execute(self):
+        # Disable/Enable Controls.
+        result = self.view.show()
+        if result == wx.ID_OK:
+            #self.model.save()
+            self.model.setServerIP(self.view.addr.GetValue())
+            self.model.setSubnetMask(self.view.mask.GetValue())
+            self.model.setServerPort(self.view.port.GetValue())
+            self.model.setPollingInterval(self.view.poll.GetValue())
+            self.model.setNetworkDriver(self.view.driver)
+            self.model.setSerialPort(self.view.serialPort.GetValue())
+
+        else:
+            pass
+        self.view.Destroy()
+
+
 def showOptionsDialogue(parent):
-    options = Options(parent)
+    model = OptionsModel()
+    controller = OptionsController(parent, model)
+    controller.execute()
+
 
 def testDialogue():
     showOptionsDialogue(None)
