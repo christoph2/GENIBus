@@ -1,0 +1,8 @@
+!!python/tuple
+- !!python/tuple
+  - window
+  - !!python/tuple
+    - !!python/tuple [sizex, 800]
+    - !!python/tuple [sizey, 600]
+    - !!python/tuple [posx, 0]
+    - !!python/tuple [posy, 0]
