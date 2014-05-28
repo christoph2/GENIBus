@@ -54,7 +54,7 @@ class Options(wx.Dialog):
         self.serialControls = []
         self.simControls = []
 
-        config = Config()
+        config = Config("GeniControl")
         config.load()
 
         self.driver = config.get('network', 'driver')
@@ -71,18 +71,24 @@ class Options(wx.Dialog):
 
         st = wx.StaticText(self, label = 'Server IP-address')
         gridsizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+
         addr = ipaddrctrl.IpAddrCtrl(self, id = ID_IPADDR)
         self.tcpControls.append(addr)
+
         gridsizer2.Add(addr, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         st = wx.StaticText(self, label = 'Subnet-mask')
+
         gridsizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         mask = ipaddrctrl.IpAddrCtrl(self, id = ID_SUBNET)
         self.tcpControls.append(mask)
+
         gridsizer2.Add(mask, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         st = wx.StaticText(self, label = 'Server-port')
+
         gridsizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         port = TextCtrl(self, id = ID_PORT, mask = '#####')
         self.tcpControls.append(port)
+
         gridsizer2.Add(port, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         gridsizer.Add(gridsizer2, 1, wx.ALL | wx.ALIGN_TOP, 5)
 
@@ -93,14 +99,15 @@ class Options(wx.Dialog):
 
         st = wx.StaticText(self, label = 'Port')
         boxSizer3.Add(st, 1, wx.ALL, 5)
+
         serialPort = TextCtrl(self, id = ID_SERIAL_PORT)
         self.serialControls.append(serialPort)
         boxSizer3.Add(serialPort, 1, wx.ALL, 5)
-
         gridsizer.Add(boxSizer3, 1, wx.ALL, 5)
 
         radioSim = wx.RadioButton(self, ID_RB_SIM, " Simulator ")
         gridsizer.Add(radioSim, 1, wx.ALL, 5)
+
         st = wx.StaticText(self, label = '')
         gridsizer.Add(st, 1, wx.ALL, 5)
 
@@ -109,8 +116,10 @@ class Options(wx.Dialog):
 
         boxSizer2 = wx.BoxSizer(wx.HORIZONTAL)
         st = wx.StaticText(self, label = 'Polling interval')
+
         boxSizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         poll = TextCtrl(self, id = ID_POLL, mask = '#####')
+
         boxSizer2.Add(poll, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         sizer.Add(boxSizer2)
 
@@ -120,8 +129,10 @@ class Options(wx.Dialog):
         okButton = wx.Button(self, id = wx.ID_OK)
         okButton.SetDefault()
         btnsizer.Add(okButton)
+
         cancelButton = wx.Button(self, id = wx.ID_CANCEL)
         btnsizer.AddButton(cancelButton)
+
         btnsizer.Realize()
         sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
 
