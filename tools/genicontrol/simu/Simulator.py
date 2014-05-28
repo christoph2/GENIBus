@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -29,12 +29,11 @@
 ##
 ## Some known-good telegrams from spec.
 ##
-
 import array
 from collections import namedtuple
 import logging
 import unittest
-from genicontrol.crc import checkCrc, calcuteCrc
+from genilib.crc import checkCrc, calcuteCrc
 from genicontrol.defs import Info, Item
 import genilib.utils as utils
 import genicontrol.apdu as apdu

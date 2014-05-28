@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -31,7 +31,7 @@ import logging
 
 import genilib.utils as utils
 import genicontrol.defs as defs
-from genicontrol.crc import Crc, CrcError
+from genilib.crc import Crc, CrcError
 
 logger = logging.getLogger("genicontrol")
 
