@@ -13,7 +13,7 @@ setup(
     author = 'Christoph Schueler',
     author_email = 'cpu12.gems@googlemail.com',
     url = 'https://github.com/christoph2/GENIBus-Arduino',
-    packages = ['genicontrol', 'genicontrol/model', 'genicontrol/view', 'genicontrol/controller'],
+    packages = ['genicontrol', 'genicontrol/model', 'genicontrol/view', 'genicontrol/controller', 'genilib', 'genilib/utils'],
     entry_points = {
 	'console_scripts': [
 		'GeniControl = genicontrol.GeniControl:main',
