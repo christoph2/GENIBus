@@ -33,7 +33,7 @@ import struct
 import sys
 import time
 import threading
-from genicontrol.configuration import Config
+from genilib.configuration import Config
 from genicontrol.connection import ConnectionIF
 
 logger = logging.getLogger("genicontrol")

@@ -35,7 +35,7 @@ except ImportError:
 
 import yaml
 
-from genicontrol.configuration import readConfigFile
+from genilib.configuration import readConfigFile
 
 ValueTuple = namedtuple('ValueTuple', 'header unit range zero value')
 Unit = namedtuple('Unit', 'physEntity factor unit')

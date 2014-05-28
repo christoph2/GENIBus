@@ -30,7 +30,7 @@ import abc
 import logging
 import threading
 from wx.lib.pubsub import Publisher as Publisher
-from genicontrol.configuration import Config
+from genilib.configuration import Config
 from wx import CallAfter
 
 logger = logging.getLogger("genicontrol")

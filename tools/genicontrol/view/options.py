@@ -31,7 +31,7 @@ import wx
 from wx.lib.masked import ipaddrctrl
 from wx.lib.masked import TextCtrl
 from genicontrol.serialport import serialAvailable
-from genicontrol.configuration import Config
+from genilib.configuration import Config
 
 ID_IPADDR       = wx.NewId()
 ID_SUBNET       = wx.NewId()

@@ -70,7 +70,7 @@ class Config(object):
                 cls._lock.release()
         return cls._instance
 
-    def __init__(self):
+    def __init__(self): # TODO: Cfg. file as a parameter!!!
         pass
 
     def load(self):

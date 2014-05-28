@@ -45,7 +45,7 @@ from genicontrol.model.config import DataitemConfiguration
 from genicontrol.controller.GUIController import GUIController
 import genicontrol.controlids as controlids
 import genicontrol.defs as defs
-from genicontrol.configuration import Config as Config
+from genilib.configuration import Config as Config
 from genicontrol.view.options import showOptionsDialogue
 from genilib.utils import dumpHex
 
