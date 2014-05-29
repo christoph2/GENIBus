@@ -31,6 +31,7 @@ import wx
 from wx.lib.masked import ipaddrctrl
 from wx.lib.masked import TextCtrl
 from genicontrol.serialport import serialAvailable
+from genilib.gui.controls import createLabeledControl
 from genilib.configuration import Config
 
 ID_IPADDR       = wx.NewId()
@@ -67,29 +68,13 @@ class OptionsView(wx.Dialog):
 
         self.radioTcp = wx.RadioButton(self, ID_RB_TCPIP, " Arduino / TCP ", style = wx.RB_GROUP)
         gridsizer.Add(self.radioTcp, 1, wx.ALL, 5)
+
         gridsizer2 = wx.FlexGridSizer(3 ,2)
 
-        st = wx.StaticText(self, label = 'Server IP-address')
-        gridsizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+        self.addr = createLabeledControl(self, 'Server IP-address', ipaddrctrl.IpAddrCtrl(self, id = ID_IPADDR), gridsizer2, self.tcpControls)
+        self.mask = createLabeledControl(self, 'Subnet-mask', ipaddrctrl.IpAddrCtrl(self, id = ID_SUBNET),gridsizer2, self.tcpControls )
+        self.port = createLabeledControl(self, 'Server-port', TextCtrl(self, id = ID_PORT, mask = '#####'), gridsizer2, self.tcpControls)
 
-        self.addr = ipaddrctrl.IpAddrCtrl(self, id = ID_IPADDR)
-        self.tcpControls.append(self.addr)
-
-        gridsizer2.Add(self.addr, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
-        st = wx.StaticText(self, label = 'Subnet-mask')
-
-        gridsizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
-        self.mask = ipaddrctrl.IpAddrCtrl(self, id = ID_SUBNET)
-        self.tcpControls.append(self.mask)
-
-        gridsizer2.Add(self.mask, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
-        st = wx.StaticText(self, label = 'Server-port')
-
-        gridsizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
-        self.port = TextCtrl(self, id = ID_PORT, mask = '#####')
-        self.tcpControls.append(self.port)
-
-        gridsizer2.Add(self.port, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         gridsizer.Add(gridsizer2, 1, wx.ALL | wx.ALIGN_TOP, 5)
 
         self.radioSerial = wx.RadioButton(self, ID_RB_SERIAL, " Serial Port ")
@@ -97,12 +82,8 @@ class OptionsView(wx.Dialog):
 
         boxSizer3 = wx.BoxSizer(wx.HORIZONTAL)
 
-        st = wx.StaticText(self, label = 'Port')
-        boxSizer3.Add(st, 1, wx.ALL, 5)
+        self.serialPort = createLabeledControl(self, 'Port', TextCtrl(self, id = ID_SERIAL_PORT), boxSizer3, self.serialControls)
 
-        self.serialPort = TextCtrl(self, id = ID_SERIAL_PORT)
-        self.serialControls.append(self.serialPort)
-        boxSizer3.Add(self.serialPort, 1, wx.ALL, 5)
         gridsizer.Add(boxSizer3, 1, wx.ALL, 5)
 
         self.radioSim = wx.RadioButton(self, ID_RB_SIM, " Simulator ")
@@ -115,12 +96,9 @@ class OptionsView(wx.Dialog):
         sizer.Add(staticBox, 1, wx.ALL, 5)
 
         boxSizer2 = wx.BoxSizer(wx.HORIZONTAL)
-        st = wx.StaticText(self, label = 'Polling interval')
 
-        boxSizer2.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
-        self.poll = TextCtrl(self, id = ID_POLL, mask = '#####')
+        self.poll = createLabeledControl(self, 'Polling interval', TextCtrl(self, id = ID_POLL, mask = '#####'), boxSizer2)
 
-        boxSizer2.Add(self.poll, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
         sizer.Add(boxSizer2)
 
         line = wx.StaticLine(self, style = wx.LI_HORIZONTAL)
