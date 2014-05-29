@@ -47,6 +47,7 @@ import genicontrol.controlids as controlids
 import genicontrol.defs as defs
 from genilib.configuration import Config as Config
 from genicontrol.view.options import showOptionsDialogue
+from genilib.gui.menu import Menu, MenuItem, MenuSeparator, createMenuBar
 from genilib.utils import dumpHex
 
 TR = wx.GetTranslation
@@ -99,10 +100,10 @@ class TestNB(wx.Notebook):
 
 
 class GBFrame(wx.Frame):
-    def __init__(self, parent, size = None, pos = None):
+    def __init__(self, parent, menuData, size = None, pos = None):
         wx.Frame.__init__(self, parent, -1, "GeniControl", size = size, pos = pos)
         self.initStatusBar()
-        self.createMenuBar()
+        createMenuBar(self, menuData)
         self.locale = None
         #self.updateLanguage(wx.LANGUAGE_ITALIAN)
 
@@ -152,44 +153,7 @@ class GBFrame(wx.Frame):
         self.statusbar.SetFieldsCount(3)
         self.statusbar.SetStatusWidths([-1, -2, -3])
 
-    def menuData(self):
-        return [(TR("&File"), (
-                    ("&Save snapshot", "Save current measurement values to a file.", self.onSaveSnapShot),
-                    ("Save &parameter", "", self.onSaveParameter),
-                    ("Save &info", "Save parameter scaling information to a file.", self.onSaveInfo),
-                    ("&Load paramter", "", self.onLoadParamter),
-                    ("", "", ""),
-                    ("&Exit", "Exit GeniControl", self.onCloseWindow))),
-                ("&Extras", (("&Options", "", self.onOptions),),),
-                ]
-
-    def createMenuBar(self):
-        menuBar = wx.MenuBar()
-        for eachMenuData in self.menuData():
-            menuLabel = eachMenuData[0]
-            menuItems = eachMenuData[1]
-            menuBar.Append(self.createMenu(menuItems), menuLabel)
-        self.SetMenuBar(menuBar)
-
-    def createMenu(self, menuData):
-        menu = wx.Menu()
-        for eachItem in menuData:
-            if len(eachItem) == 2:
-                label = eachItem[0]
-                subMenu = self.createMenu(eachItem[1])
-                menu.AppendMenu(wx.NewId(), label, subMenu)
-            else:
-                self.createMenuItem(menu, *eachItem)
-        return menu
-
-    def createMenuItem(self, menu, label, status, handler,
-                       kind=wx.ITEM_NORMAL):
-        if not label:
-            menu.AppendSeparator()
-            return
-        menuItem = menu.Append(-1, label, status, kind)
-        self.Bind(wx.EVT_MENU, handler, menuItem)
-
+    def onSaveSettings(self, event): pass
     def onSaveSnapShot(self, event): pass
     def onSaveParameter(self, event): pass
     def onSaveInfo(self, event): pass
@@ -223,6 +187,18 @@ class GeniControlApp(wx.PySimpleApp):
     def __init__(self):
         super(GeniControlApp, self).__init__()
 
+MAIN_MENU = (
+    Menu("&File",
+         MenuItem("&Save", "Save settings.", "onSaveSettings"),
+         MenuItem("Save &parameter", "", "onSaveParameter"),
+         MenuItem("Save &info", "Save parameter scaling information to a file.", "onSaveInfo"),
+         MenuItem("&Load paramter", "", "onLoadParamter"),
+         MenuSeparator(),
+         MenuItem("&Exit", "Exit GeniControl", "onCloseWindow")),
+
+    Menu("&Extras", MenuItem("&Options", "", "onOptions"))
+)
+
 def main():
     logger = logging.getLogger("GeniControl")
     config = Config("GeniControl")
@@ -230,7 +206,7 @@ def main():
     size = wx.Size(config.get('window', 'sizex'), config.get('window', 'sizey'))
     pos = wx.Point(config.get('window', 'posx'), config.get('window', 'posy'))
     app = GeniControlApp()
-    frame = GBFrame(None, size, pos)
+    frame = GBFrame(None, MAIN_MENU, size, pos)
 
     controller = GUIController(NullModel, frame)
 
