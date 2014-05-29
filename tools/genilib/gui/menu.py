@@ -23,9 +23,10 @@
 ##
 ##
 
-__all__ = ['createMenuBar']
+__all__ = ['createMenuBar', 'getMenuItem', 'findMenuInMenuBar']
 
 import wx
+
 
 class Item(object):
 
@@ -43,7 +44,7 @@ class Menu(Item):
             assert isinstance(item, Item)
             self.items.append(item)
 
-    def add(self, item):
+    def add(self, item):    # item can be MenuItem or Menu, e.g. Composite pattern.
         self.items.append(item)
 
     def __str__(self):
@@ -83,10 +84,13 @@ def createItem(window, menu, item):
     if isinstance(item, MenuSeparator):
         menu.AppendSeparator()
     else:
-        menuItem = wx.MenuItem(menu, -1, item.name, item.helpString, item.kind)
+        newID = wx.NewId()
+        menuItem = wx.MenuItem(menu, newID, item.name, item.helpString, item.kind)
+        item.id = newID
         menu.AppendItem(menuItem)
         actionHandler = getattr(window, item.action.strip())
         window.Bind(wx.EVT_MENU, actionHandler, menuItem)
+
 
 def appendItems(window, menu, menuData):
     for item in menuData.items:
@@ -98,7 +102,9 @@ def appendItems(window, menu, menuData):
 
 def createSubMenu(window, menu, menuData):
     submenu = wx.Menu()
-    menu.AppendMenu(-1, menuData.name, submenu)
+    newID = wx.NewId()
+    menu.AppendMenu(newID, menuData.name, submenu)
+    menuData.id = newID
     appendItems(window, submenu, menuData)
 
 
@@ -109,9 +115,38 @@ def createMenu(window, menuBar, menuData):
 
 
 def createMenuBar(window, menuData):
+    """Creates a menu bar in the given window.
+    menuData is a composition of the classes above.
+    """
     menuBar = wx.MenuBar()
     for menu in menuData:
         createMenu(window, menuBar, menu)
     window.SetMenuBar(menuBar)
 
+
+def getMenuItem(self, event):
+    """Returns the menu item that triggered an EVT_MENU.
+    Can be used to manipulate the correspondending item
+    (e.g. change label text, disable ...)
+    """
+    return self.GetMenuBar().FindItemById(event.GetId())
+
+
+def findMenuInMenuBar(menuBar, title):
+    """Search for a menu entry in top-level menu.
+    """
+    pos = menuBar.FindMenu(title)
+    if pos == wx.NOT_FOUND:
+        return None
+    return menuBar.GetMenu(pos)
+
+"""
+ Occasionally, you will have multiple menu items that need to be bound to the
+same handler. For example, a set of radio button toggle menus, all of which do
+essentially the same thing, may be bound to the same handler. To avoid having to
+bind each one separately, if the menu items have consecutive identifier numbers,
+use the  wx.EVT_MENU_RANGE  event type:
+
+self.Bind(wx.EVT_MENU_RANGE, function, id=menu1, id2=menu2)
+"""
 
