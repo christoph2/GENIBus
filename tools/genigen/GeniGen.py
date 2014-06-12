@@ -83,10 +83,6 @@ class Items(object): # NB: This class certainly doesn't belong here, but for now
     def itemsForClass(self, klass):
         return self._items.get(klass, [])
 
-items = Items()
-
-
-
 MY_MENU = (
 Menu("&File",
     MenuItem("&Save\tCtrl-S", "Save setting.", "onSaveSettings"),
@@ -168,12 +164,11 @@ class ItemsNotebook(wx.Notebook):
     def __init__(self, parent, id):
         wx.Notebook.__init__(self, parent, id, size = (21, 21), style = wx.BK_DEFAULT | wx.BK_BOTTOM)
 
-        items = Items()
         self.model = parent.model # Create a reference to model.
 
         self.pages = []
-        for cls in items.classes:
-            root = items.itemsForClass(cls)
+        for cls in self.model.classes:
+            root = self.model.itemsForClass(cls)
             self.pages.append(self.AddPage(ClassPanel(self, root), root.name))
 
 
@@ -223,9 +218,19 @@ class GeniGenModel(object):
         3: "Info",
     }
 
+    def __init__(self):
+        self.items = Items()
+
     def update(self, type_, name, state):
         print "Control: %s type: %s state: %s" % (name, self.TYPE_MAP[type_], "On" if state else "Off")
 
+    # Delegate the following two methods.
+    @property
+    def classes(self):
+        return iter(self.items.classes)
+
+    def itemsForClass(self, klass):
+        return self.items.itemsForClass(klass)
 
 
 class GeniGenApp(wx.PySimpleApp):
