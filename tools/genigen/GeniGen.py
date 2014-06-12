@@ -27,6 +27,7 @@
 ##
 
 from collections import namedtuple, defaultdict
+import os
 import threading
 
 try:
@@ -40,7 +41,7 @@ import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 from genilib.configuration import Config as Config
 from genilib.configuration import readConfigFile
-from genicontrol.defs import CLASS_CAPABILITIES, NICE_CLASS_NAMES, OS_GET, OS_SET, OS_INFO
+from genicontrol.defs import CLASS_CAPABILITIES, NICE_CLASS_NAMES, OS_GET, OS_SET, OS_INFO, HOME_DIRECTORY
 
 from genilib.gui.menu import Menu, MenuItem, MenuSeparator, createMenuBar, getMenuItem
 from genicontrol.dataitems import DATAITEMS
@@ -100,9 +101,23 @@ Menu("&File",
 Control = namedtuple('Control', 'type item')
 
 
-def SaveDialog(parent):
+def saveDialog(parent):
     dlg = wx.MessageDialog(None, "Do you wish to save changes?", 'Confirm Save', wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
     return dlg.ShowModal()
+
+
+def openDialog(parent):
+    result = None
+    wildcard = "GeniGen projects (*.ggproj)|*.ggproj|" \
+            "All files (*.*)|*.*"
+    dialog = wx.FileDialog(parent, "Choose a file", os.getcwd(), "", wildcard, wx.OPEN) ## TODO: Default project directory as a
+                                                                                        ## persistant parameter.
+    if dialog.ShowModal() == wx.ID_OK:
+        result = dialog.GetPath()
+        #print result
+    dialog.Destroy()
+    return result
+
 
 class ClassPanel(ScrolledPanel):
     def __init__(self, parent, root):
@@ -177,25 +192,8 @@ class ItemsNotebook(wx.Notebook):
             self.pages.append(self.AddPage(ClassPanel(self, root), root.name))
 
 
-"""
-import wx
-import os
-
-if __name__ == "__main__":
-    app = wx.PySimpleApp()
-    wildcard = "Python source (*.py)|*.py|" \
-            "Compiled Python (*.pyc)|*.pyc|" \
-            "All files (*.*)|*.*"
-    dialog = wx.FileDialog(None, "Choose a file", os.getcwd(),
-            "", wildcard, wx.OPEN)
-    if dialog.ShowModal() == wx.ID_OK:
-        print dialog.GetPath()
-
-    dialog.Destroy()
-
-"""
-
 class GeniGenFrame(wx.Frame):
+
     def __init__(self, parent, size = None, pos = None):
         wx.Frame.__init__(self, parent, -1, "GeniGen", size = size, pos = pos)
         self.initStatusBar()
@@ -205,7 +203,6 @@ class GeniGenFrame(wx.Frame):
         self.notebook = ItemsNotebook(self, wx.NewId())
         self.Bind(wx.EVT_CLOSE, self.onCloseWindow)
 
-
     def initStatusBar(self):
         self.statusbar = self.CreateStatusBar()
         self.statusbar.SetFieldsCount(3)
@@ -213,7 +210,7 @@ class GeniGenFrame(wx.Frame):
 
     def onCloseWindow(self, event):
         if self.model.modified:
-            result = SaveDialog(self)
+            result = saveDialog(self)
             if result == wx.ID_YES:
                 pass
             elif result == wx.ID_NO:
@@ -234,6 +231,8 @@ class GeniGenFrame(wx.Frame):
     def onOpenProject(self, event):
         item = getMenuItem(self, event)
         itemID = item.GetId()
+        result = openDialog(self )
+        directory, _ =  os.path.split(result)
 
     def onSaveProject(self, event):
         item = getMenuItem(self, event)
@@ -315,6 +314,15 @@ def main():
     config.load()
     size = wx.Size(config.get('window', 'sizex'), config.get('window', 'sizey'))
     pos = wx.Point(config.get('window', 'posx'), config.get('window', 'posy'))
+
+    lastUsedDirectory = config.get('general', 'lastuseddirectory')
+    if lastUsedDirectory is None:
+        # First time.
+        config.add('general', 'lastuseddirectory', HOME_DIRECTORY)
+        lastUsedDirectory = config.get('general', 'lastuseddirectory')
+
+    #print "Last used directory: '%s'." % lastUsedDirectory
+
     app = GeniGenApp()
     frame = GeniGenFrame(None, size, pos)
 
@@ -322,6 +330,7 @@ def main():
 
     frame.Show(True)
     app.MainLoop()
+    config.save()
 
 if __name__ == '__main__':
     main()
