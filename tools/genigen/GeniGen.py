@@ -107,6 +107,8 @@ class ClassPanel(ScrolledPanel):
     def __init__(self, parent, root):
         ScrolledPanel.__init__(self, parent = parent, id = wx.ID_ANY)
 
+        self.model = parent.model # Create a reference to model.
+
         numberOfItems = len(root.items)
         get = OS_GET in root.capabilities
         set = OS_SET in root.capabilities
@@ -155,15 +157,10 @@ class ClassPanel(ScrolledPanel):
 
         sizer.Add(wx.StaticLine(self, style = wx.LI_HORIZONTAL), pos = (1, 0), span = (1, 4), flag = wx.ALL, border = -1)
 
-    TYPE_MAP = {
-        0: "Get",
-        2: "Set",
-        3: "Info",
-    }
-
     def onChecked(self, event):
         control = self.controlMap[event.GetId()]
-        print "Control: %s type: %s state: %s" % (control.item.name, self.TYPE_MAP[control.type], "On" if event.IsChecked() else "Off")
+        state = event.IsChecked()
+        self.model.update(control.type, control.item.name, state)
 
 
 
@@ -172,6 +169,7 @@ class ItemsNotebook(wx.Notebook):
         wx.Notebook.__init__(self, parent, id, size = (21, 21), style = wx.BK_DEFAULT | wx.BK_BOTTOM)
 
         items = Items()
+        self.model = parent.model # Create a reference to model.
 
         self.pages = []
         for cls in items.classes:
@@ -185,6 +183,7 @@ class GeniGenFrame(wx.Frame):
         self.initStatusBar()
         createMenuBar(self, MY_MENU)
         self.locale = None
+        self.model = GeniGenModel() # Just Model-View for now...
         self.notebook = ItemsNotebook(self, wx.NewId())
 
     def initStatusBar(self):
@@ -215,6 +214,18 @@ class GeniGenFrame(wx.Frame):
 
     def onLoadParamter(self, event):
         pass
+
+
+class GeniGenModel(object):
+    TYPE_MAP = {
+        0: "Get",
+        2: "Set",
+        3: "Info",
+    }
+
+    def update(self, type_, name, state):
+        print "Control: %s type: %s state: %s" % (name, self.TYPE_MAP[type_], "On" if state else "Off")
+
 
 
 class GeniGenApp(wx.PySimpleApp):
