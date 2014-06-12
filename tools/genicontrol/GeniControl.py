@@ -174,7 +174,7 @@ class GBFrame(wx.Frame):
         size = self.Size
         pos = self.Position
         config = Config("GeniControl")
-        config.set('window', 'posy', pos.x)
+        config.set('window', 'posx', pos.x)
         config.set('window', 'posy', pos.y)
         config.set('window', 'sizex', size.x)
         config.set('window', 'sizey', size.y)
