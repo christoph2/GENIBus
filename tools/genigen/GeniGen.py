@@ -83,6 +83,7 @@ class Items(object): # NB: This class certainly doesn't belong here, but for now
     def itemsForClass(self, klass):
         return self._items.get(klass, [])
 
+
 MY_MENU = (
 Menu("&File",
     MenuItem("&New\tCtrl-N", "New Project.", "onNewProject"),
@@ -98,6 +99,10 @@ Menu("&File",
 
 Control = namedtuple('Control', 'type item')
 
+
+def SaveDialog(parent):
+    dlg = wx.MessageDialog(None, "Do you wish to save changes?", 'Confirm Save', wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
+    return dlg.ShowModal()
 
 class ClassPanel(ScrolledPanel):
     def __init__(self, parent, root):
@@ -172,6 +177,24 @@ class ItemsNotebook(wx.Notebook):
             self.pages.append(self.AddPage(ClassPanel(self, root), root.name))
 
 
+"""
+import wx
+import os
+
+if __name__ == "__main__":
+    app = wx.PySimpleApp()
+    wildcard = "Python source (*.py)|*.py|" \
+            "Compiled Python (*.pyc)|*.pyc|" \
+            "All files (*.*)|*.*"
+    dialog = wx.FileDialog(None, "Choose a file", os.getcwd(),
+            "", wildcard, wx.OPEN)
+    if dialog.ShowModal() == wx.ID_OK:
+        print dialog.GetPath()
+
+    dialog.Destroy()
+
+"""
+
 class GeniGenFrame(wx.Frame):
     def __init__(self, parent, size = None, pos = None):
         wx.Frame.__init__(self, parent, -1, "GeniGen", size = size, pos = pos)
@@ -180,6 +203,8 @@ class GeniGenFrame(wx.Frame):
         self.locale = None
         self.model = GeniGenModel() # Just Model-View for now...
         self.notebook = ItemsNotebook(self, wx.NewId())
+        self.Bind(wx.EVT_CLOSE, self.onCloseWindow)
+
 
     def initStatusBar(self):
         self.statusbar = self.CreateStatusBar()
@@ -187,6 +212,14 @@ class GeniGenFrame(wx.Frame):
         self.statusbar.SetStatusWidths([-1, -2, -3])
 
     def onCloseWindow(self, event):
+        if self.model.modified:
+            result = SaveDialog(self)
+            if result == wx.ID_YES:
+                pass
+            elif result == wx.ID_NO:
+                pass
+            elif result == wx.ID_CANCEL:
+                pass
         self.Destroy()
 
     def onOptions(self, event):
