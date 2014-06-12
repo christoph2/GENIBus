@@ -90,3 +90,6 @@ class Config(object):
     def set(self, section, option, value):
         self.cp.set(section, option, value)
 
+    def add(self, section, option, value):
+        self.cp.add(section, option, value)
+
