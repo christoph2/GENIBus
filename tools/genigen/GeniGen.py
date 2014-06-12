@@ -26,7 +26,7 @@
 ##
 ##
 
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 import threading
 
 try:
@@ -107,7 +107,7 @@ class ClassPanel(ScrolledPanel):
 
         numberOfItems = len(root.items)
         get = OS_GET in root.capabilities
-        set = OS_SET in root.capabilities
+        set_ = OS_SET in root.capabilities
         info = OS_INFO in root.capabilities
         #print "Number of Item in '%s' panel: %u" % (root.name, len(root.items))
 
@@ -122,7 +122,7 @@ class ClassPanel(ScrolledPanel):
             if get:
                 newId = self.addCheckBox(sizer, idx, 1)
                 self.controlMap[newId] = Control(OS_GET, item)
-            if set:
+            if set_:
                 newId = self.addCheckBox(sizer, idx, 2)
                 self.controlMap[newId] = Control(OS_SET, item)
             if info:
@@ -156,7 +156,7 @@ class ClassPanel(ScrolledPanel):
     def onChecked(self, event):
         control = self.controlMap[event.GetId()]
         state = event.IsChecked()
-        self.model.update(control.type, control.item.name, state)
+        self.model.update(control.type, control.item.klass, control.item.name, state)
 
 
 
@@ -211,18 +211,55 @@ class GeniGenFrame(wx.Frame):
         pass
 
 
+class ValueProperty(object):
+
+    def __init__(self, set_ = False, get = False, info = False):
+        self.set_ = set_
+        self.get = get
+        self.info = info
+
+    def updateAttr(self, attrName, state):
+        attr = getattr(self, attrName)
+        if state != attr:
+            attr = state
+
+    def update(self, type_, state):
+        if type_ == OS_GET:
+            self.updateAttr('get', state)
+        elif type_ == OS_SET:
+            self.updateAttr('set_', state)
+        elif type_ == OS_INFO:
+            self.updateAttr('info', state)
+
+
 class GeniGenModel(object):
     TYPE_MAP = {
         0: "Get",
         2: "Set",
         3: "Info",
     }
-
+    # Add actual data-storage to model.
     def __init__(self):
+        self._modified = False
         self.items = Items()
+        self.storage = defaultdict(dict)
+        self.initializeItems()
 
-    def update(self, type_, name, state):
+    def initializeItems(self):
+        for klass in self.classes:
+            for item in self.itemsForClass(klass).items:
+                #print "ITEM", item
+                self.storage[klass][item.name] = ValueProperty()
+
+    def update(self, type_, klass, name, state):
+        self._modified = True
         print "Control: %s type: %s state: %s" % (name, self.TYPE_MAP[type_], "On" if state else "Off")
+        valueProperty = self.storage[klass][name]
+        valueProperty.update(type_, state)
+
+    @property
+    def modified(self):
+        return self._modified
 
     # Delegate the following two methods.
     @property
