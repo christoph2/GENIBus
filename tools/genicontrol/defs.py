@@ -114,6 +114,25 @@ class ADPUClass:
     def toString(klass):
         return ADPUClass.nameDict[klass]
 
+
+NICE_CLASS_NAMES = {
+    ADPUClass.PROTOCOL_DATA:                       "Protocol Data",
+    ADPUClass.BUS_DATA:                            "Bus Data",
+    ADPUClass.MEASURERED_DATA:                     "Measurered Data",
+    ADPUClass.COMMANDS:                            "Commands",
+    ADPUClass.CONFIGURATION_PARAMETERS:            "Configuration Parameters",
+    ADPUClass.REFERENCE_VALUES:                    "Reference Values",
+    ADPUClass.TEST_DATA:                           "Test Data",
+    ADPUClass.ASCII_STRINGS:                       "ASCII Strings",
+    ADPUClass.MEMORY_BLOCKS:                       "Memory Blocks",
+    ADPUClass.EMBEDDED_PUDS:                       "Embedded PDUs",
+    ADPUClass.DATA_OBJECTS:                        "Data Objects",
+    ADPUClass.SIXTEENBIT_MEASURERED_DATA:          "16Bit Measurered Data",
+    ADPUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS: "16Bit Configuration Parameters",
+    ADPUClass.SIXTEENBIT_REFERENCE_VALUES:         "16Bit Reference Values",
+}
+
+
 ##
 ## Supported classes (by GeniControl).
 ##

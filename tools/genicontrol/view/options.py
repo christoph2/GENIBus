@@ -270,8 +270,8 @@ def showOptionsDialogue(parent):
     controller.execute()
 
 
-def testDialogue():
-    showOptionsDialogue(None)
+def testDialog():
+    showOptionsDialog(None)
 
 
 def main():
@@ -280,7 +280,7 @@ def main():
             super(TestApp, self).__init__()
 
     app = TestApp()
-    testDialogue()
+    testDialog()
 
 if __name__ == '__main__':
     main()
