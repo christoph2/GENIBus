@@ -101,22 +101,23 @@ Menu("&File",
 Control = namedtuple('Control', 'type item')
 
 
-def saveDialog(parent):
+def saveDialog(parent, initialDirectory):
     dlg = wx.MessageDialog(None, "Do you wish to save changes?", 'Confirm Save', wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
     return dlg.ShowModal()
 
 
-def openDialog(parent):
-    result = None
+def openDialog(parent, initialDirectory):
+    path = None
+    ok = False
     wildcard = "GeniGen projects (*.ggproj)|*.ggproj|" \
             "All files (*.*)|*.*"
-    dialog = wx.FileDialog(parent, "Choose a file", os.getcwd(), "", wildcard, wx.OPEN) ## TODO: Default project directory as a
+    dialog = wx.FileDialog(parent, "Choose a file", initialDirectory, "", wildcard, wx.OPEN) ## TODO: Default project directory as a
                                                                                         ## persistant parameter.
     if dialog.ShowModal() == wx.ID_OK:
-        result = dialog.GetPath()
-        #print result
+        path = dialog.GetPath()
+        ok = True
     dialog.Destroy()
-    return result
+    return (ok, path)
 
 
 class ClassPanel(ScrolledPanel):
@@ -210,14 +211,23 @@ class GeniGenFrame(wx.Frame):
 
     def onCloseWindow(self, event):
         if self.model.modified:
-            result = saveDialog(self)
+            result = saveDialog(self, self.lastUsedDirectory)
             if result == wx.ID_YES:
                 pass
             elif result == wx.ID_NO:
                 pass
             elif result == wx.ID_CANCEL:
                 pass
+        self.saveWindowSettings()
         self.Destroy()
+
+    def saveWindowSettings(self):
+        size = self.Size
+        pos = self.Position
+        self.config.set('window', 'posx', pos.x)
+        self.config.set('window', 'posy', pos.y)
+        self.config.set('window', 'sizex', size.x)
+        self.config.set('window', 'sizey', size.y)
 
     def onOptions(self, event):
         item = getMenuItem(self, event)
@@ -231,8 +241,10 @@ class GeniGenFrame(wx.Frame):
     def onOpenProject(self, event):
         item = getMenuItem(self, event)
         itemID = item.GetId()
-        result = openDialog(self )
-        directory, _ =  os.path.split(result)
+        ok, path = openDialog(self, self.lastUsedDirectory)
+        if ok:
+            directory, fileName =  os.path.split(path)
+            self.lastUsedDirectory = directory
 
     def onSaveProject(self, event):
         item = getMenuItem(self, event)
@@ -243,6 +255,15 @@ class GeniGenFrame(wx.Frame):
         item = getMenuItem(self, event)
         itemID = item.GetId()
         print itemID, event.Id
+
+
+    def _getLastUsedDirectory(self):
+        return self.config.get('general', 'lastuseddirectory')
+
+    def _setLastUsedDirectory(self, value):
+        self.config.set('general', 'lastuseddirectory', value)
+
+    lastUsedDirectory = property(_getLastUsedDirectory, _setLastUsedDirectory)
 
 
 class ValueProperty(object):
@@ -325,6 +346,7 @@ def main():
 
     app = GeniGenApp()
     frame = GeniGenFrame(None, size, pos)
+    frame.config = config
 
     #controller = GUIController(NullModel, frame)
 

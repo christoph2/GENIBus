@@ -140,7 +140,6 @@ class GBFrame(wx.Frame):
         if self.locale:
             assert sys.getrefcount(self.locale) <= 2
             del self.locale
-
         # create a locale object for this language
         self.locale = wx.Locale(lang)
         if self.locale.IsOk():
