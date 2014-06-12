@@ -85,10 +85,10 @@ class Items(object): # NB: This class certainly doesn't belong here, but for now
 
 MY_MENU = (
 Menu("&File",
-    MenuItem("&Save\tCtrl-S", "Save setting.", "onSaveSettings"),
-    MenuItem("Save &parameter", "", "onSaveParameter"),
-    MenuItem("Save &info", "Save parameter scaling information to a file.", "onSaveInfo"),
-    MenuItem("&Load paramter\tCtrl-L", "", "onLoadParamter"),
+    MenuItem("&New\tCtrl-N", "New Project.", "onNewProject"),
+    MenuItem("&Open\tCtrl-O", "Open Project.", "onOpenProject"),
+    MenuItem("&Save\tCtrl-S", "Save Project.", "onSaveProject"),
+    MenuItem("S&ave as ...", "Save Project as.", "onSaveProjectAs"),
     MenuSeparator(),
     MenuItem("&Exit\tAlt-F4", "Exit GeniControl", "onCloseWindow")),
 
@@ -194,21 +194,23 @@ class GeniGenFrame(wx.Frame):
         itemID = item.GetId()
         print itemID, event.Id
 
-    def onSaveSettings(self, event):
+    def onNewProject(self, event):
+        item = getMenuItem(self, event)
+        itemID = item.GetId()
+
+    def onOpenProject(self, event):
+        item = getMenuItem(self, event)
+        itemID = item.GetId()
+
+    def onSaveProject(self, event):
         item = getMenuItem(self, event)
         itemID = item.GetId()
         print itemID, event.Id
 
-    def onSaveParameter(self, event):
+    def onSaveProjectAs(self, event):
         item = getMenuItem(self, event)
         itemID = item.GetId()
         print itemID, event.Id
-
-    def onSaveInfo(self, event):
-        pass
-
-    def onLoadParamter(self, event):
-        pass
 
 
 class ValueProperty(object):
