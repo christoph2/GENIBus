@@ -101,23 +101,33 @@ Menu("&File",
 Control = namedtuple('Control', 'type item')
 
 
-def saveDialog(parent, initialDirectory):
-    dlg = wx.MessageDialog(None, "Do you wish to save changes?", 'Confirm Save', wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
-    return dlg.ShowModal()
-
-
-def openDialog(parent, initialDirectory):
+def fileDialog(parent, type_, initialDirectory):
     path = None
     ok = False
-    wildcard = "GeniGen projects (*.ggproj)|*.ggproj|" \
-            "All files (*.*)|*.*"
-    dialog = wx.FileDialog(parent, "Choose a file", initialDirectory, "", wildcard, wx.OPEN) ## TODO: Default project directory as a
-                                                                                        ## persistant parameter.
+    wildcard = "GeniGen projects (*.ggproj)|*.ggproj| All files (*.*)|*.*"
+    dialog = wx.FileDialog(parent, "Choose a file", initialDirectory, "", wildcard, type_)
     if dialog.ShowModal() == wx.ID_OK:
         path = dialog.GetPath()
         ok = True
+    print "FileDialog returned:", ok, path
     dialog.Destroy()
     return (ok, path)
+
+
+def saveDialog(parent, initialDirectory):
+    dlg = wx.MessageDialog(None, "Do you wish to save changes?", 'Confirm Save', wx.YES_NO | wx.CANCEL | wx.ICON_QUESTION)
+    result = dlg.ShowModal()
+    ok = False
+    path = None
+    if result == wx.ID_YES:
+        ok, path = fileDialog(parent, wx.SAVE, initialDirectory)
+    elif result == wx.ID_CANCEL:
+        ok = -1
+    return (ok, path)
+
+
+def openDialog(parent, initialDirectory):
+    return fileDialog(parent, wx.OPEN, initialDirectory)
 
 
 class ClassPanel(ScrolledPanel):
