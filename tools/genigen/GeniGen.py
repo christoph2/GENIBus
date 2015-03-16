@@ -221,13 +221,13 @@ class GeniGenFrame(wx.Frame):
 
     def onCloseWindow(self, event):
         if self.model.modified:
-            result = saveDialog(self, self.lastUsedDirectory)
-            if result == wx.ID_YES:
-                pass
-            elif result == wx.ID_NO:
-                pass
-            elif result == wx.ID_CANCEL:
-                pass
+            result, path = saveDialog(self, self.lastUsedDirectory)
+            if result == True:
+                print "Save!!!"
+            elif result == False:
+                print "Don't save"
+            elif result == -1:
+                print "Save canceled"
         self.saveWindowSettings()
         self.Destroy()
 
