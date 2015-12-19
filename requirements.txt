@@ -1,0 +1,7 @@
+enum34
+mako
+pymongo
+tornado
+pyserial
+requests
+colorama
