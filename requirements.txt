@@ -2,4 +2,3 @@ enum34
 mako
 pyserial
 pyyaml
-wxpython>=2.8,<2.9
