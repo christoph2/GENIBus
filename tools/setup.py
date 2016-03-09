@@ -4,7 +4,7 @@ from distutils.core import setup,Extension
 from glob import glob
 from setuptools import find_packages
 
-print find_packages()
+print(find_packages())
 
 setup(
     name = 'genicontrol',

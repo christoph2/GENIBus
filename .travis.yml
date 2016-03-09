@@ -21,7 +21,6 @@ install:
   - travis_retry pip install pytest-cov coverage coveralls codacy-coverage
 
 script:
-#  python -m unittest discover ./objutils/tests/
    cd ./tools
    coverage run --source=genicontrol setup.py test
 
