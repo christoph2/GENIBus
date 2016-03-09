@@ -22,7 +22,7 @@ install:
 
 script:
    - cd ./tools
-   - coverage run --source=genicontrol setup.py test
+   - coverage run --source=genicontrol,genilib,genigen setup.py test
 
 after_success:
   - pylint app
