@@ -22,5 +22,7 @@ setup(
     install_requires = ['mako', 'pyserial', 'pyyaml'],
     data_files = [
             ('genicontrol/config', glob('genicontrol/config/*.*')),
-    ]
+    ],
+    test_suite="tests"
+    
 )
