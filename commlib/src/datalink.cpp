@@ -1,7 +1,7 @@
 /*
  *  Grundfos GENIBus Library.
  *
- *  (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+ *  (C) 2007-2016 by Christoph Schueler <github.com/Christoph2,
  *                                       cpu12.gems@googlemail.com>
  *
  *   All Rights Reserved
@@ -22,7 +22,7 @@
  *
  */
 
-#include "GB_Datalink.h"
+#include "genibus/datalink.h"
 #include <stdio.h>
 
 static const uint8 connectReqPayload[] = {
