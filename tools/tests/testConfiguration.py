@@ -26,16 +26,16 @@ class TestCase(unittest.TestCase):
     def testGetSerial(self):
         self.assertEqual(self.config.get('serial', 'serialport'), '')
 
-    def testGet(self):
+    def testGetServerIp(self):
         self.assertEqual(self.config.get('network', 'serverip'), '192.168.100.10')
 
-    def testGet(self):
+    def testGetSubnetMask(self):
         self.assertEqual(self.config.get('network', 'subnetmask'), '255.255.255.0')
 
-    def testGet(self):
+    def testGetServerPort(self):
         self.assertEqual(self.config.get('network', 'serverport'), 8080)
 
-    def testGet(self):
+    def testGetNetworkDriver(self):
         self.assertEqual(self.config.get('network', 'driver'), 1)
 
 if __name__ == '__main__':
