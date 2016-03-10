@@ -284,34 +284,34 @@ class TestCrc(unittest.TestCase):
         return utils.makeWord(frame[defs.CRC_HIGH], frame[defs.CRC_LOW])
 
     def testConnReq(self):
-        self.assertEquals(self.check(CONNECT_REQ), self.expectedCrc(CONNECT_REQ))
+        self.assertEqual(self.check(CONNECT_REQ), self.expectedCrc(CONNECT_REQ))
 
     def testConnResp(self):
-        self.assertEquals(self.check(CONNECT_RESP), self.expectedCrc(CONNECT_RESP))
+        self.assertEqual(self.check(CONNECT_RESP), self.expectedCrc(CONNECT_RESP))
 
     def testDataReq(self):
-        self.assertEquals(self.check(DATA_REQ), self.expectedCrc(DATA_REQ))
+        self.assertEqual(self.check(DATA_REQ), self.expectedCrc(DATA_REQ))
 
     def testDataResp(self):
-        self.assertEquals(self.check(DATA_RESP), self.expectedCrc(DATA_RESP))
+        self.assertEqual(self.check(DATA_RESP), self.expectedCrc(DATA_RESP))
 
     def testInfoReq(self):
-        self.assertEquals(self.check(INFO_REQ), self.expectedCrc(INFO_REQ))
+        self.assertEqual(self.check(INFO_REQ), self.expectedCrc(INFO_REQ))
 
     def testInfoResp(self):
-        self.assertEquals(self.check(INFO_RESP), self.expectedCrc(INFO_RESP))
+        self.assertEqual(self.check(INFO_RESP), self.expectedCrc(INFO_RESP))
 
     def testRefReq(self):
-        self.assertEquals(self.check(REF_REQ), self.expectedCrc(REF_REQ))
+        self.assertEqual(self.check(REF_REQ), self.expectedCrc(REF_REQ))
 
     def testRefResp(self):
-        self.assertEquals(self.check(REF_RESP), self.expectedCrc(REF_RESP))
+        self.assertEqual(self.check(REF_RESP), self.expectedCrc(REF_RESP))
 
     def testConfReq(self):
-        self.assertEquals(self.check(CONF_REQ), self.expectedCrc(CONF_REQ))
+        self.assertEqual(self.check(CONF_REQ), self.expectedCrc(CONF_REQ))
 
     def testConfResp(self):
-        self.assertEquals(self.check(CONF_RESP), self.expectedCrc(CONF_RESP))
+        self.assertEqual(self.check(CONF_RESP), self.expectedCrc(CONF_RESP))
 
 """
 class TestDataPool(unittest.TestCase):
