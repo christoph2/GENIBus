@@ -80,7 +80,7 @@ class Connector(ConnectionIF):
              self.connected = True
              return True
         except Exception as e:
-             print str(e)
+             print(str(e))
              return False
 
     def disconnect(self):

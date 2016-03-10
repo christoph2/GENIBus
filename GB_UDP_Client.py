@@ -14,9 +14,9 @@ except Exception as e:
     msg = "%u: %s -- Press any key to exit." % (e.errno, e.strerror)
     raw_input(msg)
     sys.exit(1)
-print "TCP-client up and running."
+print("TCP-client up and running.")
 
 while True:
     data = s.recv(1024)
-    print repr(data)
+    print(repr(data))
 s.close()

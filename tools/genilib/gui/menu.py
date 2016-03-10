@@ -79,7 +79,7 @@ class MenuSeparator(MenuItem):
 
 
 def createItem(window, menu, item):
-    #print "[%s]" % item.name
+    #print("[%s]" % item.name)
 
     if isinstance(item, MenuSeparator):
         menu.AppendSeparator()

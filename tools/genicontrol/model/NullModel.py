@@ -117,7 +117,7 @@ class NullModel(ModelIf.IModel):
 
     def sendCommand(self, command):
         self._concurrentAccess.acquire()
-        print "Command requested:", command
+        print("Command requested:", command)
         self._commandRequested = True
         req = apdu.createSetCommandsPDU(
             apdu.Header(defs.SD_DATA_REQUEST, self.getUnitAddress(), 0x04),
@@ -142,7 +142,7 @@ class NullModel(ModelIf.IModel):
                 continue
             elif key.endswith('_hi'):
                 key = key[ : key.index('_hi')]
-                #print "16Bit", key,
+                #print("16Bit", key,)
                 value_hi = value
                 value_lo = measurements[key + '_lo']
                 value = makeWord(value_hi, value_lo)
@@ -174,7 +174,7 @@ class NullModel(ModelIf.IModel):
 
     def setValue(self, group, datapoint, value):
         self._setValueLock.acquire()
-        #print "SetValue - Group: %s DP: % s Value: %s" % (defs.ADPUClass.toString(group), datapoint, value)
+        #print("SetValue - Group: %s DP: % s Value: %s" % (defs.ADPUClass.toString(group), datapoint, value))
         self._valueDict.setdefault(group, dict())[datapoint] = value
         self.sendMessage("%s.%s" % (defs.ADPUClass.toString(group), datapoint), value)
         self._setValueLock.release()

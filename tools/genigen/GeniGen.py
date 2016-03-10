@@ -109,7 +109,7 @@ def fileDialog(parent, type_, initialDirectory):
     if dialog.ShowModal() == wx.ID_OK:
         path = dialog.GetPath()
         ok = True
-    print "FileDialog returned:", ok, path
+    print("FileDialog returned:", ok, path)
     dialog.Destroy()
     return (ok, path)
 
@@ -140,7 +140,7 @@ class ClassPanel(ScrolledPanel):
         get = OS_GET in root.capabilities
         set_ = OS_SET in root.capabilities
         info = OS_INFO in root.capabilities
-        #print "Number of Item in '%s' panel: %u" % (root.name, len(root.items))
+        #print("Number of Item in '%s' panel: %u" % (root.name, len(root.items)))
 
         self.controlMap = {}
 
@@ -223,11 +223,11 @@ class GeniGenFrame(wx.Frame):
         if self.model.modified:
             result, path = saveDialog(self, self.lastUsedDirectory)
             if result == True:
-                print "Save!!!"
+                print("Save!!!")
             elif result == False:
-                print "Don't save"
+                print("Don't save")
             elif result == -1:
-                print "Save canceled"
+                print("Save canceled")
         self.saveWindowSettings()
         self.Destroy()
 
@@ -242,7 +242,7 @@ class GeniGenFrame(wx.Frame):
     def onOptions(self, event):
         item = getMenuItem(self, event)
         itemID = item.GetId()
-        print itemID, event.Id
+        print(itemID, event.Id)
 
     def onNewProject(self, event):
         item = getMenuItem(self, event)
@@ -259,12 +259,12 @@ class GeniGenFrame(wx.Frame):
     def onSaveProject(self, event):
         item = getMenuItem(self, event)
         itemID = item.GetId()
-        print itemID, event.Id
+        print(itemID, event.Id)
 
     def onSaveProjectAs(self, event):
         item = getMenuItem(self, event)
         itemID = item.GetId()
-        print itemID, event.Id
+        print(itemID, event.Id)
 
 
     def _getLastUsedDirectory(self):
@@ -313,12 +313,12 @@ class GeniGenModel(object):
     def initializeItems(self):
         for klass in self.classes:
             for item in self.itemsForClass(klass).items:
-                #print "ITEM", item
+                #print("ITEM", item)
                 self.storage[klass][item.name] = ValueProperty()
 
     def update(self, type_, klass, name, state):
         self._modified = True
-        print "Control: %s type: %s state: %s" % (name, self.TYPE_MAP[type_], "On" if state else "Off")
+        print("Control: %s type: %s state: %s" % (name, self.TYPE_MAP[type_], "On" if state else "Off"))
         valueProperty = self.storage[klass][name]
         valueProperty.update(type_, state)
 
@@ -352,7 +352,7 @@ def main():
         config.add('general', 'lastuseddirectory', HOME_DIRECTORY)
         lastUsedDirectory = config.get('general', 'lastuseddirectory')
 
-    #print "Last used directory: '%s'." % lastUsedDirectory
+    #print("Last used directory: '%s'." % lastUsedDirectory)
 
     app = GeniGenApp()
     frame = GeniGenFrame(None, size, pos)

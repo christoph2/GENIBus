@@ -144,13 +144,13 @@ class MCPanel(ScrolledPanel):
             if controlID:
                 control = self.statusPanel.FindWindowById(controlID)
                 if control:
-                    #print "**ITEM ***", item, value
+                    #print("**ITEM ***", item, value)
                     if item == 'f_act':
                         value = float(value)
                     control.SetValue(value)
 
     def setPumpStatus(self, item, value):
-        #print "PS: ", item ,value
+        #print("PS: ", item ,value)
         itemMap = {
             'activeSource': "Control Source",
             'operationMode': "Operation Mode",

@@ -179,11 +179,11 @@ class RequestorThread(threading.Thread):
             try:
                 response = dissectResponse(data)
             except Exception as e:
-                print str(e), data
+                print(str(e), data)
             else:
                 if self._model._commandRequested:
                     self._model._commandRequested = False
-                    #print "COMMAND_RESP", response
+                    #print("COMMAND_RESP", response)
                     return
 
                 if self.getState() == RequestorThread.STATE_CONNECT_HL:
@@ -287,7 +287,7 @@ def createInfoRequestTelegrams(destAddr):
             elif klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
                 telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x04), parameter = slice)
 
-            #print "IR", telegram
+            #print("IR", telegram)
             result.append((telegram, slice, ))
     return result
 

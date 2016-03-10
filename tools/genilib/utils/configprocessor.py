@@ -100,14 +100,14 @@ class ConfigProcessor(object):
         self._sections[section][option] = type_(value)
 
     def add(self, section, option, value):
-        #print "Adding", section, option
+        #print("Adding", section, option)
         if not section in self._sections.keys():
-            #print "Section '%s' does not exist!" % section
+            #print("Section '%s' does not exist!" % section)
             self._sections[section] = OrderedDict()
         if not option in self._sections[section].keys():
-            #print "Option '%s' does not exist!" % option
+            #print("Option '%s' does not exist!" % option)
             pass
-        #print "Value", value
+        #print("Value", value)
         type_ = type(value)
         self._sections[section][option] = type_(value)
 

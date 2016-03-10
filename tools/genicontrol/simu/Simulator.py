@@ -234,7 +234,7 @@ def createResponse(request):
         else:
             for item in data:
                 name, acess, _ = dataItemsById[item]
-                #print "KLASS: %s NAME: %s " % (klass, name)
+                #print("KLASS: %s NAME: %s " % (klass, name))
                 value, info = dataItemsByName[name]
                 if ack == defs.OS_GET:
                     apduLength += 1 # Currently only 8-bit data values.
@@ -304,16 +304,14 @@ class SimulationServer(ConnectionIF):
 def testResponse(telegram, datapoints, valueInterpretation):
     res = createResponse(dissectResponse(telegram))
     dr = dissectResponse(res)
-    print rawInterpreteResponse(dr, datapoints, valueInterpretation)
-    print
-
+    print(rawInterpreteResponse(dr, datapoints, valueInterpretation))
 
 def printTuple(data, name):
-    print "%s = (" % name
+    print ("%s = (" % name)
     for d in data:
-        print "     0x%02x," % d
+        print("     0x%02x," % d)
 
-    print ")"
+    print(")")
 
 def createStaticTelegrams():
     """
@@ -329,7 +327,7 @@ def createStaticTelegrams():
             continue
         dd[klass][name] = _id
     for klass, items in dd.items():
-        print klass
+        print(klass)
         # [it[i:i+n] for i in range(0, len(it), n)]
         items = items.items()
         if len(items) > 15:

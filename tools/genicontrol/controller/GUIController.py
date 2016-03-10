@@ -77,7 +77,7 @@ class ControllerThread(threading.Thread):
 
     def run(self):
         name = self.getName()
-        print "Starting %s." % name
+        print("Starting %s." % name)
         while True:
             if self.quitEvent.wait(0.5):
                 break
@@ -93,7 +93,7 @@ class ControllerThread(threading.Thread):
                 #outf.write(str(self.infoRecords))
                 yaml.dump(self.infoRecords, outf)
 
-        print "Exiting %s." % name
+        print("Exiting %s." % name)
 
     def onInfoUpdate(self, msg):
         #self._view.post('INFO_UPDATE', msg)
@@ -105,7 +105,7 @@ class ControllerThread(threading.Thread):
                 #self._view.notebook.infoPanel.setItem(key, svalue.physEntity, str(svalue.factor), svalue.unit, str(value.zero), str(value.range))
                 #self._view.notebook.infoPanel.grid.Fit()
         self.infoRecords.append(values)
-        #print msg.data.values()
+        #print(msg.data.values())
 
     def onChange(self, msg):
         if len(msg.topic) == 1:
@@ -113,7 +113,7 @@ class ControllerThread(threading.Thread):
             item = ''
         else:
             group, item = msg.topic
-        #print "Update: '%s' Item:'%s' Data: '%s'" % (group, item, msg.data)
+        #print("Update: '%s' Item:'%s' Data: '%s'" % (group, item, msg.data))
         if group == 'MEASURERED_DATA':
             CallAfter(self._view.notebook.mcPanel.setValue, item, msg.data)
             #self._view.notebook.mcPanel.setValue(item, msg.data)
@@ -121,33 +121,33 @@ class ControllerThread(threading.Thread):
     def onPumpStatus(self, msg):
         group, item = msg.topic
         data = msg.data
-        #print "***PS***", item, data
+        #print("***PS***", item, data)
         CallAfter(self._view.notebook.mcPanel.setPumpStatus, item, data)
         #self._view.notebook.mcPanel.setPumpStatus(item, data)
 
     def onRemoteLocalChanged(self, event):
-        print "Remote?: %s\n" % (event.getState(), )
+        print("Remote?: %s\n" % (event.getState(), ))
         cmd = 'REMOTE' if event.getState() else 'LOCAL'
         self.sendCommand(cmd)
 
     def onOperationModeChanged(self, event):
-        print "Operation-Mode changed: '%s'" % event.getState()
+        print("Operation-Mode changed: '%s'" % event.getState())
         self.sendCommand(event.getState().upper())
 
     def onRefUp(self, event):
-        print "RefUp"
+        print("RefUp")
         self.sendCommand('REF_UP')
 
     def onRefDown(self, event):
-        print "RefDown"
+        print("RefDown")
         self.sendCommand('REF_DOWN')
 
     def onResetAlarm(self, event):
-        print "ResetAlarm"
+        print("ResetAlarm")
         self.sendCommand('RESET_ALARM')
 
     def onResetAlarmLog(self, event):
-        print "ResetAlarmLog"
+        print("ResetAlarmLog")
         self.sendCommand('RESET_ALARM_LOG')
 
     def sendCommand(self, command):

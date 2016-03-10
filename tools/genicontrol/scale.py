@@ -54,8 +54,6 @@ USAGE = """usage: %s header unit range zero value
 
 """ % os.path.split(sys.argv[0])[1]
 
-#print USAGE
-
 # UNIT      RANGE   ZERO
 #   21      90      10
 #   44      120     0
@@ -63,8 +61,8 @@ USAGE = """usage: %s header unit range zero value
 u21 = UnitTable[21]
 u44 = UnitTable[44]
 
-#print convertForward8(163, 10, 90, 1)
-#print convertForward16(0x10d6, 0, 120, 1)
+#print(convertForward8(163, 10, 90, 1))
+#print(convertForward16(0x10d6, 0, 120, 1))
 
 
 def argumentsToLower():
@@ -74,11 +72,11 @@ def argumentsToLower():
 def main():
     for info, value in TestValues:
         scaling = getScalingInfo(info)
-        print scaling
+        print(scaling)
         if value > 0xff:
-            print convertForward16(value, info.zero, info.range, scaling.factor)
+            print(convertForward16(value, info.zero, info.range, scaling.factor))
         else:
-            print convertForward8(value, info.zero, info.range, scaling.factor)
+            print(convertForward8(value, info.zero, info.range, scaling.factor))
 
 if __name__ == '__main__':
     main()

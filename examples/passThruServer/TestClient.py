@@ -47,26 +47,25 @@ try:
 
     conn = s.connect((SERVER, PORT))
 except Exception as e:
-    print e.message
+    print(e.message)
     msg = "%s: %s -- Press Return to exit." % (e.errno, e.message)
     raw_input(msg)
     sys.exit(1)
-print "TCP-client up and running."
+print("TCP-client up and running.")
 
 while True:
-    print "Connect request..."
+    print("Connect request...")
     try:
         s.send(bytearray(CONNECT_REQ))
     except socket.error as e:
-	 #print str(e)
+         #print(str(e))
          if e.errno != 32: # 'Broken pipe' error isn't that dramatic.
               raise
     try:
       data = s.recv(1024)
-      print "Response: ", hexDump(bytearray(data))
-      print
+      print("Response: ", hexDump(bytearray(data)))
     except Exception as e:
-        print "Response: ", str(e)
+        print("Response: ", str(e))
     time.sleep(1.0)
 s.close()
 
