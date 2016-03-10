@@ -1,6 +1,6 @@
+importlib
 enum34
 mako
 pyserial
 pyyaml
 enum
-importlib

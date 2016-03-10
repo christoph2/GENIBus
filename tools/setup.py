@@ -16,13 +16,13 @@ setup(
     url = 'https://github.com/christoph2/GENIBus-Arduino',
     packages = ['genicontrol', 'genicontrol/model', 'genicontrol/view', 'genicontrol/controller', 'genilib', 'genilib/utils'],
     entry_points = {
-	'console_scripts': [
-		'GeniControl = genicontrol.GeniControl:main',
+        'console_scripts': [
+                'GeniControl = genicontrol.GeniControl:main',
         ],
     },
-    install_requires = ['mako', 'pyserial', 'pyyaml', 'enum', 'importlib'],
+    install_requires = ['importlib', 'mako', 'pyserial', 'pyyaml', 'enum',],
     data_files = [
             ('genicontrol/config', glob('genicontrol/config/*.*')),
     ],
-    test_suite="tests"    
+    test_suite="tests"
 )
