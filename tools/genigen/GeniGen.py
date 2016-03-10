@@ -30,10 +30,7 @@ from collections import namedtuple, defaultdict
 import os
 import threading
 
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+from genilib.utils import createStringBuffer
 import itertools
 import logging
 

@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2016 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -28,10 +28,7 @@
 
 
 from collections import namedtuple
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+from genilib.utils import createStringBuffer
 
 import yaml
 
@@ -40,6 +37,6 @@ from genilib.configuration import readConfigFile
 ValueTuple = namedtuple('ValueTuple', 'header unit range zero value')
 Unit = namedtuple('Unit', 'physEntity factor unit')
 
-UnitTable = yaml.load(StringIO.StringIO(readConfigFile("genicontrol", "units.yaml")))
+UnitTable = yaml.load(createStringBuffer(readConfigFile("genicontrol", "units.yaml")))
 
 

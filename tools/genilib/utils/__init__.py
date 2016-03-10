@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2016 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -30,6 +30,7 @@
 import array
 import logging
 import os
+import sys
 from genicontrol.defs import CONFIGURATION_DIRECTORY
 
 logger = logging.getLogger("GeniControl")
@@ -57,3 +58,37 @@ def absConfigurationFilename(fname):
 
 def dumpHex(arr):
     return [hex(x) for x in arr]
+
+
+if sys.version_info.major == 3:
+    from io import BytesIO as StringIO
+else:
+    try:
+        from cStringIO import StringIO
+    except ImportError:
+        from StringIO import StringIO
+
+
+def createStringBuffer(*args):
+    """Create a string with file-like behaviour (StringIO on Python 2.x).
+    """
+    return StringIO(*args)
+
+def binExtractor(fname, offset, length):
+    """Extract a junk of data from a file.
+    """
+    fp = open(fname)
+    fp.seek(offset)
+    data = fp.read(length)
+    return data
+
+CYG_PREFIX = "/cygdrive/"
+
+def cygpathToWin(path):
+    if path.startswith(CYG_PREFIX):
+        path = path[len(CYG_PREFIX) : ]
+        driveLetter = "{0}:\\".format(path[0])
+        path = path[2 : ].replace("/", "\\")
+        path = "{0}{1}".format(driveLetter, path)
+    return path
+

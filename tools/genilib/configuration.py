@@ -31,10 +31,7 @@ try:
 except ImportError:
     import configparser # Python 3.x
 
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+from genilib.utils import createStringBuffer
 
 import logging
 import os
@@ -65,7 +62,7 @@ class Config(object):
                     cls.defaultsFile = "%s_Defaults.yaml" % applicationName
                     print("Defaults file is '{0}'.".format(cls.defaultsFile))
                     cls._instance = super(cls.__class__, cls).__new__(cls)
-                    baz = yaml.load(StringIO.StringIO(readConfigFile("genicontrol", cls.defaultsFile)))
+                    baz = yaml.load(createStringBuffer(readConfigFile("genicontrol", cls.defaultsFile)))
                     cls.cp = ConfigProcessor(baz)
             finally:
                 cls._lock.release()

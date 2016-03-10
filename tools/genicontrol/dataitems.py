@@ -32,25 +32,18 @@ __all__ = [
 ]
 
 from collections import namedtuple
-
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
-
 import yaml
+
+from genilib.utils import createStringBuffer
 import genicontrol.defs as defs
 from genicontrol.configuration import readConfigFile
 
-
 Dataitem = namedtuple('Dataitem', 'name klass id access note')
 
-DATAITEMS = yaml.load(StringIO.StringIO(readConfigFile("genicontrol", "dataitemsUPE.yaml")))
-
+DATAITEMS = yaml.load(createStringBuffer(readConfigFile("genicontrol", "dataitemsUPE.yaml")))
 
 def addToDict(d, k, v):
     d[k] = v
-
 
 PROTOCOL_DATA = dict()
 COMMANDS = dict()
