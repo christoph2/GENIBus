@@ -1,7 +1,7 @@
 /*
  *  Grundfos GENIBus Library.
  *
- *  (C) 2007-2013 by Christoph Schueler <github.com/Christoph2,
+ *  (C) 2007-2016 by Christoph Schueler <github.com/Christoph2,
  *                                       cpu12.gems@googlemail.com>
  *
  *   All Rights Reserved
@@ -23,8 +23,7 @@
  */
 
 
-#include "Crc.h"
-#include "HardwareSerial.h"
+#include "genibus/crc.h"
 
 #if !defined(__GB_DATALINK)
 #define __GB_DATALINK
