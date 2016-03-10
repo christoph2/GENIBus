@@ -6,7 +6,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2016 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -36,7 +36,7 @@ import os
 HOME_DIRECTORY = os.path.abspath(os.path.expanduser('~/'))
 CONFIGURATION_DIRECTORY = os.path.join(HOME_DIRECTORY, 'GeniControl')
 if not os.access(CONFIGURATION_DIRECTORY, os.F_OK):
-    print " doesn't exist. creating. ",
+    print("Configuration directory '{0}' doesn't exist. creating...".format(CONFIGURATION_DIRECTORY))
     os.mkdir(CONFIGURATION_DIRECTORY)
 
 ##
