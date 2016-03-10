@@ -1,4 +1,5 @@
 #!/bin/env/python
+# -*- coding: utf-8 -*-
 
 from distutils.core import setup,Extension
 from glob import glob
@@ -23,6 +24,5 @@ setup(
     data_files = [
             ('genicontrol/config', glob('genicontrol/config/*.*')),
     ],
-    test_suite="tests"
-    
+    test_suite="tests"    
 )
