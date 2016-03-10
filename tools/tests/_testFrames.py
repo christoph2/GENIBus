@@ -4,8 +4,8 @@ import unittest
 from genilib.crc import checkCrc, calcuteCrc
 import genilib.utils as utils
 import genicontrol.defs as defs
-import genicontrol.dataitems as dataitems
-from genicontrol.simu.Simulator import DATA_POOL
+#import genicontrol.dataitems as dataitems
+#from genicontrol.simu.Simulator import DATA_POOL
 
 ##
 ## Some known-good telegrams from spec.
@@ -269,8 +269,7 @@ CONF_RESP = (
     0x19,   ##  CRC low
 )
 
-ALL_TELEGRAMS = (CONNECT_REQ, CONNECT_RESP, DATA_REQ, DATA_RESP, INFO_REQ,
-INFO_RESP, REF_REQ, REF_RESP, CONF_REQ, CONF_RESP)
+ALL_TELEGRAMS = (CONNECT_REQ, CONNECT_RESP, DATA_REQ, DATA_RESP, INFO_REQ, INFO_RESP, REF_REQ, REF_RESP, CONF_REQ, CONF_RESP)
 
 class TestCrc(unittest.TestCase):
     """
@@ -285,26 +284,22 @@ class TestCrc(unittest.TestCase):
         return utils.makeWord(frame[defs.CRC_HIGH], frame[defs.CRC_LOW])
 
     def testConnReq(self):
-        self.assertEquals(self.check(CONNECT_REQ),
-self.expectedCrc(CONNECT_REQ))
+        self.assertEquals(self.check(CONNECT_REQ), self.expectedCrc(CONNECT_REQ))
 
     def testConnResp(self):
-        self.assertEquals(self.check(CONNECT_RESP),
-self.expectedCrc(CONNECT_RESP))
+        self.assertEquals(self.check(CONNECT_RESP), self.expectedCrc(CONNECT_RESP))
 
     def testDataReq(self):
         self.assertEquals(self.check(DATA_REQ), self.expectedCrc(DATA_REQ))
 
     def testDataResp(self):
-        self.assertEquals(self.check(DATA_RESP),
-self.expectedCrc(DATA_RESP))
+        self.assertEquals(self.check(DATA_RESP), self.expectedCrc(DATA_RESP))
 
     def testInfoReq(self):
         self.assertEquals(self.check(INFO_REQ), self.expectedCrc(INFO_REQ))
 
     def testInfoResp(self):
-        self.assertEquals(self.check(INFO_RESP),
-self.expectedCrc(INFO_RESP))
+        self.assertEquals(self.check(INFO_RESP), self.expectedCrc(INFO_RESP))
 
     def testRefReq(self):
         self.assertEquals(self.check(REF_REQ), self.expectedCrc(REF_REQ))
@@ -316,8 +311,7 @@ self.expectedCrc(INFO_RESP))
         self.assertEquals(self.check(CONF_REQ), self.expectedCrc(CONF_REQ))
 
     def testConfResp(self):
-        self.assertEquals(self.check(CONF_RESP),
-self.expectedCrc(CONF_RESP))
+        self.assertEquals(self.check(CONF_RESP), self.expectedCrc(CONF_RESP))
 
 """
 class TestDataPool(unittest.TestCase):
