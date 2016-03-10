@@ -1,7 +1,7 @@
 /*
  *  Grundfos GENIBus Library.
  *
- * (C) 2007-2012 by Christoph Schueler <github.com/Christoph2,
+ * (C) 2007-2016 by Christoph Schueler <github.com/Christoph2,
  *                                      cpu12.gems@googlemail.com>
  *
  * All Rights Reserved
@@ -21,31 +21,18 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  */
-#if !defined(__CRC_H)
-#define __CRC_H
 
-#include "Types.h"
+#ifndef __PORT_TIMER_H
+#define __PORT_TIMER_H
 
-#if defined(__cplusplus)
-extern "C"
-{
-#endif  /* __cplusplus */
+#include "Wildfire_Config.h"
+#include "knx_timer.h"
 
-
-class Crc {
-public:
-  Crc(uint16 data = 0xffffu);
-  void init(uint16 data);
-  void update(uint8 data);
-  uint16 get(void);
-private:
-  uint16 _accum;
-};
+typedef struct tagPort_Timer_ConfigType {
+    KnxTmr_TickHandlerType tickHandler;
+    uint16_t tickResolution;
+} Port_Timer_ConfigType;
 
 
-#if defined(__cplusplus)
-}
-#endif  /* __cplusplus */
-
-#endif /* __CRC_H */
+#endif /* __PORT_TIMER_H*/
 
