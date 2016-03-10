@@ -329,4 +329,9 @@ class TestDataPool(unittest.TestCase):
                     raise KeyError('invalid datapoint "%s"' % value.name)
 """
 
-unittest.main()
+def main():
+    unittest.main()
+
+if __name__ == '__main__':
+    main()
+
