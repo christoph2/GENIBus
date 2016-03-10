@@ -30,4 +30,4 @@ after_success:
   - pylint app
   - coveralls
   - coverage xml && python-codacy-coverage -r coverage.xml
-
+  - cd commlib; autoreconf -vi && ./configure && make
