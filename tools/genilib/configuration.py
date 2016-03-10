@@ -61,8 +61,9 @@ class Config(object):
                 cls._lock.acquire()
                 if not hasattr(cls, '_instance'):
                     cls.configurationFile = absConfigurationFilename(".%s.cfg" % applicationName)
+                    print("Configuration file is '{0}'.".format(cls.configurationFile))
                     cls.defaultsFile = "%s_Defaults.yaml" % applicationName
-
+                    print("Defaults file is '{0}'.".format(cls.defaultsFile))
                     cls._instance = super(cls.__class__, cls).__new__(cls)
                     baz = yaml.load(StringIO.StringIO(readConfigFile("genicontrol", cls.defaultsFile)))
                     cls.cp = ConfigProcessor(baz)
@@ -78,7 +79,9 @@ class Config(object):
             if os.access(self.configurationFile, os.F_OK):
                 self.cp.read(open(self.configurationFile))
                 self.loaded = True
-        # else: we are working with default values.
+            else:
+                # else: we are working with default values.
+                print("Configuration file doesn't exist, using defaults.")
 
     def save(self):
         self.cp.write(open(self.configurationFile, 'w'))
