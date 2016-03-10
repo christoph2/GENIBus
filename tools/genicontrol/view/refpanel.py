@@ -78,7 +78,7 @@ class RefPanel(ScrolledPanel):
         sizer.Add(self.btnSetRefValues, ((len(DataitemConfiguration['ReferenceValues']) + 1), 0), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
 
         self.SetSizerAndFit(sizer)
-	self.SetupScrolling()
+        self.SetupScrolling()
 
     def choiceButton(self, event):
         self.setControlMode(event.EventObject.controlMode)
