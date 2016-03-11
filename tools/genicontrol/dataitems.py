@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2016 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -36,7 +36,7 @@ import yaml
 
 from genilib.utils import createStringBuffer
 import genicontrol.defs as defs
-from genicontrol.configuration import readConfigFile
+from genilib.configuration import readConfigFile
 
 Dataitem = namedtuple('Dataitem', 'name klass id access note')
 
