@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2016 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -98,7 +98,6 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"unit_version", 0x80,      Info(0x80, None, None, None)),
         Item(u"surv_alarm1_bak", 0x80,   Info(0x81, None, None, None)),
         Item(u"surv_alarm2_bak", 0x80,   Info(0x81, None, None, None)),
-        Item(u"surv_alarm3_bak", 0x80,   Info(0x81, None, None, None)),
         Item(u"loc_setup1", 0x80,        Info(0x81, None, None, None)),
         Item(u"rem_setup1", 0x80,        Info(0x81, None, None, None)),
         Item(u"stop_alarm1", 0x80,       Info(0x81, None, None, None)),
@@ -111,25 +110,19 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"i_line", 0x80,            Info(0x80, None, None, None)),
         Item(u"surv_alarm1", 0x80,       Info(0x81, None, None, None)),
         Item(u"surv_alarm2", 0x80,       Info(0x81, None, None, None)),
-        Item(u"surv_alarm3", 0x80,       Info(0x81, None, None, None)),
         Item(u"t_e", 0x80,               Info(0x80, None, None, None)),
         Item(u"start_alarm1_bak", 0x80,  Info(0x81, None, None, None)),
         Item(u"start_alarm2_bak", 0x80,  Info(0x81, None, None, None)),
-        Item(u"start_alarm3_bak", 0x80,  Info(0x81, None, None, None)),
         Item(u"v_dc", 0x80,              Info(0x82, 0x05, 0x00, 0x51)),
         Item(u"start_alarm1", 0x80,      Info(0x81, None, None, None)),
         Item(u"start_alarm2", 0x80,      Info(0x81, None, None, None)),
-        Item(u"start_alarm3", 0x80,      Info(0x81, None, None, None)),
         Item(u"twin_pump_mode", 0x80,    Info(0x81, None, None, None)),
         Item(u"extern_inputs", 0x80,     Info(0x81, None, None, None)),
         Item(u"qsd_alarm1", 0x80,        Info(0x81, None, None, None)),
         Item(u"qsd_alarm2", 0x80,        Info(0x81, None, None, None)),
-        Item(u"qsd_alarm3", 0x80,        Info(0x81, None, None, None)),
         Item(u"p_max",      0x80,        Info(0x82, 0x09, 0x00, 0x03)),
-
         Item(u"qsd_alarm1_bak", 0x80,    Info(0x81, None, None, None)),
         Item(u"qsd_alarm2_bak", 0x80,    Info(0x81, None, None, None)),
-        Item(u"qsd_alarm3_bak", 0x80,    Info(0x81, None, None, None)),
         Item(u"sys_ref", 0x94,           Info(0x82, 0x19, 0x00, 0x0b)),
         Item(u"h", 0x17,                 Info(0x82, 0x19, 0x00, 0x0b)),
         Item(u"q", 0x26,                 Info(0x82, 0x17, 0x00, 0x0c)),
