@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2016 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -35,7 +35,6 @@ from wx.lib.pubsub import Publisher as Publisher
 from wx import CallAfter
 import time
 import threading
-import genicontrol.dataitems as dataitems
 from genicontrol.view.mcpanel import MCPanel
 from genicontrol.view.infopanel import InfoPanel
 from genicontrol.view.refpanel import RefPanel
@@ -45,13 +44,12 @@ from genicontrol.model.config import DataitemConfiguration
 from genicontrol.controller.GUIController import GUIController
 import genicontrol.controlids as controlids
 import genicontrol.defs as defs
-from genilib.configuration import Config as Config
+from genilib.configuration import Config
 from genicontrol.view.options import showOptionsDialogue
 from genilib.gui.menu import Menu, MenuItem, MenuSeparator, createMenuBar
 from genilib.utils import dumpHex
 
 TR = wx.GetTranslation
-
 
 class BusmonitorPanel(wx.Panel):
     def __init__(self, parent):
