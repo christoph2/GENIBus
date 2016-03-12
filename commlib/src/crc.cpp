@@ -22,6 +22,8 @@
  *
  */
 
+namespace genibus {
+
 #include "genibus/crc.h"
 
 
@@ -96,4 +98,6 @@ uint16 Crc::get(void)
 {
     return _accum ^ ((uint16)0xffffu);
 }
+
+} // END namespace genibus.
 

@@ -24,12 +24,9 @@
 #if !defined(__CRC_H)
 #define __CRC_H
 
-#include "genibus/types.h"
+namespace genibus {
 
-#if defined(__cplusplus)
-extern "C"
-{
-#endif  /* __cplusplus */
+#include "genibus/types.h"
 
 
 class Crc {
@@ -42,10 +39,7 @@ private:
   uint16 _accum;
 };
 
-
-#if defined(__cplusplus)
-}
-#endif  /* __cplusplus */
+} // END namespace genibus.
 
 #endif /* __CRC_H */
 

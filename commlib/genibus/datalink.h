@@ -22,6 +22,7 @@
  *
  */
 
+namespace genibus {
 
 #include "genibus/crc.h"
 
@@ -87,10 +88,7 @@ private:
     uint8 _idx;
 };
 
-
-#if defined(__cplusplus)
-}
-#endif  /* __cplusplus */
+}   // END namespace genibus.
 
 #endif /* __GB_DATALINK */
 

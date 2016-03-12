@@ -22,8 +22,12 @@
  *
  */
 
+
+namespace genibus {
+
 #include "genibus/datalink.h"
 #include <stdio.h>
+
 
 static const uint8 connectReqPayload[] = {
     0x00, 0x02, 0x02, 0x03, 0x04, 0x02, 0x2e, 0x2f, 0x02, 0x02, 0x94, 0x95
@@ -152,4 +156,6 @@ bool GB_Datalink::verifyCRC(uint8 leftBound, uint8 rightBound)
     //printf("R: %#4X C: %#4X\n", receivedCrc, calculatedCrc);
     return receivedCrc == calculatedCrc;
 }
+
+} // END namespace genibus.
 
