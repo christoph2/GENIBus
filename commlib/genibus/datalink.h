@@ -25,6 +25,7 @@
 namespace genibus {
 
 #include "genibus/crc.h"
+#include <stdint.h>
 
 #if !defined(__GB_DATALINK)
 #define __GB_DATALINK

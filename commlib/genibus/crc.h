@@ -26,17 +26,18 @@
 
 namespace genibus {
 
+#include <stdint.h>
 #include "genibus/types.h"
 
 
 class Crc {
 public:
-  Crc(uint16 data = 0xffffu);
-  void init(uint16 data);
-  void update(uint8 data);
-  uint16 get(void);
+  Crc(uint16_t data = 0xffffu);
+  void init(uint16_t data);
+  void update(uint8_t data);
+  uint16_t get(void);
 private:
-  uint16 _accum;
+  uint16_t _accum;
 };
 
 } // END namespace genibus.
