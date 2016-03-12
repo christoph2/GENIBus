@@ -31,12 +31,13 @@ namespace genibus {
 
 class Interface {
 public:
-        Interface();
-        uint8_t getLen(void) const = 0;;
-        uint8_t write(uint8_t const * buf, size_t len) = 0;
-        uint8_t write(uint8_t val) = 0;
-        size_t available(void) const = 0;
-        int16_t read(void) const = 0;
+    Interface();
+    virtual ~Interface();
+    virtual uint8_t getLen(void) const = 0;
+    virtual write(uint8_t const * const buf, uint16_t len) = 0;
+    virtual uint8_t write(uint8_t val) const = 0;
+    virtual uint16_t available(void) const = 0;
+    virtual int16_t read(void) const = 0;
 };
 
 } /// END namespace genibus.
