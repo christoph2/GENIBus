@@ -22,10 +22,11 @@
  *
  */
 
-namespace genibus {
 
 #if !defined(__INTERFACE_H)
 #define __INTERFACE_H
+
+namespace genibus {
 
 #include <stdint.h>
 
@@ -34,7 +35,7 @@ public:
     Interface();
     virtual ~Interface();
     virtual uint8_t getLen(void) const = 0;
-    virtual write(uint8_t const * const buf, uint16_t len) = 0;
+    virtual uint8_t write(uint8_t const * const buf, uint16_t len) = 0;
     virtual uint8_t write(uint8_t val) const = 0;
     virtual uint16_t available(void) const = 0;
     virtual int16_t read(void) const = 0;

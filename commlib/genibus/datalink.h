@@ -22,19 +22,16 @@
  *
  */
 
+
+#if !defined(__GB_DATALINK)
+#define __GB_DATALINK
+
+
 namespace genibus {
 
 #include "genibus/crc.h"
 #include "genibus/interface.h"
 #include <stdint.h>
-
-#if !defined(__GB_DATALINK)
-#define __GB_DATALINK
-
-#if defined(__cplusplus)
-extern "C"
-{
-#endif  /* __cplusplus */
 
 /*
 ** Start-delimiters.
@@ -47,7 +44,7 @@ extern "C"
 typedef enum tagDl_State {
     DL_IDLE,
     DL_SENDING,
-    DL_RECEIVING,
+    DL_RECEIVING
 } Dl_State;
 
 
