@@ -26,11 +26,10 @@
 
 namespace genibus {
 
-using namespace std;
-
 #include <cstdint>
 #include "genibus/types.h"
 
+using namespace std;
 
 class Crc {
 public:
