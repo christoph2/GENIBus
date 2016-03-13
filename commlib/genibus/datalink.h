@@ -29,11 +29,11 @@
 
 namespace genibus {
 
+using namespace std;
+
 #include "genibus/crc.h"
 #include "genibus/interface.h"
 #include <cstdint>
-
-using namespace std;
 
 /*
 ** Start-delimiters.
