@@ -26,7 +26,9 @@
 
 namespace genibus {
 
-#include <stdint.h>
+using namespace std;
+
+#include <cstdint>
 #include "genibus/types.h"
 
 
