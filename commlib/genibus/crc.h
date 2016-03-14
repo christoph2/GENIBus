@@ -33,12 +33,12 @@ using namespace std;
 
 class Crc {
 public:
-  Crc(uint16_t data = 0xffffu);
-  void init(uint16_t data);
-  void update(uint8_t data);
-  uint16_t get(void);
+  Crc(std::uint16_t data = 0xffffu);
+  void init(std::uint16_t data);
+  void update(std::uint8_t data);
+  std::uint16_t get(void);
 private:
-  uint16_t _accum;
+  std::uint16_t _accum;
 };
 
 } // END namespace genibus.

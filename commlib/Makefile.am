@@ -6,4 +6,4 @@ lib_LTLIBRARIES = libgenibus.la
 libgenibus_la_SOURCES = src/datalink.cpp src/crc.cpp src/posix_timer.c
 libgenibus_la_CPPFLAGS = -I$(top_srcdir)/genibus
 libgenibus_la_CFLAGS = -Wall -std=c99
-libgenibus_la_CXXFLAGS = -Wall -std=c++11
+libgenibus_la_CXXFLAGS = -Wall -std=c++0x
