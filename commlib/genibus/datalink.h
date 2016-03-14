@@ -59,7 +59,7 @@ typedef void (*Error_Callout)(Gb_Error error, uint8_t * buffer, uint8_t len);
 class GB_Datalink {
 public:
 /* TODO: rename 'callout', add errorCallout, add checked. */
-    GB_Datalink(Interface & port, Dl_Callout dataLinkCallout = NULL, Error_Callout errorCallout = NULL, boolean checked = FALSE) :
+    GB_Datalink(genibus::Interface & port, Dl_Callout dataLinkCallout = NULL, Error_Callout errorCallout = NULL, boolean checked = FALSE) :
         _port(port), _crc(0xffffu), _state(DL_IDLE), _dataLinkCallout(dataLinkCallout), _errorCallout(errorCallout),
         _checked(checked), _frameLength(0), _idx(0)
         { _port.begin(9600); };
@@ -76,7 +76,7 @@ protected:
     uint16_t calculateCRC(uint8_t leftBound, uint8_t rightBound);
     bool verifyCRC(uint8_t leftBound, uint8_t rightBound);
 private:
-    Interface & _port;
+    genibus::Interface & _port;
     Dl_Callout _dataLinkCallout;
     Error_Callout _errorCallout;
     uint8_t _scratchBuffer[0xff];
