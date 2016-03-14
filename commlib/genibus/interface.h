@@ -33,18 +33,11 @@ extern "C"
 
 #include "genibus/types.h"
 
-#if 0
-class Interface {
-public:
-    Interface();
-    virtual ~Interface();
-    virtual uint8_t getLen(void) const = 0;
-    virtual uint8_t write(uint8_t const * const buf, uint16_t len) = 0;
-    virtual uint8_t write(uint8_t val) const = 0;
-    virtual uint16_t available(void) const = 0;
-    virtual int16_t read(void) const = 0;
-};
-#endif
+typedef struct tagInterface {
+    uint8 (*writeFrame)(uint8 const * const buf, uint16 len);
+    uint16 (*available)(void);
+    uint8 (*readByte)(void);
+} Interface;
 
 #if defined(__cplusplus)
 }

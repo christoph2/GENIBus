@@ -59,8 +59,8 @@ void LinkLayer_Feed(DatalinkLayerType * linkLayer)
     static uint8 byteCount;
     uint8 receivedByte;
 
-    while (linkLayer->port.available() > 0) {
-        receivedByte = linkLayer->port.read();
+    while (linkLayer->port->available() > 0) {
+        receivedByte = linkLayer->port->readByte();
         linkLayer->scratchBuffer[linkLayer->frameIdx] = receivedByte;
         if (linkLayer->frameIdx == 1) {
             byteCount =  receivedByte + 3;
@@ -125,7 +125,7 @@ void LinkLayer_SendPDU(DatalinkLayerType * linkLayer, uint8 sd, uint8 da, uint8 
     linkLayer->scratchBuffer[idx] = HIBYTE(calculatedCrc);
     linkLayer->scratchBuffer[idx + 1] = LOBYTE(calculatedCrc);
 
-    linkLayer->port.write(linkLayer->scratchBuffer, len);
+    linkLayer->port->writeFrame(linkLayer->scratchBuffer, len);
 
     LinkLayer_SetState(linkLayer, DL_IDLE);
 }
@@ -138,13 +138,13 @@ void LinkLayer_ConnectRequest(DatalinkLayerType * linkLayer, uint8 sa)
 #if 0
 void GB_Datalink::sendRaw(uint8 const * data, uint8 len)
 {
-    linkLayer->port.write(data, len);
+    linkLayer->port->writeFrame(data, len);
 }
 
 
-void GB_Datalink::write(uint8 ch)
+void GB_Datalink::writeFrame(uint8 ch)
 {
-    linkLayer->port.write(ch);
+    linkLayer->port->writeFrame(ch);
 }
 
 

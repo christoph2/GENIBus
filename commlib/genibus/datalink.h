@@ -64,7 +64,7 @@ typedef void (*Dl_Callout)(uint8 * buffer, uint8 len);
 typedef void (*Error_Callout)(Gb_Error error, uint8 * buffer, uint8 len);
 
 typedef struct tagDatalinkLayerType {
-    //genibus::Interface & _port;
+    Interface * port;
     Dl_Callout dataLinkCallout;
     Error_Callout errorCallout;
     uint8 scratchBuffer[0xff];
