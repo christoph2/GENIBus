@@ -13,6 +13,7 @@ AC_PROG_CXX
 AC_PROG_INSTALL
 # AC_PROG_RANLIB
 #AM_PROG_CC_C_O
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 
 #AC_PROG_AWK
 #AC_PROG_LEX
@@ -20,9 +21,8 @@ AC_PROG_INSTALL
 # Checks for typedefs, structures, and compiler characteristics.
 #AC_TYPE_UINT16_T
  
-
+ 
 # Checks for library functions.
-
+ 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
-
