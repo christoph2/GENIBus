@@ -33,7 +33,7 @@ using namespace std;
 
 #include "genibus/crc.h"
 #include "genibus/interface.h"
-#include <cstdint>
+#include <stdint.h>
 
 /*
 ** Start-delimiters.

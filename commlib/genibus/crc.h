@@ -28,7 +28,7 @@ namespace genibus {
 
 using namespace std;
 
-#include <cstdint>
+#include <stdint.h>
 #include "genibus/types.h"
 
 class Crc {
