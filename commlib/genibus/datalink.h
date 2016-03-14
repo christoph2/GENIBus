@@ -29,18 +29,16 @@
 
 namespace genibus {
 
-using namespace std;
-
+#include "genibus/types.h"
 #include "genibus/crc.h"
 #include "genibus/interface.h"
-#include <stdint.h>
 
 /*
 ** Start-delimiters.
 */
-#define GB_SD_REPLY     ((std::uint8_t)0x24)
-#define GB_SD_MESSAGE   ((std::uint8_t)0x26)
-#define GB_SD_REQUEST   ((std::uint8_t)0x27)
+#define GB_SD_REPLY     ((uint8_t)0x24)
+#define GB_SD_MESSAGE   ((uint8_t)0x26)
+#define GB_SD_REQUEST   ((uint8_t)0x27)
 
 
 typedef enum tagDl_State {
@@ -55,8 +53,8 @@ typedef enum tagGb_Error {
 } Gb_Error;
 
 
-typedef void (*Dl_Callout)(std::uint8_t * buffer, std::uint8_t len);
-typedef void (*Error_Callout)(Gb_Error error, std::uint8_t * buffer, std::uint8_t len);
+typedef void (*Dl_Callout)(uint8_t * buffer, uint8_t len);
+typedef void (*Error_Callout)(Gb_Error error, uint8_t * buffer, uint8_t len);
 
 class GB_Datalink {
 public:
@@ -67,26 +65,26 @@ public:
         { _port.begin(9600); };
     void reset(void);
     void feed(void);
-    inline std::uint8_t const * const getBufferPointer(void) const { return (std::uint8_t const * const )_scratchBuffer; };
+    inline uint8_t const * const getBufferPointer(void) const { return (uint8_t const * const )_scratchBuffer; };
     inline Dl_State getState(void) const { return _state; };
     inline void setState(Dl_State state) { _state = state; };
-    void connectRequest(std::uint8_t sa);
-    void sendPDU(std::uint8_t sd, std::uint8_t da, std::uint8_t sa, std::uint8_t const * data, std::uint8_t len);
-    void sendRaw(std::uint8_t const * data, std::uint8_t len);
-    void write(std::uint8_t ch);
+    void connectRequest(uint8_t sa);
+    void sendPDU(uint8_t sd, uint8_t da, uint8_t sa, uint8_t const * data, uint8_t len);
+    void sendRaw(uint8_t const * data, uint8_t len);
+    void write(uint8_t ch);
 protected:
-    std::uint16_t calculateCRC(std::uint8_t leftBound, std::uint8_t rightBound);
-    bool verifyCRC(std::uint8_t leftBound, std::uint8_t rightBound);
+    uint16_t calculateCRC(uint8_t leftBound, uint8_t rightBound);
+    bool verifyCRC(uint8_t leftBound, uint8_t rightBound);
 private:
     Interface & _port;
     Dl_Callout _dataLinkCallout;
     Error_Callout _errorCallout;
-    std::uint8_t _scratchBuffer[0xff];
+    uint8_t _scratchBuffer[0xff];
     Crc _crc;
     Dl_State _state;
-    std::uint8_t _frameLength;
+    uint8_t _frameLength;
     boolean _checked;
-    std::uint8_t _idx;
+    uint8_t _idx;
 };
 
 }   // END namespace genibus.

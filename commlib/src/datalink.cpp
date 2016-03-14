@@ -29,15 +29,15 @@ namespace genibus {
 #include <stdio.h>
 
 
-static const std::uint8_t connectReqPayload[] = {
+static const uint8_t connectReqPayload[] = {
     0x00, 0x02, 0x02, 0x03, 0x04, 0x02, 0x2e, 0x2f, 0x02, 0x02, 0x94, 0x95
 };
 
 
-void GB_Datalink::sendPDU(std::uint8_t sd, std::uint8_t da, std::uint8_t sa, std::uint8_t const * data, std::uint8_t len)
+void GB_Datalink::sendPDU(uint8_t sd, uint8_t da, uint8_t sa, uint8_t const * data, uint8_t len)
 {
-    std::uint8_t _idx;
-    std::uint16_t calculatedCrc;
+    uint8_t _idx;
+    uint16_t calculatedCrc;
 
     if (getState() != DL_IDLE) {
         return;
@@ -46,12 +46,12 @@ void GB_Datalink::sendPDU(std::uint8_t sd, std::uint8_t da, std::uint8_t sa, std
     setState(DL_SENDING);
 
     _scratchBuffer[0] = sd;
-    _scratchBuffer[1] = len + ((std::uint8_t)0x02);
+    _scratchBuffer[1] = len + ((uint8_t)0x02);
     _scratchBuffer[2] = da;
     _scratchBuffer[3] = sa;
 
-    for (_idx = ((std::uint8_t)0x00); _idx < len; ++_idx) {
-        _scratchBuffer[_idx + ((std::uint8_t)0x04)] = data[_idx];
+    for (_idx = ((uint8_t)0x00); _idx < len; ++_idx) {
+        _scratchBuffer[_idx + ((uint8_t)0x04)] = data[_idx];
     }
 
     calculatedCrc = calculateCRC(1, len + 4);
@@ -63,13 +63,13 @@ void GB_Datalink::sendPDU(std::uint8_t sd, std::uint8_t da, std::uint8_t sa, std
     setState(DL_IDLE);
 }
 
-void GB_Datalink::sendRaw(std::uint8_t const * data, std::uint8_t len)
+void GB_Datalink::sendRaw(uint8_t const * data, uint8_t len)
 {
     _port.write(data, len);
 }
 
 
-void GB_Datalink::write(std::uint8_t ch)
+void GB_Datalink::write(uint8_t ch)
 {
     _port.write(ch);
 }
@@ -93,9 +93,9 @@ void GB_Datalink::reset(void)
 
 void GB_Datalink::feed(void)
 {
-    static std::uint8_t byteCount;
-    std::uint8_t receivedByte;
-    std::uint16_t calculatedCrc;
+    static uint8_t byteCount;
+    uint8_t receivedByte;
+    uint16_t calculatedCrc;
 
     while (_port.available() > 0) {
         receivedByte = _port.read();
@@ -128,14 +128,14 @@ void GB_Datalink::feed(void)
     }
 }
 
-void GB_Datalink::connectRequest(std::uint8_t sa)
+void GB_Datalink::connectRequest(uint8_t sa)
 {
    sendPDU(0x27, 0xfe, sa, connectReqPayload, ARRAY_SIZE(connectReqPayload));
 }
 
-std::uint16_t  GB_Datalink::calculateCRC(std::uint8_t leftBound, std::uint8_t rightBound)
+uint16_t  GB_Datalink::calculateCRC(uint8_t leftBound, uint8_t rightBound)
 {
-    std::uint8_t _idx;
+    uint8_t _idx;
 
      _crc.init(0xffff);
 
@@ -146,10 +146,10 @@ std::uint16_t  GB_Datalink::calculateCRC(std::uint8_t leftBound, std::uint8_t ri
     return _crc.get();
 }
 
-bool GB_Datalink::verifyCRC(std::uint8_t leftBound, std::uint8_t rightBound)
+bool GB_Datalink::verifyCRC(uint8_t leftBound, uint8_t rightBound)
 {
-    std::uint16_t calculatedCrc;
-    std::uint16_t receivedCrc;
+    uint16_t calculatedCrc;
+    uint16_t receivedCrc;
 
     receivedCrc = MAKEWORD(_scratchBuffer[rightBound], _scratchBuffer[rightBound + 1]);
     calculatedCrc = calculateCRC(leftBound, rightBound);
