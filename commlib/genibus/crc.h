@@ -24,21 +24,18 @@
 #if !defined(__CRC_H)
 #define __CRC_H
 
-namespace genibus {
+#if defined(__cplusplus)
+extern "C"
+{
+#endif  /* __cplusplus */
 
 #include "genibus/types.h"
 
-class Crc {
-public:
-  Crc(uint16_t data = 0xffffu);
-  void init(uint16_t data);
-  void update(uint8_t data);
-  uint16_t get(void);
-private:
-  uint16_t _accum;
-};
+uint16 Crc_CalculateCRC16(uint8 const * Crc_DataPtr, uint16 Crc_Length, uint16 Crc_StartValue16);
 
-} // END namespace genibus.
+#if defined(__cplusplus)
+}
+#endif  /* __cplusplus */
 
 #endif /* __CRC_H */
 

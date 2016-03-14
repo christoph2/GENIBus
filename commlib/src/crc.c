@@ -22,7 +22,6 @@
  *
  */
 
-namespace genibus {
 
 #include "genibus/crc.h"
 
@@ -30,7 +29,7 @@ namespace genibus {
 /*!
  *  Table for CRC16 calculation (CCITT / poly: 0x1021).
  */
-static const uint16_t Crc_Table16[] = {
+static const uint16 Crc_Table16[] = {
     0x0000U, 0x1021U, 0x2042U, 0x3063U, 0x4084U, 0x50a5U, 0x60c6U, 0x70e7U,
     0x8108U, 0x9129U, 0xa14aU, 0xb16bU, 0xc18cU, 0xd1adU, 0xe1ceU, 0xf1efU,
     0x1231U, 0x0210U, 0x3273U, 0x2252U, 0x52b5U, 0x4294U, 0x72f7U, 0x62d6U,
@@ -77,27 +76,19 @@ static const uint16_t Crc_Table16[] = {
  * Global functions.
  *
  */
-Crc::Crc(uint16_t data)
+uint16 Crc_CalculateCRC16(uint8 const * Crc_DataPtr, uint16 Crc_Length, uint16 Crc_StartValue16)
 {
-    init(data);
+    uint16  idx;
+    uint16  crc;
+
+    crc = Crc_StartValue16;
+
+    while (Crc_Length--) {
+        idx    = ((crc >> 8) ^ *Crc_DataPtr) & 0xff;
+        crc    = (Crc_Table16[idx] ^ (crc << 8)) & 0xffffU;
+
+        Crc_DataPtr++;
+    }
+
+    return crc;
 }
-
-void Crc::update(uint8_t data)
-{
-    _accum = (_accum << 8) ^ Crc_Table16[((_accum >> 8) ^ data)];
-}
-
-
-void Crc::init(uint16_t data)
-{
-    _accum = data;
-}
-
-
-uint16_t Crc::get(void)
-{
-    return _accum ^ ((uint16_t)0xffffu);
-}
-
-} // END namespace genibus.
-

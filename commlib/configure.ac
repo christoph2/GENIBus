@@ -1,6 +1,6 @@
 #AC_PREREQ([2.69])
 AC_INIT([Genibus], [1.0], [cpu12.gems@googlemail.com])
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([-Wall foreign])
 LT_PREREQ([2.2])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_HEADERS([config.h])

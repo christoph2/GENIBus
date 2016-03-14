@@ -26,10 +26,14 @@
 #if !defined(__INTERFACE_H)
 #define __INTERFACE_H
 
-namespace genibus {
+#if defined(__cplusplus)
+extern "C"
+{
+#endif  /* __cplusplus */
 
-#include <stdint.h>
+#include "genibus/types.h"
 
+#if 0
 class Interface {
 public:
     Interface();
@@ -40,8 +44,11 @@ public:
     virtual uint16_t available(void) const = 0;
     virtual int16_t read(void) const = 0;
 };
+#endif
 
-} /// END namespace genibus.
+#if defined(__cplusplus)
+}
+#endif  /* __cplusplus */
 
 #endif /* __INTERFACE_H */
 

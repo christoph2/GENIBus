@@ -26,8 +26,10 @@
 #if !defined(__GB_DATALINK)
 #define __GB_DATALINK
 
-
-namespace genibus {
+#if defined(__cplusplus)
+extern "C"
+{
+#endif  /* __cplusplus */
 
 #include "genibus/types.h"
 #include "genibus/crc.h"
@@ -36,9 +38,9 @@ namespace genibus {
 /*
 ** Start-delimiters.
 */
-#define GB_SD_REPLY     ((uint8_t)0x24)
-#define GB_SD_MESSAGE   ((uint8_t)0x26)
-#define GB_SD_REQUEST   ((uint8_t)0x27)
+#define GB_SD_REPLY     ((uint8)0x24)
+#define GB_SD_MESSAGE   ((uint8)0x26)
+#define GB_SD_REQUEST   ((uint8)0x27)
 
 
 typedef enum tagDl_State {
@@ -48,46 +50,65 @@ typedef enum tagDl_State {
 } Dl_State;
 
 
+typedef enum tagDl_Error {
+    DL_ERROR_NONE,
+    DL_ERROR_TIMEOUT,
+    DL_ERROR_CHECKSUM
+} Dl_Error;
+
 typedef enum tagGb_Error {
     ERR_INVALID_CRC
 } Gb_Error;
 
+typedef void (*Dl_Callout)(uint8 * buffer, uint8 len);
+typedef void (*Error_Callout)(Gb_Error error, uint8 * buffer, uint8 len);
 
-typedef void (*Dl_Callout)(uint8_t * buffer, uint8_t len);
-typedef void (*Error_Callout)(Gb_Error error, uint8_t * buffer, uint8_t len);
+typedef struct tagDatalinkLayerType {
+    //genibus::Interface & _port;
+    Dl_Callout dataLinkCallout;
+    Error_Callout errorCallout;
+    uint8 scratchBuffer[0xff];
+    //Crc _crc;
+    Dl_State state;
+    uint8 frameLength;
+    boolean checked;
+    uint8 frameIdx;
+} DatalinkLayerType;
 
+void LinkLayer_Init(DatalinkLayerType * linkLayer);
+void LinkLayer_Reset(DatalinkLayerType * linkLayer);
+void LinkLayer_SetState(DatalinkLayerType * linkLayer, Dl_State state);
+Dl_State LinkLayer_GetState(DatalinkLayerType * linkLayer);
+void LinkLayer_Feed(DatalinkLayerType * linkLayer);
+boolean LinkLayer_VerifyCRC(DatalinkLayerType * linkLayer);
+void LinkLayer_SendPDU(DatalinkLayerType * linkLayer, uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint8 len);
+void LinkLayer_ConnectRequest(DatalinkLayerType * linkLayer, uint8 sa);
+
+#if 0
 class GB_Datalink {
 public:
 /* TODO: rename 'callout', add errorCallout, add checked. */
-    GB_Datalink(genibus::Interface & port, Dl_Callout dataLinkCallout = NULL, Error_Callout errorCallout = NULL, boolean checked = FALSE) :
-        _port(port), _crc(0xffffu), _state(DL_IDLE), _dataLinkCallout(dataLinkCallout), _errorCallout(errorCallout),
-        _checked(checked), _frameLength(0), _idx(0)
-        { _port.begin(9600); };
-    void reset(void);
-    void feed(void);
-    inline uint8_t const * const getBufferPointer(void) const { return (uint8_t const * const )_scratchBuffer; };
-    inline Dl_State getState(void) const { return _state; };
-    inline void setState(Dl_State state) { _state = state; };
-    void connectRequest(uint8_t sa);
-    void sendPDU(uint8_t sd, uint8_t da, uint8_t sa, uint8_t const * data, uint8_t len);
-    void sendRaw(uint8_t const * data, uint8_t len);
-    void write(uint8_t ch);
-protected:
-    uint16_t calculateCRC(uint8_t leftBound, uint8_t rightBound);
-    bool verifyCRC(uint8_t leftBound, uint8_t rightBound);
+    inline uint8 const * const getBufferPointer(void) const { return (uint8 const * const )_scratchBuffer; };
+    void connectRequest(uint8 sa);
+    void sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint8 len);
+    void sendRaw(uint8 const * data, uint8 len);
+    void write(uint8 ch);
 private:
     genibus::Interface & _port;
     Dl_Callout _dataLinkCallout;
     Error_Callout _errorCallout;
-    uint8_t _scratchBuffer[0xff];
+    uint8 _scratchBuffer[0xff];
     Crc _crc;
     Dl_State _state;
-    uint8_t _frameLength;
+    uint8 _frameLength;
     boolean _checked;
-    uint8_t _idx;
+    uint8 _idx;
 };
+#endif
 
-}   // END namespace genibus.
+#if defined(__cplusplus)
+}
+#endif  /* __cplusplus */
 
 #endif /* __GB_DATALINK */
 
