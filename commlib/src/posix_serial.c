@@ -78,7 +78,7 @@ static PollingResultType Serial_Poll(Port_Serial_ComPortType * port, boolean wri
             //printf("<<POLL INTERRUPTED [%u]>>\n");
             return POLLING_INTERRUPTED;
         } else {
-            Win_Error("poll", errno);
+//            Win_Error("poll", errno);
             return POLLING_ERROR;
         }
     } else if (result == 0) {
@@ -267,7 +267,7 @@ void Port_Serial_Task(void)
         result = Port_Serial_Read(buffer, byteCount);
         printf("Read-Result: %02x\n", result);
         if (result == -1) {
-            Win_Error("read", errno);
+//            Win_Error("read", errno);
         } else {
             Dbg_DumpHex(buffer, byteCount);
             for (idx = 0; idx < byteCount; ++idx) {

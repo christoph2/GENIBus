@@ -27,13 +27,21 @@
 
 #include <stdint.h>
 
-#include "Wildfire_Config.h"
+typedef uint8_t boolean;
+
+#if !defined(TRUE)
+    #define TRUE	(1)
+#endif
+
+#if !defined(FALSE)
+    #define FALSE	(!TRUE)
+#endif
 
 #if KNX_TARGET_TYPE == KNX_TARGET_POSIX
 #include <termios.h>
 #endif
 
-#include "knx_defs.h"
+//#include "knx_defs.h"
 
 typedef struct tagComPort_t {
     uint8_t portNumber;
