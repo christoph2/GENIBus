@@ -5,7 +5,7 @@
 ##
 ## Grundfos GENIBus Library for Arduino.
 ##
-## (C) 2007-2014 by Christoph Schueler <github.com/Christoph2,
+## (C) 2007-2016 by Christoph Schueler <github.com/Christoph2,
 ##                                      cpu12.gems@googlemail.com>
 ##
 ##  All Rights Reserved
@@ -72,11 +72,22 @@ class SerialPort(ConnectionIF):
         return True
 
     def write(self, data):
+        self.output(True)
         self._port.write(bytearray(list(data)))
+        self.flush()
 
     def read(self, length):
+        self.output(False)
         result = array.array('B', self._port.read(length))
         return result
+
+    def output(self, enable):
+        if enable:
+            self._port.rts = False
+            self._port.dtr = False
+        else:
+            self._port.rts = True
+            self._port.dtr = True
 
     def flush(self):
         self._port.flush()
