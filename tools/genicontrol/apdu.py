@@ -251,7 +251,7 @@ def createConnectRequestPDU(sourceAddr):
     return createGetValuesPDU(
         Header(defs.SD_DATA_REQUEST, defs.CONNECTION_REQ_ADDR, sourceAddr),
         measurements =  ['unit_family', 'unit_type'],
-        protocolData =  ['df_buf_len',  'unit_bus_mode'],
+        protocolData =  ['buf_len',  'unit_bus_mode'],
         parameter =     ['unit_addr',   'group_addr']
     )
 
@@ -259,12 +259,12 @@ def createConnectRequestPDU(sourceAddr):
 if __name__ == '__main__':
     print(dumpHex(createConnectRequestPDU(0x01)))
 
-    print(dumpHex(createSetCommandsPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x04), ['REMOTE', 'START'])))
+    print(dumpHex(createSetCommandsPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x01), ['REMOTE', 'START'])))
 
-    print(dumpHex(createSetValuesPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x04), references = [('ref_rem', 0xa5, )])))
+    print(dumpHex(createSetValuesPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x01), references = [('ref_rem', 0xa5, )])))
 
     print(dumpHex(createGetInfoPDU(
-        Header(defs.SD_DATA_REQUEST, 0x20, 0x04),
-        measurements = ['h', 'q', 'p', 'speed', 'energy_hi'])
+        Header(defs.SD_DATA_REQUEST, 0x20, 0x01),
+        measurements = ['h', 'q', 'p', 'speed_hi', 'energy_hi'])
     ))
 

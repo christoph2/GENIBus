@@ -99,7 +99,7 @@ class MultipleChoiceButtons(wx.Panel):
 class ToggleButton(wx.ToggleButton):
     """Extends wx.ToggleButton with active/inactive labels.
     """
-    def __init__(self, parent, labelOn, labelOff, bgColorOn = wx.Color(0, 255, 0)):
+    def __init__(self, parent, labelOn, labelOff, bgColorOn = wx.Colour(0, 255, 0)):
         wx.ToggleButton.__init__(self, parent = parent, label = labelOn, id = wx.ID_ANY)
         self.labelOn = labelOn
         self.labelOff = labelOff

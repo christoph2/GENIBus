@@ -131,27 +131,27 @@ class RequestorThread(threading.Thread):
                 else:
                     #self.setState(RequestorThread.STATE_REQ_REFS)
                     self.setState(RequestorThread.STATE_REQ_PARAM)
-                    self._requestedDatapoints = ('ref_rem', 'ref_ir', 'ref_att_rem')
+                    self._requestedDatapoints = ('ref_rem', 'ref_ir')
                     req = apdu.createGetValuesPDU(
-                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x04),
+                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
                         references = self._requestedDatapoints
                     )
                     #self.request(req)
             elif self.getState() == RequestorThread.STATE_REQ_PARAM:
-                    self._requestedDatapoints = ('unit_addr', 'group_addr', 'min_curve_no', 'h_const_ref_min', 'h_const_ref_max',
+                    self._requestedDatapoints = ('unit_addr', 'group_addr', 'h_const_ref_min', 'h_const_ref_max',
                         'h_prop_ref_min', 'h_prop_ref_max', 'ref_steps'
                     )
                     req = apdu.createGetValuesPDU(
-                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x04),
+                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
                         parameter = self._requestedDatapoints
                     )
                     self.request(req)
             elif self.getState() == RequestorThread.STATE_OPERATIONAL:
-                self._requestedDatapoints = ('speed', 'h', 'q', 'p', 'f_act', 'act_mode1', 'act_mode2', 'act_mode3', 'led_contr',
-                    'contr_source', 'energy_hi', 'energy_lo', 't_2hour_hi', 't_2hour_lo'
+                self._requestedDatapoints = ('speed_hi','speed_lo', 'h', 'q', 'p', 'f_act', 'act_mode1', 'act_mode2', 'act_mode3',
+                     'led_contr', 'contr_source', 'energy_hi', 'energy_lo', 't_2hour_hi', 't_2hour_lo'
                 )
                 req = apdu.createGetValuesPDU(
-                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x04),
+                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
                     measurements = self._requestedDatapoints
                 )
                 self.request(req)
@@ -214,7 +214,7 @@ class RequestorThread(threading.Thread):
         for apdu in response.APDUs:
             if apdu.klass == defs.ADPUClass.PROTOCOL_DATA:
                 df_buf_len, unit_bus_mode = apdu.data
-                self.setValue(defs.ADPUClass.PROTOCOL_DATA, 'df_buf_len', df_buf_len)
+                self.setValue(defs.ADPUClass.PROTOCOL_DATA, 'buf_len', df_buf_len)
                 self.setValue(defs.ADPUClass.PROTOCOL_DATA, 'unit_bus_mode', unit_bus_mode)
             elif apdu.klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
                 unit_addr, group_addr = apdu.data
@@ -281,11 +281,11 @@ def createInfoRequestTelegrams(destAddr):
         for idx, slice in enumerate(slices):
             slice = [n for n,i in slice]
             if klass == defs.ADPUClass.MEASURERED_DATA:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x04), measurements = slice)
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
             elif klass == defs.ADPUClass.REFERENCE_VALUES:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x04), references = slice)
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), references = slice)
             elif klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x04), parameter = slice)
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), parameter = slice)
 
             #print("IR", telegram)
             result.append((telegram, slice, ))

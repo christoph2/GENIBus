@@ -332,7 +332,7 @@ class GeniGenModel(object):
         return self.items.itemsForClass(klass)
 
 
-class GeniGenApp(wx.PySimpleApp):
+class GeniGenApp(wx.App):
     def __init__(self):
         super(GeniGenApp, self).__init__()
 

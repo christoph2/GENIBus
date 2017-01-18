@@ -30,7 +30,6 @@
 from collections import namedtuple
 import logging
 from genicontrol.units import UnitTable
-from genicontrol.conversion import convertForward8, convertForward16
 
 logger = logging.getLogger("GeniControl")
 

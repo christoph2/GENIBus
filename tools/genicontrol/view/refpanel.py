@@ -32,13 +32,13 @@ import genicontrol.dataitems as dataitems
 from genicontrol.model.config import DataitemConfiguration
 import genicontrol.controlids as controlids
 
-CONTROL_MODE_AUTOMATIC              = 0
+CONTROL_MODE_AUTOADAPT              = 0
 CONTROL_MODE_CONSTANT_PRESSURE      = 1
 CONTROL_MODE_PROPORTIONAL_PRESSURE  = 2
 CONTROL_MODE_CONSTANT_FREQUENCY     = 3
 
 CONTROL_MODE_MAP = {
-    CONTROL_MODE_AUTOMATIC:             controlids.ID_CMD_AUTOMATIC,
+    CONTROL_MODE_AUTOADAPT:             controlids.ID_CMD_AUTOADAPT,
     CONTROL_MODE_CONSTANT_PRESSURE:     controlids.ID_CMD_CONST_PRESS,
     CONTROL_MODE_PROPORTIONAL_PRESSURE: controlids.ID_CMD_PROP_PRESS,
     CONTROL_MODE_CONSTANT_FREQUENCY:    controlids.ID_CMD_CONST_FREQ
@@ -59,20 +59,20 @@ class RefPanel(ScrolledPanel):
         groupSizer.Add(btnPropPressure, 1, wx.ALL, 5)
         btnConstFreq = wx.ToggleButton(self, label = 'Constant Frequency', id = controlids.ID_CMD_CONST_FREQ)
         groupSizer.Add(btnConstFreq, 1, wx.ALL, 5)
-        btnAutomatic = wx.ToggleButton(self, label = 'Automatic', id = controlids.ID_CMD_AUTOMATIC)
-        self.btnBgColor = btnAutomatic.GetBackgroundColour()
-        groupSizer.Add(btnAutomatic, 1, wx.ALL, 5)
-        self.setControlMode(CONTROL_MODE_AUTOMATIC)
+        btnAutoAdapt = wx.ToggleButton(self, label = 'AutoAdapt', id = controlids.ID_CMD_AUTOADAPT)
+        self.btnBgColor = btnAutoAdapt.GetBackgroundColour()
+        groupSizer.Add(btnAutoAdapt, 1, wx.ALL, 5)
+        self.setControlMode(CONTROL_MODE_AUTOADAPT)
 
         btnConstPressure.controlMode = CONTROL_MODE_CONSTANT_PRESSURE
         btnPropPressure.controlMode = CONTROL_MODE_PROPORTIONAL_PRESSURE
         btnConstFreq.controlMode = CONTROL_MODE_CONSTANT_FREQUENCY
-        btnAutomatic.controlMode = CONTROL_MODE_AUTOMATIC
+        btnAutoAdapt.controlMode = CONTROL_MODE_AUTOADAPT
 
         self.Bind(wx.EVT_TOGGLEBUTTON, self.choiceButton, btnConstPressure)
         self.Bind(wx.EVT_TOGGLEBUTTON, self.choiceButton, btnPropPressure)
         self.Bind(wx.EVT_TOGGLEBUTTON, self.choiceButton, btnConstFreq)
-        self.Bind(wx.EVT_TOGGLEBUTTON, self.choiceButton, btnAutomatic)
+        self.Bind(wx.EVT_TOGGLEBUTTON, self.choiceButton, btnAutoAdapt)
 
         sizer.Add(groupSizer, (len(DataitemConfiguration['ReferenceValues']), 0), (1, 3), wx.ALL | wx.GROW, 5)
         sizer.Add(self.btnSetRefValues, ((len(DataitemConfiguration['ReferenceValues']) + 1), 0), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
@@ -115,7 +115,7 @@ class RefPanel(ScrolledPanel):
         self._mode = mode
         control = self.getButtonForMode(mode)
         control.SetValue(True)
-        control.SetBackgroundColour(wx.Color(0, 255, 0))
+        control.SetBackgroundColour(wx.Colour(0, 255, 0))
 
     def getControlMode(self):
         return self._mode
@@ -125,7 +125,7 @@ class RefPanel(ScrolledPanel):
         # Active State
         if event.EventObject.GetValue() == True:
             event.EventObject.SetLabel(event.EventObject.labelOff)
-            event.EventObject.SetBackgroundColour(wx.Color(0, 255, 0))
+            event.EventObject.SetBackgroundColour(wx.Colour(0, 255, 0))
         # Inactive State
         if event.EventObject.GetValue() == False:
             event.EventObject.SetLabel(event.EventObject.labelOn)

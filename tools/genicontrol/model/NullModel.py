@@ -120,7 +120,7 @@ class NullModel(ModelIf.IModel):
         print("Command requested:", command)
         self._commandRequested = True
         req = apdu.createSetCommandsPDU(
-            apdu.Header(defs.SD_DATA_REQUEST, self.getUnitAddress(), 0x04),
+            apdu.Header(defs.SD_DATA_REQUEST, self.getUnitAddress(), 0x01),
             [command]
         )
         self.writeToServer(req)
@@ -141,12 +141,17 @@ class NullModel(ModelIf.IModel):
             elif key.endswith('_lo'):
                 continue
             elif key.endswith('_hi'):
+                info = self.getInfo(defs.ADPUClass.MEASURERED_DATA, key)
+                scalingInfo = getScalingInfo(info)
                 key = key[ : key.index('_hi')]
-                #print("16Bit", key,)
                 value_hi = value
                 value_lo = measurements[key + '_lo']
                 value = makeWord(value_hi, value_lo)
-                scaledValue = "%.2f" % self.roundValue(conversion.convertForward16(value, info.zero, info.range, scalingInfo.factor))
+                if key == 'speed': # 0x83 Extended Precision 16bit
+                    scaledValue = "%.2f" % self.roundValue(conversion.convertExtended16(value, info.zero, info.range, scalingInfo.factor))
+                else:
+                    scaledValue = "%.2f" % self.roundValue(conversion.convertForward16(value, info.zero, info.range, scalingInfo.factor))
+                #print("16Bit", key, value_hi, value_lo, value, info.zero, info.range, scalingInfo.factor, scaledValue)
                 msg = "MEASURERED_DATA.%s"
                 self.sendMessage(msg % key + '_hi', scaledValue)
             else:
@@ -156,7 +161,11 @@ class NullModel(ModelIf.IModel):
                     scaledValue = 'n/a'
                 else:
                     if (info.head & 0x02) == 2:
-                        scaledValue = "%.2f" % self.roundValue(conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor))
+                        if key is 'q': # Magna3 delivers wrong flow range of 100
+                            scaledValue = "%.2f" % self.roundValue(conversion.convertForward8(value, info.zero, 127, scalingInfo.factor))
+                        else:
+                            scaledValue = "%.2f" % self.roundValue(conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor))
+                    #print("8Bit", key, value, info.zero, info.range, scalingInfo.factor, scaledValue)
                     else:
                         scaledValue = str(value) # Unscaled.
                     msg = "MEASURERED_DATA.%s"

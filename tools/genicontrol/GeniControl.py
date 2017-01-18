@@ -31,7 +31,9 @@ import logging
 import os
 import Queue
 import wx
-from wx.lib.pubsub import Publisher as Publisher
+#from wx.lib.pubsub import Publisher as Publisher
+from wx.lib.pubsub import setuparg1
+from wx.lib.pubsub import pub as Publisher
 from wx import CallAfter
 import time
 import threading
@@ -160,7 +162,7 @@ class GBFrame(wx.Frame):
         showOptionsDialogue(self)
 
     def onCloseWindow(self, event):
-        Publisher().sendMessage('QUIT')
+        Publisher.sendMessage('QUIT')
 
     def shutdownView(self):
         self.quit()
@@ -180,7 +182,7 @@ class GBFrame(wx.Frame):
         self.notebook.bmPanel.appendLine(rxTx, telegram)
 
 
-class GeniControlApp(wx.PySimpleApp):
+class GeniControlApp(wx.App):
     def __init__(self):
         super(GeniControlApp, self).__init__()
 

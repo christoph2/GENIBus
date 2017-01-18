@@ -35,7 +35,9 @@ import genicontrol.defs as defs
 from genicontrol.scaling import getScalingInfo
 from genicontrol.controller.ControllerIF import IController
 import genicontrol.dd as dd
-from wx.lib.pubsub import Publisher as Publisher
+#from wx.lib.pubsub import Publisher as Publisher
+from wx.lib.pubsub import setuparg1
+from wx.lib.pubsub import pub as Publisher
 from wx import CallAfter
 
 
@@ -60,10 +62,10 @@ class ControllerThread(threading.Thread):
         self.quitEvent = quitEvent
         self.infoRecords = []
         self.setName(self.__class__.__name__)
-        Publisher().subscribe(self.onInfoUpdate, 'INFO')
-        Publisher().subscribe(self.onPumpStatus, 'PUMP_STATUS')
+        Publisher.subscribe(self.onInfoUpdate, 'INFO')
+        Publisher.subscribe(self.onPumpStatus, 'PUMP_STATUS')
         for klass in defs.ADPUClass.nameDict.values():
-            Publisher().subscribe(self.onChange, klass)
+            Publisher.subscribe(self.onChange, klass)
 
         controls = self._view.notebook.mcPanel.controlsPanel
         controls.btnOperationMode.Bind(controls.btnOperationMode.EVT_BUTTON_CHANGED, self.onOperationModeChanged)
@@ -158,7 +160,7 @@ class GUIController(IController):
     def __init__(self, modelCls, view):
         self._view = view
         self._view.Bind(wx.EVT_CLOSE, self.onCloseApplication)
-        Publisher().subscribe(self.onQuit, 'QUIT')
+        Publisher.subscribe(self.onQuit, 'QUIT')
 
         super(GUIController, self).__init__(modelCls, view)
 

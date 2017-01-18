@@ -29,7 +29,9 @@
 
 import abc
 import logging
-from wx.lib.pubsub import Publisher as Publisher
+#from wx.lib.pubsub import Publisher as Publisher
+from wx.lib.pubsub import setuparg1
+from wx.lib.pubsub import pub as Publisher
 
 DATA_NOT_AVAILABLE = None
 
@@ -39,13 +41,14 @@ class IModel(object):
 
     def __init__(self, waitingPoint, connection):
         #super(IModel, self).__init__(self)
-        self._pub = Publisher()
+        self._pub = Publisher
         self._waitingPoint = waitingPoint
         self._connection = connection
         #self.initialize()
 
     def sendMessage(self, topic, data):
-        self._pub.sendMessage(topic, data)
+        if data:
+            self._pub.sendMessage(topic, data)
 
     def subscribe(self, topic, callback):
         self._pub.subscribe(topic = topic, listener = callback)

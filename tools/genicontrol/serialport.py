@@ -46,8 +46,8 @@ class SerialPort(ConnectionIF):
     _logger = logger
     counter = 0
 
-    def __init__(self, portName, baudrate = 19200, bytesize = serial.EIGHTBITS,
-                 parity = serial.PARITY_NONE, stopbits = serial.STOPBITS_ONE, timeout = 0.1):
+    def __init__(self, portName, baudrate = 9600, bytesize = serial.EIGHTBITS,
+                 parity = serial.PARITY_NONE, stopbits = serial.STOPBITS_ONE, timeout = 0.5):
         self._portName = portName
         self._port = None
         self._baudrate = baudrate

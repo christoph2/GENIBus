@@ -442,3 +442,15 @@
   - - [physEntity, !!python/unicode 'Energy pr vol.']
     - [factor, 1]
     - [unit, "Wh/m\xB3"]
+98: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Rot. velocity', 1, !!python/unicode 'rpm']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Rot. velocity']
+    - [factor, 1]
+    - [unit, !!python/unicode 'rpm']
+104: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Voltage', 2, !!python/unicode 'V']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Voltage']
+    - [factor, 2]
+    - [unit, !!python/unicode 'V']

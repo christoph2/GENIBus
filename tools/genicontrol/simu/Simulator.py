@@ -51,12 +51,12 @@ logger = logging.getLogger("GeniControl")
 
 dataReqValues = (
     "act_mode1", "act_mode2", "act_mode3", "led_contr", "ref_act", "ref_inf", "ref_att_loc", "sys_ref", "h", "q",
-    "h_max", "q_max", "t_2hour_hi", "t_2hour_lo", "contr_source", "p", "energy_hi", "energy_lo", "speed",
+    "h_max", "q_max", "t_2hour_hi", "t_2hour_lo", "contr_source", "p", "energy_hi", "energy_lo", "speed_hi", "speed_lo",
     "curve_no_ref", "alarm_code", "alarm_log_1", "alarm_log_2", "alarm_log_3", "alarm_log_4", "alarm_log_5"
 )
 
 infoReqValues = (
-    "h", "q", "p", "speed", "energy_hi"
+    "h", "q", "p", "speed_hi", "energy_hi"
 )
 
 refSetValues = (
@@ -69,7 +69,7 @@ commandSetValues = (
 
 DATA_POOL = { # This dictionary is used to 'simulate' communication.
     defs.ADPUClass.PROTOCOL_DATA: {
-        Item(u"df_buf_len",         0x46, None),
+        Item(u"buf_len",            0x46, None),
         Item(u"unit_bus_mode",      0x4e, None)
     },
     defs.ADPUClass.MEASURERED_DATA: {
@@ -88,41 +88,23 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"ref_inf", 0xfe,           Info(0x82, 0x1e, 0x00, 0x64)),
         Item(u"ref_att_loc", 0xfe,       Info(0x82, 0x1e, 0x00, 0x64)),
         Item(u"ref_loc", 0x80,           Info(0x80, None, None, None)),
-        Item(u"i_dc", 0x80,              Info(0x82, 0x2a, 0x00, 0x06)),
         Item(u"q_kn1", 0x80,             Info(0x82, 0x17, 0x00, 0x0c)),
-        Item(u"stop_alarm1_bak", 0x80,   Info(0x81, None, None, None)),
-        Item(u"stop_alarm2_bak", 0x80,   Info(0x81, None, None, None)),
-        Item(u"stop_alarm3_bak", 0x80,   Info(0x81, None, None, None)),
-        Item(u"ind_alarm_bak", 0x81,     Info(0x81, None, None, None)),
         Item(u"alarm_code_disp", 0x80,   Info(0xa0, None, None, None)),
         Item(u"unit_version", 0x80,      Info(0x80, None, None, None)),
-        Item(u"surv_alarm1_bak", 0x80,   Info(0x81, None, None, None)),
-        Item(u"surv_alarm2_bak", 0x80,   Info(0x81, None, None, None)),
         Item(u"loc_setup1", 0x80,        Info(0x81, None, None, None)),
         Item(u"rem_setup1", 0x80,        Info(0x81, None, None, None)),
         Item(u"stop_alarm1", 0x80,       Info(0x81, None, None, None)),
-        Item(u"stop_alarm2", 0x80,       Info(0x81, None, None, None)),
-        Item(u"stop_alarm3", 0x80,       Info(0x81, None, None, None)),
         Item(u"t_w", 0x80,               Info(0x82, 0x15, 0x00, 0xfe)),
         Item(u"ind_alarm", 0x81,         Info(0x81, None, None, None)),
         Item(u"contr_ref", 0x80,         Info(0x80, None, None, None)),
         Item(u"t_m", 0x80,               Info(0x82, 0x15, 0x00, 0xfe)),
-        Item(u"i_line", 0x80,            Info(0x80, None, None, None)),
         Item(u"surv_alarm1", 0x80,       Info(0x81, None, None, None)),
-        Item(u"surv_alarm2", 0x80,       Info(0x81, None, None, None)),
         Item(u"t_e", 0x80,               Info(0x80, None, None, None)),
-        Item(u"start_alarm1_bak", 0x80,  Info(0x81, None, None, None)),
-        Item(u"start_alarm2_bak", 0x80,  Info(0x81, None, None, None)),
         Item(u"v_dc", 0x80,              Info(0x82, 0x05, 0x00, 0x51)),
         Item(u"start_alarm1", 0x80,      Info(0x81, None, None, None)),
-        Item(u"start_alarm2", 0x80,      Info(0x81, None, None, None)),
-        Item(u"twin_pump_mode", 0x80,    Info(0x81, None, None, None)),
         Item(u"extern_inputs", 0x80,     Info(0x81, None, None, None)),
         Item(u"qsd_alarm1", 0x80,        Info(0x81, None, None, None)),
-        Item(u"qsd_alarm2", 0x80,        Info(0x81, None, None, None)),
         Item(u"p_max",      0x80,        Info(0x82, 0x09, 0x00, 0x03)),
-        Item(u"qsd_alarm1_bak", 0x80,    Info(0x81, None, None, None)),
-        Item(u"qsd_alarm2_bak", 0x80,    Info(0x81, None, None, None)),
         Item(u"sys_ref", 0x94,           Info(0x82, 0x19, 0x00, 0x0b)),
         Item(u"h", 0x17,                 Info(0x82, 0x19, 0x00, 0x0b)),
         Item(u"q", 0x26,                 Info(0x82, 0x17, 0x00, 0x0c)),
@@ -135,7 +117,8 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"p", 0x0a,                 Info(0x82, 0x09, 0x00, 0x03)),
         Item(u"energy_hi", 0x00,         Info(0x82, 0x28, 0x00, 0x7f)),
         Item(u"energy_lo", 0x00,         Info(0xb0, None, None, None)),
-        Item(u"speed", 0x50,             Info(0x82, 0x13, 0x00, 0x2e)),
+        Item(u"speed_hi", 0x00,          Info(0x82, 0x13, 0x00, 0x2e)),
+        Item(u"speed_lo", 0x50,          Info(0xb0, None, None, None)),
         Item(u"curve_no_ref", 0x0e,      Info(0x80, None, None, None)),
         Item(u"alarm_code", 0x00,        Info(0xa0, None, None, None)),
         Item(u"alarm_log_1", 0x20,       Info(0xa0, None, None, None)),
@@ -162,25 +145,19 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"CONST_PRESS",     None,   Info(None, None, None, None)),
         Item(u"MIN",             None,   Info(None, None, None, None)),
         Item(u"MAX",             None,   Info(None, None, None, None)),
-        Item(u"INFLUENCE_E",     None,   Info(None, None, None, None)),
-        Item(u"INFLUENCE_D",     None,   Info(None, None, None, None)),
         Item(u"LOCK_KEYS",       None,   Info(None, None, None, None)),
         Item(u"UNLOCK_KEYS",     None,   Info(None, None, None, None)),
         Item(u"REF_UP",          None,   Info(None, None, None, None)),
         Item(u"REF_DOWN",        None,   Info(None, None, None, None)),
         Item(u"RESET_HIST",      None,   Info(None, None, None, None)),
         Item(u"RESET_ALARM_LOG", None,   Info(None, None, None, None)),
-        Item(u"AUTOMATIC",       None,   Info(None, None, None, None)),
-        Item(u"TWIN_MODE_SPARE", None,   Info(None, None, None, None)),
-        Item(u"TWIN_MODE_ALT",   None,   Info(None, None, None, None)),
-        Item(u"TWIN_MODE_SYNC",  None,   Info(None, None, None, None)),
+        Item(u"AUTOADAPT",       None,   Info(None, None, None, None)),
         Item(u"NIGHT_REDUCT_E+", None,   Info(None, None, None, None)),
         Item(u"NIGHT_REDUCT_D+", None,   Info(None, None, None, None)),
     },
     defs.ADPUClass.CONFIGURATION_PARAMETERS: {
         Item(u"unit_addr",         0xe7, Info(0xa0, None, None, None)),
         Item(u"group_addr",        0xf7, Info(0xa0, None, None, None)),
-        Item(u"min_curve_no",      0x00, Info(0x80, None, None, None)),
 
         Item(u"h_const_ref_min",   0x17, Info(0x82, 0x19, 0x00, 0x0b)),
         Item(u"h_const_ref_max",   0xd0, Info(0x82, 0x19, 0x00, 0x0b)),
@@ -193,7 +170,6 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
     defs.ADPUClass.REFERENCE_VALUES: {
         Item(u"ref_rem",        0x10,    Info(0x80, None, None, None)),
         Item(u"ref_ir",         0x20,    Info(0x82, 0x1e, 0x00, 0x64)),
-        Item(u"ref_att_rem",    0x30,    Info(0x80, None, None, None)),
     },
     defs.ADPUClass.ASCII_STRINGS: {},
 }
@@ -330,11 +306,11 @@ def createStaticTelegrams():
         for idx, slice in enumerate(slices):
             slice = [n for n,i in slice]
             if klass == defs.ADPUClass.MEASURERED_DATA:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = slice)
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), measurements = slice)
             elif klass == defs.ADPUClass.REFERENCE_VALUES:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), references = slice)
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), references = slice)
             elif klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), parameter = slice)
+                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), parameter = slice)
             printTuple(telegram, "INFO_REQUEST%u" % idx)
 
 import sys
@@ -373,13 +349,13 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
 
 def main():
     createStaticTelegrams()
-    telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = dataReqValues)
+    telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), measurements = dataReqValues)
     testResponse(telegram, dataReqValues, defs.OS_GET)
 
-    telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), measurements = infoReqValues)
+    telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), measurements = infoReqValues)
     testResponse(telegram, infoReqValues, defs.OS_INFO)
 
-    telegram = apdu.createSetCommandsPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x04), commands = commandSetValues)
+    telegram = apdu.createSetCommandsPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), commands = commandSetValues)
     testResponse(telegram, commandSetValues, defs.OS_SET)
 
 
