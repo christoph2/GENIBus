@@ -52,7 +52,7 @@ class InfoPanel(ScrolledPanel):
         ctl.SetValue('GB')
         ctl = self.FindWindowById(controlids.ID_STR_DEVELOPERS)
         ctl.SetValue('CS')
-        ctl = self.FindWindowById(controlids.ID_STR_RTOS_CODE)
+        ctl = self.FindWindowById(controlids.ID_STR_SERIAL_NO)
         ctl.SetValue('RT')
         self.SetupScrolling()
 

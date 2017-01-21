@@ -40,7 +40,7 @@ from genilib.configuration import readConfigFile
 
 Dataitem = namedtuple('Dataitem', 'name klass id access note')
 
-DATAITEMS = yaml.load(createStringBuffer(readConfigFile("genicontrol", "dataitemsUPE.yaml")))
+DATAITEMS = yaml.load(createStringBuffer(readConfigFile("genicontrol", "dataitemsMAGNA.yaml")))
 
 def addToDict(d, k, v):
     d[k] = v
@@ -106,7 +106,7 @@ Code Alarm Group Alarm Cause
 32 Overvoltage
 40 Undervoltage
 48 Overload
-49 Overcurrent (i_line, i_dc, i_mo)
+49 Overcurrent (i_mo)
 51 Blocked motor/pump
 56 Underload
 57 Dry Running

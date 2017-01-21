@@ -6,7 +6,7 @@
 - !!python/tuple
   - network
   - !!python/tuple
-    - !!python/tuple [serverip, 192.168.100.10]
+    - !!python/tuple [serverip, 192.168.178.22]
     - !!python/tuple [subnetmask, 255.255.255.0]
     - !!python/tuple [serverport, 8080]
     - !!python/tuple [driver, 1]
@@ -20,4 +20,4 @@
 - !!python/tuple
   - serial
   - !!python/tuple
-    - !!python/tuple [serialport, '']
+    - !!python/tuple [serialport, '/dev/ttyUSB0']

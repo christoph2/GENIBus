@@ -53,3 +53,10 @@ def convertReverse16(x, zero, range, unit):
     return ((D('254.0') * D('256.0'))/ (D(range) * D(unit))) * ((D(-zero) * D(unit)) + D(x))
 
 
+def convertExtended8(x, zero_hi, zero_lo, unit):
+    return ((D('256.0') * D(zero_hi) + D(zero_lo)) + D(x & 0xff)) * D(unit)
+
+
+def convertExtended16(x, zero, range, unit):
+    return ((D('256.0') * D(zero) + D(range)) + D(x & 0xffff)) * D(unit)
+

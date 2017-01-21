@@ -50,14 +50,13 @@
     - [access, 1]
     - [note, !!python/unicode 'Frequency converter DC link voltage']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 't_e', 2, 28, 1, !!python/unicode 'Temperature in contdefs.ACC_ROl
-      electdefs.ACC_ROnics']
+  args: [!!python/unicode 't_e', 2, 28, 1, !!python/unicode 'Temperature in electronics']
   state: !!python/object/apply:collections.OrderedDict
   - - [name, !!python/unicode 't_e']
     - [klass, 2]
     - [id, 28]
     - [access, 1]
-    - [note, !!python/unicode 'Temperature in contdefs.ACC_ROl electdefs.ACC_ROnics']
+    - [note, !!python/unicode 'Temperature in electronics']
 - !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 't_m', 2, 29, 1, !!python/unicode 'Temp. in motor or in
       frequency converter module']

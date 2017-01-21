@@ -42,7 +42,7 @@ config = Config("GeniControl")
 
 config.load()  ## TEST!!!
 
-#SERVER = '192.168.1.2'  # TODO: Adjust to the IP-address of your Arduino board!
+#SERVER = '192.168.178.22'  # TODO: Adjust to the IP-address of your Arduino board!
 
 #SERVER = 'localhost'
 SERVER = socket.gethostname()

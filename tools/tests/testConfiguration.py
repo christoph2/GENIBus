@@ -27,7 +27,7 @@ class TestCase(unittest.TestCase):
         self.assertEqual(self.config.get('serial', 'serialport'), '')
 
     def testGetServerIp(self):
-        self.assertEqual(self.config.get('network', 'serverip'), '192.168.100.10')
+        self.assertEqual(self.config.get('network', 'serverip'), '192.168.178.22')
 
     def testGetSubnetMask(self):
         self.assertEqual(self.config.get('network', 'subnetmask'), '255.255.255.0')

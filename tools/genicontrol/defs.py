@@ -96,7 +96,7 @@ class ADPUClass:
     nameDict = {
         PROTOCOL_DATA                       : 'PROTOCOL_DATA',
         BUS_DATA                            : 'BUS_DATA',
-        MEASURERED_DATA                     : 'MEASURERED_DATAs',
+        MEASURERED_DATA                     : 'MEASURERED_DATA',
         COMMANDS                            : 'COMMANDS',
         CONFIGURATION_PARAMETERS            : 'CONFIGURATION_PARAMETERS',
         REFERENCE_VALUES                    : 'REFERENCE_VALUES',
