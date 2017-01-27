@@ -50,13 +50,15 @@
 #endif
 
 /* Function Prototypes. */
-static boolean Serial_OpenPort(Port_Serial_ComPortType * port, uint16_t nBaudRate,uint8_t nParity, uint8_t nDataBits, uint8_t nStopBits);
+static boolean Serial_OpenPort(Port_Serial_ComPortType * port, uint16_t nBaudRate,uint16_t nParity, uint8_t nDataBits, uint8_t nStopBits);
 static void Serial_ClosePort(Port_Serial_ComPortType const * port);
 static uint16_t Serial_BytesWaiting(Port_Serial_ComPortType const * port, uint32_t * errors);
 static boolean Serial_Write(Port_Serial_ComPortType * port, uint8_t const * buffer, uint32_t byteCount);
-static boolean Serial_WriteByte(Port_Serial_ComPortType * port, uint8_t byteToWrite);
+//static boolean Serial_WriteByte(Port_Serial_ComPortType * port, uint8_t byteToWrite);
 static PollingResultType Serial_Poll(Port_Serial_ComPortType * port, boolean writing, uint16_t * events);
 
+void Win_Error(char * function, uint32_t err);
+void Dbg_DumpHex(uint8_t const * frame, uint16_t length);
 
 static Port_Serial_ComPortType ComPort;
 
@@ -78,7 +80,7 @@ static PollingResultType Serial_Poll(Port_Serial_ComPortType * port, boolean wri
             //printf("<<POLL INTERRUPTED [%u]>>\n");
             return POLLING_INTERRUPTED;
         } else {
-//            Win_Error("poll", errno);
+            Win_Error("poll", errno);
             return POLLING_ERROR;
         }
     } else if (result == 0) {
@@ -101,11 +103,14 @@ static uint16_t Serial_BytesWaiting(Port_Serial_ComPortType const * port, uint32
 
 static boolean Serial_Write(Port_Serial_ComPortType * port, uint8_t const * buffer, uint32_t byteCount)
 {
-    int result;
+    uint32_t result;
     PollingResultType pollingResult;
     uint16_t events;
 
     result = write(port->fd, buffer, byteCount);
+    if (result == -1) {
+        return FALSE;
+    }
 #if defined(FLUSH_TRANSMITTER) && FLUSH_TRANSMITTER == 1
     tcdrain(port->fd);
 #endif
@@ -119,7 +124,7 @@ static boolean Serial_Write(Port_Serial_ComPortType * port, uint8_t const * buff
 }
 
 
-static boolean Serial_OpenPort(Port_Serial_ComPortType * port, uint16_t nBaudRate,uint8_t nParity, uint8_t nDataBits, uint8_t nStopBits)
+static boolean Serial_OpenPort(Port_Serial_ComPortType * port, uint16_t nBaudRate, uint16_t nParity, uint8_t nDataBits, uint8_t nStopBits)
 {
     //int fd;
     //int cflag, lflag, iflag, oflag;
@@ -267,11 +272,11 @@ void Port_Serial_Task(void)
         result = Port_Serial_Read(buffer, byteCount);
         printf("Read-Result: %02x\n", result);
         if (result == -1) {
-//            Win_Error("read", errno);
+            Win_Error("read", errno);
         } else {
             Dbg_DumpHex(buffer, byteCount);
             for (idx = 0; idx < byteCount; ++idx) {
-                KnxLL_FeedReceiver(buffer[idx]);
+//                KnxLL_FeedReceiver(buffer[idx]);
             }
         }
     } else if (pollingResult == POLLING_TIMEOUT) {
@@ -279,3 +284,21 @@ void Port_Serial_Task(void)
     } else {
     }
 }
+
+
+void Dbg_DumpHex(uint8_t const * frame, uint16_t length)
+{
+    uint8_t idx;
+
+    for (idx = 0; idx < length; ++idx) {
+        printf("%02x ", frame[idx]);
+    }
+    printf("\n");
+}
+
+
+void Win_Error(char * function, uint32_t err)
+{
+    printf("%s failed with error %u: %s\n", function, err, strerror(err));
+}
+
