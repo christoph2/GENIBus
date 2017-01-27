@@ -6,12 +6,12 @@ from glob import glob
 from setuptools import find_packages
 import sys
 
-VER = sys.version_info.major, sys.version_info.minor
+#VER = sys.version_info.major, sys.version_info.minor
 
-if VER < (3, 4):
-    REQS = ['PyQt5', 'mako', 'pyserial', 'enum']	# 'enum' backport needed.
-else:
-    REQS = ['PyQt5', 'mako', 'pyserial']
+#if VER < (3, 4):
+REQS = ['PyQt5', 'mako', 'pyserial', 'enum']	# 'enum' backport needed.
+#else:
+#    REQS = ['PyQt5', 'mako', 'pyserial']
 
 setup(
     name = 'genibus',
