@@ -71,12 +71,11 @@ class DeviceDB(SingletonBase):
         self.cursor.close()
         self.conn.close()
 
-    def select(self, table):
-        self.cursor.execute("SELECT * FROM {0};".format(table))
+    def select(self, model):
+        self.cursor.execute("SELECT * FROM dataitems WHERE model = ? ORDER BY class, id;", (model, ))
         result = self.cursor.fetchall();
         return result
 
-#db = DeviceDB()
-#pprint(db.select("dataitems"))
-#db.close()
+db = DeviceDB()
+#pprint(db.select("upe"))
 
