@@ -6,7 +6,12 @@ from glob import glob
 from setuptools import find_packages
 import sys
 
-REQS = [, 'mako', 'pyserial', 'enum']	# 'PyQt5'
+
+if sys.version_info < (3, 4):
+    REQS = ['mako', 'pyserial', 'enum']	# 'PyQt5'
+else:
+    REQS = ['mako', 'pyserial']
+    
 
 setup(
     name = 'genibus',
