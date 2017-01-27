@@ -1,7 +1,7 @@
 /*
  *  Grundfos GENIBus Library.
  *
- * (C) 2007-2016 by Christoph Schueler <github.com/Christoph2,
+ * (C) 2007-2017 by Christoph Schueler <github.com/Christoph2,
  *                                      cpu12.gems@googlemail.com>
  *
  * All Rights Reserved
@@ -24,14 +24,30 @@
 #if !defined(__CRC_H)
 #define __CRC_H
 
+
 #if defined(__cplusplus)
 extern "C"
 {
 #endif  /* __cplusplus */
 
+
 #include "genibus/types.h"
 
 uint16 Crc_CalculateCRC16(uint8 const * Crc_DataPtr, uint16 Crc_Length, uint16 Crc_StartValue16);
+
+
+#if 0
+class Crc {
+public:
+  Crc(uint16 data = 0xffffu);
+  void init(uint16 data);
+  void update(uint8 data);
+  uint16 get(void);
+private:
+  uint16 _accum;
+};
+#endif
+
 
 #if defined(__cplusplus)
 }
