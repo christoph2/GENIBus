@@ -1,6 +1,5 @@
-importlib
+PyQt5
 enum34
 mako
 pyserial
-pyyaml
 enum
