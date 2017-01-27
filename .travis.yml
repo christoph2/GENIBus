@@ -23,7 +23,7 @@ install:
   - travis_retry pip install pytest-cov coverage coveralls codacy-coverage
 
 script:
-   - cd ./genibus
+#   - cd ./genibus
    - coverage run --source=genibus setup.py test
 
 after_success:
