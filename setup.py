@@ -31,5 +31,5 @@ setup(
             ('genibus/config', glob('genibus/config/*.json')), 
             ('genibus/devices', glob('genibus/devices/*.json')),
     ],
-    test_suite="tests"
+    test_suite="genibus.tests"
 )
