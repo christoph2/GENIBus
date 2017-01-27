@@ -29,7 +29,7 @@ __version__ = '0.1.0'
 
 import threading
 import types
-from knxReTk.utilz import helper
+from genibus.utils import helper
 from array import array
 
 
