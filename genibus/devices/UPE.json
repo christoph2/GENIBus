@@ -1,0 +1,793 @@
+[
+   [
+      "df_buf_len", 
+      0, 
+      2, 
+      1, 
+      ""
+   ], 
+   [
+      "unit_bus_mode", 
+      0, 
+      3, 
+      1, 
+      ""
+   ], 
+   [
+      "t_2hour_hi", 
+      2, 
+      24, 
+      1, 
+      "Two hour counter"
+   ], 
+   [
+      "t_2hour_lo", 
+      2, 
+      25, 
+      1, 
+      "Two hour counter"
+   ], 
+   [
+      "i_dc", 
+      2, 
+      26, 
+      1, 
+      "Frequency converter DC link current"
+   ], 
+   [
+      "v_dc", 
+      2, 
+      27, 
+      1, 
+      "Frequency converter DC link voltage"
+   ], 
+   [
+      "t_e", 
+      2, 
+      28, 
+      1, 
+      "Temperature in electronics"
+   ], 
+   [
+      "t_m", 
+      2, 
+      29, 
+      1, 
+      "Temp. in motor or in frequency converter module"
+   ], 
+   [
+      "i_mo", 
+      2, 
+      30, 
+      1, 
+      "Motor current"
+   ], 
+   [
+      "i_line", 
+      2, 
+      31, 
+      1, 
+      "Mains supply current"
+   ], 
+   [
+      "f_act", 
+      2, 
+      32, 
+      1, 
+      "Actual control signal (freq. or voltage) applied to pump"
+   ], 
+   [
+      "p", 
+      2, 
+      34, 
+      1, 
+      "Power consumption"
+   ], 
+   [
+      "speed", 
+      2, 
+      35, 
+      1, 
+      "Pump speed"
+   ], 
+   [
+      "h", 
+      2, 
+      37, 
+      1, 
+      "Actual pump head"
+   ], 
+   [
+      "q", 
+      2, 
+      39, 
+      1, 
+      "Actual pump flow"
+   ], 
+   [
+      "ref_loc", 
+      2, 
+      40, 
+      1, 
+      "Local reference setting"
+   ], 
+   [
+      "p_max", 
+      2, 
+      41, 
+      1, 
+      "Maximum power consumption"
+   ], 
+   [
+      "q_kn1", 
+      2, 
+      42, 
+      1, 
+      "Minimum possible flow at maximum power consum."
+   ], 
+   [
+      "q_max", 
+      2, 
+      43, 
+      1, 
+      "Maximum possible flow at maximum power consum."
+   ], 
+   [
+      "h_max", 
+      2, 
+      44, 
+      1, 
+      "Maximum pump head (closed valve)"
+   ], 
+   [
+      "ind_alarm_bak", 
+      2, 
+      46, 
+      1, 
+      "Back up byte to indication alarm"
+   ], 
+   [
+      "led_contr", 
+      2, 
+      47, 
+      1, 
+      "Status of green and red indication diodes"
+   ], 
+   [
+      "ref_act", 
+      2, 
+      48, 
+      1, 
+      "Actual reference"
+   ], 
+   [
+      "ref_inf", 
+      2, 
+      49, 
+      1, 
+      "Reference influence"
+   ], 
+   [
+      "t_w", 
+      2, 
+      58, 
+      1, 
+      "Water temperature"
+   ], 
+   [
+      "ref_att_loc", 
+      2, 
+      61, 
+      1, 
+      "Local reference attenuator input"
+   ], 
+   [
+      "sys_ref", 
+      2, 
+      62, 
+      1, 
+      "Selected system control loop reference"
+   ], 
+   [
+      "start_alarm1", 
+      2, 
+      64, 
+      1, 
+      "Start Alarm No. 1"
+   ], 
+   [
+      "start_alarm2", 
+      2, 
+      65, 
+      1, 
+      "Start Alarm No. 2"
+   ], 
+   [
+      "qsd_alarm1", 
+      2, 
+      66, 
+      1, 
+      "Quick Shut Down Alarm No. 1"
+   ], 
+   [
+      "qsd_alarm2", 
+      2, 
+      67, 
+      1, 
+      "Quick Shut Down Alarm No. 2"
+   ], 
+   [
+      "stop_alarm1", 
+      2, 
+      68, 
+      1, 
+      "Stop Alarm No. 1"
+   ], 
+   [
+      "stop_alarm2", 
+      2, 
+      69, 
+      1, 
+      "Stop Alarm No. 2"
+   ], 
+   [
+      "surv_alarm1", 
+      2, 
+      70, 
+      1, 
+      "Survive Alarm No. 1"
+   ], 
+   [
+      "surv_alarm2", 
+      2, 
+      71, 
+      1, 
+      "Survive Alarm No. 2"
+   ], 
+   [
+      "ind_alarm", 
+      2, 
+      72, 
+      1, 
+      "Indication Alarm"
+   ], 
+   [
+      "start_alarm1_bak", 
+      2, 
+      73, 
+      1, 
+      "Start Alarm No. 1 backup"
+   ], 
+   [
+      "start_alarm2_bak", 
+      2, 
+      74, 
+      1, 
+      "Start Alarm No. 2 backup"
+   ], 
+   [
+      "qsd_alarm1_bak", 
+      2, 
+      75, 
+      1, 
+      "Quick Shut Down Alarm No. 1 backup"
+   ], 
+   [
+      "qsd_alarm2_bak", 
+      2, 
+      76, 
+      1, 
+      "Quick Shut Down Alarm No. 2 backup"
+   ], 
+   [
+      "stop_alarm1_bak", 
+      2, 
+      77, 
+      1, 
+      "Stop Alarm No. 1 backup"
+   ], 
+   [
+      "stop_alarm2_bak", 
+      2, 
+      78, 
+      1, 
+      "Stop Alarm No. 2 backup"
+   ], 
+   [
+      "surv_alarm1_bak", 
+      2, 
+      79, 
+      1, 
+      "Survive Alarm No.1 backup"
+   ], 
+   [
+      "surv_alarm2_bak", 
+      2, 
+      80, 
+      1, 
+      "Survive Alarm No.2 backup"
+   ], 
+   [
+      "act_mode1", 
+      2, 
+      81, 
+      1, 
+      "Actual Mode Status No. 1"
+   ], 
+   [
+      "act_mode2", 
+      2, 
+      82, 
+      1, 
+      "Actual Mode Status No. 2"
+   ], 
+   [
+      "act_mode3", 
+      2, 
+      83, 
+      1, 
+      "Actual Mode Status No. 3"
+   ], 
+   [
+      "loc_setup1", 
+      2, 
+      85, 
+      1, 
+      "Local setup"
+   ], 
+   [
+      "rem_setup1", 
+      2, 
+      87, 
+      1, 
+      "Remote setup"
+   ], 
+   [
+      "extern_inputs", 
+      2, 
+      89, 
+      1, 
+      "Logical value of all external control inputs"
+   ], 
+   [
+      "contr_source", 
+      2, 
+      90, 
+      1, 
+      "Currently active contr. source and priority"
+   ], 
+   [
+      "stop_alarm3", 
+      2, 
+      93, 
+      1, 
+      "Stop Alarm No. 3"
+   ], 
+   [
+      "stop_alarm3_bak", 
+      2, 
+      96, 
+      1, 
+      "Stop Alarm No. 3 backup"
+   ], 
+   [
+      "curve_no_ref", 
+      2, 
+      97, 
+      1, 
+      "Selected curve No. (LED bar indicator No.)"
+   ], 
+   [
+      "contr_ref", 
+      2, 
+      147, 
+      1, 
+      "Control loop reference"
+   ], 
+   [
+      "unit_family", 
+      2, 
+      148, 
+      1, 
+      "Unit family code"
+   ], 
+   [
+      "unit_type", 
+      2, 
+      149, 
+      1, 
+      "Unit type code"
+   ], 
+   [
+      "unit_version", 
+      2, 
+      150, 
+      1, 
+      "Unit version code"
+   ], 
+   [
+      "energy_hi", 
+      2, 
+      152, 
+      1, 
+      "Accumulated electric energy consumption"
+   ], 
+   [
+      "energy_lo", 
+      2, 
+      153, 
+      1, 
+      "Accumulated electric energy consumption"
+   ], 
+   [
+      "alarm_code_disp", 
+      2, 
+      155, 
+      1, 
+      "Interpreted (filtered) version of alarm_code"
+   ], 
+   [
+      "alarm_code", 
+      2, 
+      158, 
+      1, 
+      "Actual alarm"
+   ], 
+   [
+      "alarm_log_1", 
+      2, 
+      159, 
+      1, 
+      "Logged alarm code No. 1"
+   ], 
+   [
+      "alarm_log_2", 
+      2, 
+      160, 
+      1, 
+      "Logged alarm code No. 2"
+   ], 
+   [
+      "alarm_log_3", 
+      2, 
+      161, 
+      1, 
+      "Logged alarm code No. 3"
+   ], 
+   [
+      "alarm_log_4", 
+      2, 
+      162, 
+      1, 
+      "Logged alarm code No. 4"
+   ], 
+   [
+      "alarm_log_5", 
+      2, 
+      163, 
+      1, 
+      "Logged alarm code No. 5"
+   ], 
+   [
+      "twin_pump_mode", 
+      2, 
+      166, 
+      1, 
+      "Twin Pump Mode, UPED's only"
+   ], 
+   [
+      "RESET", 
+      3, 
+      1, 
+      2, 
+      "Hardware resets the pump"
+   ], 
+   [
+      "RESET_ALARM", 
+      3, 
+      2, 
+      2, 
+      "Resets pending alarm and attempts a restart"
+   ], 
+   [
+      "USER_BOOT", 
+      3, 
+      4, 
+      2, 
+      "Returns to factory setting. Pump must be stopped"
+   ], 
+   [
+      "STOP", 
+      3, 
+      5, 
+      2, 
+      "Stops the pump (Operation Mode Stop)"
+   ], 
+   [
+      "START", 
+      3, 
+      6, 
+      2, 
+      "Starts the pump (Operation Mode Start)"
+   ], 
+   [
+      "REMOTE", 
+      3, 
+      7, 
+      2, 
+      "Switch to Remote Mode"
+   ], 
+   [
+      "LOCAL", 
+      3, 
+      8, 
+      2, 
+      "Switch to Local Mode"
+   ], 
+   [
+      "RUN", 
+      3, 
+      9, 
+      2, 
+      "Run Mode, only for factory use"
+   ], 
+   [
+      "PROGRAM", 
+      3, 
+      10, 
+      2, 
+      "Programming Mode, only for factory use"
+   ], 
+   [
+      "CONST_FREQ", 
+      3, 
+      22, 
+      2, 
+      "Sets the pump in Control Mode Const. Frequency"
+   ], 
+   [
+      "PROP_PRESS", 
+      3, 
+      23, 
+      2, 
+      "Sets the pump in Control Mode Proportional Press."
+   ], 
+   [
+      "CONST_PRESS", 
+      3, 
+      24, 
+      2, 
+      "Sets the pump in Control Mode Constant Pressure"
+   ], 
+   [
+      "MIN", 
+      3, 
+      25, 
+      2, 
+      "Pump running on min. curve (Operation Mode Min)"
+   ], 
+   [
+      "MAX", 
+      3, 
+      26, 
+      2, 
+      "Pump running on max. curve (Oper. Mode Max)"
+   ], 
+   [
+      "INFLUENCE_E", 
+      3, 
+      28, 
+      2, 
+      "Enables temperature influence"
+   ], 
+   [
+      "INFLUENCE_D", 
+      3, 
+      29, 
+      2, 
+      "Enables temperature influence"
+   ], 
+   [
+      "LOCK_KEYS", 
+      3, 
+      30, 
+      2, 
+      "Keys Setting is Locked (buttons at pump disabled)"
+   ], 
+   [
+      "UNLOCK_KEYS", 
+      3, 
+      31, 
+      2, 
+      "Keys Setting is Unlocked (buttons at pump enabled)"
+   ], 
+   [
+      "REF_UP", 
+      3, 
+      33, 
+      2, 
+      "Increases setpoint one step, like pressing + button"
+   ], 
+   [
+      "REF_DOWN", 
+      3, 
+      34, 
+      2, 
+      "Decreases setpoint one step, like pressing - button"
+   ], 
+   [
+      "RESET_HIST", 
+      3, 
+      36, 
+      2, 
+      "Resets kWh- and h-counter. Pump must be stopped"
+   ], 
+   [
+      "RESET_ALARM_LOG", 
+      3, 
+      51, 
+      2, 
+      "Resets the alarm log"
+   ], 
+   [
+      "AUTOMATIC", 
+      3, 
+      52, 
+      2, 
+      "Sets the pump in Control Mode Automatic"
+   ], 
+   [
+      "TWIN_MODE_SPARE", 
+      3, 
+      58, 
+      2, 
+      "Twin Pump Mode Spare"
+   ], 
+   [
+      "TWIN_MODE_ALT", 
+      3, 
+      59, 
+      2, 
+      "Twin Pump Mode Alternating"
+   ], 
+   [
+      "TWIN_MODE_SYNC", 
+      3, 
+      60, 
+      2, 
+      "Twin Pump Mode Syncrouneous"
+   ], 
+   [
+      "NIGHT_REDUCT_E+", 
+      3, 
+      66, 
+      2, 
+      "Enables Night Reduction"
+   ], 
+   [
+      "NIGHT_REDUCT_D+", 
+      3, 
+      67, 
+      2, 
+      "Disables Night Reduction"
+   ], 
+   [
+      "unit_addr", 
+      4, 
+      46, 
+      3, 
+      "GENIbus/GENIlink unit address"
+   ], 
+   [
+      "group_addr", 
+      4, 
+      47, 
+      3, 
+      "GENIbus group address"
+   ], 
+   [
+      "min_curve_no", 
+      4, 
+      74, 
+      3, 
+      "Minimum curve No."
+   ], 
+   [
+      "h_const_ref_min", 
+      4, 
+      83, 
+      3, 
+      "Constant Pressure Mode minimum reference"
+   ], 
+   [
+      "h_const_ref_max", 
+      4, 
+      84, 
+      3, 
+      "Constant Pressure Mode maximum reference"
+   ], 
+   [
+      "h_prop_ref_min", 
+      4, 
+      85, 
+      3, 
+      "Proportional Pressure Mode minimum reference"
+   ], 
+   [
+      "h_prop_ref_max", 
+      4, 
+      86, 
+      3, 
+      "Proportional Pressure Mode maximum reference"
+   ], 
+   [
+      "ref_steps", 
+      4, 
+      87, 
+      3, 
+      "No. of discrete reference steps"
+   ], 
+   [
+      "ref_rem", 
+      5, 
+      1, 
+      2, 
+      "GENIbus setpoint (Remote reference)"
+   ], 
+   [
+      "ref_ir", 
+      5, 
+      2, 
+      2, 
+      "GENIlink setpoint (curve No.)"
+   ], 
+   [
+      "ref_att_rem", 
+      5, 
+      19, 
+      2, 
+      "Remote reference attenuation"
+   ], 
+   [
+      "product_name", 
+      7, 
+      1, 
+      1, 
+      ""
+   ], 
+   [
+      "software_name1", 
+      7, 
+      3, 
+      1, 
+      ""
+   ], 
+   [
+      "compile_date1", 
+      7, 
+      4, 
+      1, 
+      ""
+   ], 
+   [
+      "protocol_code", 
+      7, 
+      5, 
+      1, 
+      ""
+   ], 
+   [
+      "developers", 
+      7, 
+      7, 
+      1, 
+      ""
+   ], 
+   [
+      "rtos_code", 
+      7, 
+      12, 
+      1, 
+      ""
+   ]
+]
