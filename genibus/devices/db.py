@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 __version__ = "0.1.0"
+
 __copyright__ = """
 Grundfos GENIBus Library.
 
@@ -39,17 +40,22 @@ class DeviceDB(SingletonBase):
 
     def __init__(self):
         self.open()
-        self.importDevices()
+        self.importFiles()
 
     def createSchema(self):
-        print("Creating schema...")
-
+        #print("Creating schema...")
         self.cursor.execute("""
             CREATE TABLE dataitems(
                 model CHAR(64) NOT NULL, name CHAR(64) NOT NULL,
                 class INT NOT NULL, id INT NOT NULL, access INT NOT NULL, note CHAR(64) DEFAULT NULL,
                 PRIMARY KEY(model, name)
-            );""")
+            );
+        """)
+
+        self.cursor.execute("""CREATE TABLE units(
+            id INT NOT NULL PRIMARY KEY,physicalEntity CHAR(64), prefix DOUBLE, Unit CHAR(8)
+            );
+        """)
         self.conn.commit()
 
     def open(self):
@@ -57,13 +63,20 @@ class DeviceDB(SingletonBase):
         self.cursor = self.conn.cursor()
         self.createSchema()
 
-    def importDevices(self):
-        for dp in glob.glob("{0}{1}*.json".format(os.path.dirname(sys.modules['genibus.devices'].__file__), os.sep)):
+    def importFiles(self):
+        _dir = os.path.dirname(sys.modules['genibus.devices'].__file__)
+        for dp in glob.glob("{0}{1}*.json".format(_dir, os.sep)):
             _, fullname = os.path.split(dp)
             model = fullname.split('.')[0]
             data = json.load(open(dp))
             for row  in data:
                 self.conn.execute("INSERT INTO dataitems VALUES(?, ?, ?, ?, ?, ?)", (model, *row))
+        self.conn.commit()
+        data = pkgutil.get_data('genibus.config', 'units2.json')
+        units = json.loads(data.decode('latin-1'), encoding = 'utf-8')
+        for key, unit in units.items():
+            unit[0] = unit[0].strip()
+            self.conn.execute("INSERT INTO units VALUES(?, ?, ?, ?)", (key, *unit))
         self.conn.commit()
 
     def close(self):
@@ -71,11 +84,38 @@ class DeviceDB(SingletonBase):
         self.cursor.close()
         self.conn.close()
 
-    def select(self, model):
+    def dataitems(self, model):
         self.cursor.execute("SELECT * FROM dataitems WHERE model = ? ORDER BY class, id;", (model, ))
         result = self.cursor.fetchall();
         return result
 
-db = DeviceDB()
-#pprint(db.select("upe"))
+    def dataitemsByClass(self, model, klass):
+        self.cursor.execute("SELECT * FROM dataitems WHERE model = ? AND class = ? ORDER BY id;", (model, klass))
+        result = self.cursor.fetchall();
+        return result
+
+    def units(self):
+        self.cursor.execute("SELECT * FROM units ORDER BY id;")
+        result = self.cursor.fetchall();
+        return result
+
+    def unitEnities(self):
+        self.cursor.execute("SELECT DISTINCT(physicalEntity) FROM units ORDER BY 1;")
+        result = self.cursor.fetchall();
+        return result
+
+    def unitsByEntity(self, entity):
+        self.cursor.execute("SELECT * FROM units WHERE physicalEntity = ? ORDER BY id;", (entity, ))
+        result = self.cursor.fetchall();
+        return result
+
+
+##
+##import genibus.gbdefs as defs
+##
+##db = DeviceDB()
+##pprint(db.dataitemsByClass("magna", defs.ADPUClass.COMMANDS))
+##pprint(db.unitEnities())
+##pprint(db.unitsByEntity("Voltage"))
+##
 
