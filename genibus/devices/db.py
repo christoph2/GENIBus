@@ -72,7 +72,7 @@ class DeviceDB(SingletonBase):
             for row  in data:
                 self.conn.execute("INSERT INTO dataitems VALUES(?, ?, ?, ?, ?, ?)", (model, *row))
         self.conn.commit()
-        data = pkgutil.get_data('genibus.config', 'units2.json')
+        data = pkgutil.get_data('genibus.config', 'units.json')
         units = json.loads(data.decode('latin-1'), encoding = 'utf-8')
         for key, unit in units.items():
             unit[0] = unit[0].strip()
