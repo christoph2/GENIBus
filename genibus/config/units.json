@@ -1,382 +1,116 @@
-{
-   "1": [
-      "Electrical current", 
-      0.1, 
-      "A"
-   ], 
-   "2": [
-      "Electrical current", 
-      5, 
-      "A"
-   ], 
-   "3": [
-      "Voltage", 
-      0.1, 
-      "V"
-   ], 
-   "4": [
-      "Voltage", 
-      1, 
-      "V"
-   ], 
-   "5": [
-      "Voltage", 
-      5, 
-      "V"
-   ], 
-   "6": [
-      "Elec. resistance", 
-      1, 
-      "\u03a9"
-   ], 
-   "7": [
-      "Power (active)", 
-      1, 
-      "W"
-   ], 
-   "8": [
-      "Power (active)", 
-      10, 
-      "W"
-   ], 
-   "9": [
-      "Power (active)", 
-      100, 
-      "W"
-   ], 
-   "10": [
-      "Power (apparent)", 
-      1, 
-      "VA"
-   ], 
-   "11": [
-      "Power (apparent)", 
-      10, 
-      "VA"
-   ], 
-   "12": [
-      "Power (apparent)", 
-      100, 
-      "VA"
-   ], 
-   "13": [
-      "Power (reactive)", 
-      1, 
-      "VAr"
-   ], 
-   "14": [
-      "Power (reactive)", 
-      10, 
-      "Var"
-   ], 
-   "15": [
-      "Power (reactive)", 
-      100, 
-      "VAr"
-   ], 
-   "16": [
-      "Frequency", 
-      1, 
-      "Hz"
-   ], 
-   "17": [
-      "Frequency", 
-      2.5, 
-      "Hz"
-   ], 
-   "18": [
-      "Rot. velocity", 
-      12, 
-      "rpm"
-   ], 
-   "19": [
-      "Rot. velocity", 
-      100, 
-      "rpm"
-   ], 
-   "20": [
-      "Temperature", 
-      0.1, 
-      "\u00b0C"
-   ], 
-   "21": [
-      "Temperature", 
-      1, 
-      "\u00b0C"
-   ], 
-   "22": [
-      "Flow", 
-      0.1, 
-      "m\u00b3/h"
-   ], 
-   "23": [
-      "Flow", 
-      1, 
-      "m\u00b3/h"
-   ], 
-   "24": [
-      "Head", 
-      0.1, 
-      "m"
-   ], 
-   "25": [
-      "Head", 
-      1, 
-      "m"
-   ], 
-   "26": [
-      "Head", 
-      10, 
-      "m"
-   ], 
-   "27": [
-      "Pressure", 
-      0.01, 
-      "bar"
-   ], 
-   "28": [
-      "Pressure", 
-      0.1, 
-      "bar"
-   ], 
-   "29": [
-      "Pressure", 
-      1, 
-      "bar"
-   ], 
-   "30": [
-      "Percentage", 
-      1, 
-      "%"
-   ], 
-   "31": [
-      "Energy", 
-      1, 
-      "kWh"
-   ], 
-   "32": [
-      "Energy", 
-      10, 
-      "kWh"
-   ], 
-   "33": [
-      "Energy", 
-      100, 
-      "kWh"
-   ], 
-   "34": [
-      "Ang. velocity", 
-      2, 
-      "rad/s"
-   ], 
-   "35": [
-      "Time", 
-      1, 
-      "h"
-   ], 
-   "36": [
-      "Time", 
-      2, 
-      "min"
-   ], 
-   "37": [
-      "Time", 
-      1, 
-      "s"
-   ], 
-   "38": [
-      "Frequency", 
-      2, 
-      "Hz"
-   ], 
-   "39": [
-      "Time", 
-      1024, 
-      "h"
-   ], 
-   "40": [
-      "Energy", 
-      512, 
-      "kWh"
-   ], 
-   "41": [
-      "Flow", 
-      5, 
-      "m\u00b3/h"
-   ], 
-   "42": [
-      "Electrical current", 
-      0.2, 
-      "A"
-   ], 
-   "43": [
-      "Elec. resistance", 
-      10, 
-      "k\u03a9"
-   ], 
-   "44": [
-      "Power (active)", 
-      1, 
-      "kW"
-   ], 
-   "45": [
-      "Power (active)", 
-      10, 
-      "kW"
-   ], 
-   "46": [
-      "Energy", 
-      1, 
-      "MWh"
-   ], 
-   "47": [
-      "Energy", 
-      10, 
-      "MWh"
-   ], 
-   "48": [
-      "Energy", 
-      100, 
-      "MWh"
-   ], 
-   "49": [
-      "Ang. degrees", 
-      1, 
-      "\u00b0"
-   ], 
-   "50": [
-      "Gain", 
-      1, 
-      ""
-   ], 
-   "51": [
-      "Pressure", 
-      0.001, 
-      "bar"
-   ], 
-   "52": [
-      "Flow", 
-      1, 
-      "l/s"
-   ], 
-   "53": [
-      "Flow", 
-      1, 
-      "m\u00b3/s"
-   ], 
-   "54": [
-      "Flow", 
-      1, 
-      "gpm"
-   ], 
-   "55": [
-      "Pressure", 
-      1, 
-      "psi"
-   ], 
-   "56": [
-      "Head", 
-      1, 
-      "ft"
-   ], 
-   "57": [
-      "Temperature", 
-      1, 
-      "\u00b0F"
-   ], 
-   "58": [
-      "Flow", 
-      10, 
-      "gpm"
-   ], 
-   "59": [
-      "Head", 
-      10, 
-      "ft"
-   ], 
-   "60": [
-      "Pressure", 
-      10, 
-      "psi"
-   ], 
-   "61": [
-      "Pressure", 
-      1, 
-      "kPa"
-   ], 
-   "62": [
-      "Electrical current", 
-      0.5, 
-      "A"
-   ], 
-   "63": [
-      "Flow", 
-      0.1, 
-      "l/s"
-   ], 
-   "64": [
-      "Volume", 
-      0.1, 
-      "m\u00b3"
-   ], 
-   "65": [
-      "Volume", 
-      1000, 
-      "m\u00b3"
-   ], 
-   "66": [
-      "Energy pr vol.", 
-      10, 
-      "kWh/m\u00b3"
-   ], 
-   "67": [
-      "Volume", 
-      256, 
-      "m\u00b3"
-   ], 
-   "68": [
-      "Area", 
-      1, 
-      "m\u00b2"
-   ], 
-   "69": [
-      "Flow", 
-      0.1, 
-      "ml/h"
-   ], 
-   "70": [
-      "Volume", 
-      0.1, 
-      "ml"
-   ], 
-   "71": [
-      "Volume", 
-      1, 
-      "nl"
-   ], 
-   "72": [
-      "Time", 
-      1024, 
-      "min"
-   ], 
-   "73": [
-      "Flow", 
-      0.5, 
-      "l/h"
-   ], 
-   "74": [
-      "Energy pr vol.", 
-      1, 
-      "Wh/m\u00b3"
-   ], 
-   "98": [
-      "Rot. velocity", 
-      1, 
-      "rpm"
-   ], 
-   "104": [
-      "Voltage", 
-      2, 
-      "V"
-   ]
+{ 
+    "1": ["Electrical current ", 0.1, "A"],
+    "2": ["Electrical current ", 5, "A"],
+    "3": ["Voltage ", 0.1, "V"],
+    "4": ["Voltage ", 1, "V"],
+    "5": ["Voltage ", 5, "V"],
+    "6": ["Elec. resistance ", 1, "Ω"],
+    "7": ["Power (active) ", 1, "W"],
+    "8": ["Power (active) ", 10, "W"],
+    "9": ["Power (active) ", 100, "W"],
+    "10": ["Elec. capacitance ", 1, "µF"],
+    "11": ["Frequency ", 0.5, "Hz"],
+    "12": ["Percentage ", 0.1, "%"],
+    "13": ["Time ", 2, "h"],
+    "14": ["Time ", 30, "s"],
+    "15": ["Electrical current ", 1, "µA"],
+    "16": ["Frequency ", 1, "Hz"],
+    "17": ["Frequency ", 2.5, "Hz"],
+    "18": ["Rot. velocity ", 12, "rpm"],
+    "19": ["Rot. velocity ", 100, "rpm"],
+    "20": ["Temperature ", 0.1, "°C"],
+    "21": ["Temperature ", 1, "°C"],
+    "22": ["Flow ", 0.1, "m³/h"],
+    "23": ["Flow ", 1, "m³/h"],
+    "24": ["Head/Distance ", 0.1, "m"],
+    "25": ["Head/Distance ", 1, "m"],
+    "26": ["Head/Distance ", 10, "m"],
+    "27": ["Pressure ", 0.01, "bar"],
+    "28": ["Pressure ", 0.1, "bar"],
+    "29": ["Pressure ", 1, "bar"],
+    "30": ["Percentage ", 1, "%"],
+    "31": ["Energy ", 1, "kWh"],
+    "32": ["Energy ", 10, "kWh"],
+    "33": ["Energy ", 100, "kWh"],
+    "34": ["Ang. velocity ", 2, "rad/s"],
+    "35": ["Time ", 1, "h"],
+    "36": ["Time ", 2, "min"],
+    "37": ["Time ", 1, "s"],
+    "38": ["Frequency ", 2, "Hz"],
+    "39": ["Time ", 1024, "h"],
+    "40": ["Energy ", 512, "kWh"],
+    "41": ["Flow ", 5, "m³/h"],
+    "42": ["Electrical current ", 0.2, "A"],
+    "43": ["Elec. resistance ", 10, "Ω"],
+    "44": ["Power (active) ", 1, "kW"],
+    "45": ["Power (active) ", 10, "kW"],
+    "46": ["Energy ", 1, "MWh"],
+    "47": ["Energy ", 10, "MWh"],
+    "48": ["Energy ", 100, "MWh"],
+    "49": ["Ang. degrees ", 1, "°"],
+    "50": ["Gain ", 1, ""],
+    "51 ": ["Pressure ", 0.001 , "bar"],
+    "52": ["Flow ", 1, "l/s"],
+    "53": ["Flow ", 1, "m³/s"],
+    "54": ["Flow ", 1, "gpm"],
+    "55": ["Pressure ", 1, "psi"],
+    "56": ["Head/Distance ", 1, "ft"],
+    "57": ["Temperature ", 1, "°F"],
+    "58": ["Flow ", 10, "gpm"],
+    "59": ["Head/Distance ", 10, "ft"],
+    "60": ["Pressure ", 10, "psi"],
+    "61": ["Pressure ", 1, "kPa"],
+    "62": ["Electrical current ", 0.5, "A"],
+    "63": ["Flow ", 0.1, "l/s"],
+    "64": ["Volume ", 0.1, "m³"],
+    "65": ["Volume ", 1000, "m³"],
+    "66": ["Energy pr vol. ", 10, "kWh/m³"],
+    "67": ["Volume ", 256, "m³"],
+    "68": ["Area ", 1, "m2"],
+    "69": ["Flow ", 0.1, "ml/h"],
+    "70": ["Volume ", 0.1, "ml"],
+    "71": ["Volume ", 1, "nl"],
+    "72": ["Time ", 1024, "min"],
+    "73": ["Flow ", 0.5, "l/h"],
+    "74": ["Energy pr vol. ", 1, "Wh/m³"],
+    "75": ["Torque ", 1, "Nm"],
+    "76": ["Percentage ", 10, "%"],
+    "77": ["Gain ", 0.01, ""],
+    "78 ": ["Time ", 10 , "s"],
+    "79": ["Time ", 0.1, "s"],
+    "80": ["Time ", 1, "min"],
+    "81": ["Time ", 100, "h"],
+    "82": ["Flow ", 0.1, "l/min"],
+    "83": ["Head/Distance ", 0.01, "m"],
+    "84": ["Temperature ", 0.01, "K"],
+    "85": ["Energy ", 2, "kWh"],
+    "86": ["Volume ", 1, "m³"],
+    "87": ["Energy ", 1, "Ws"],
+    "88": ["Volume ", 1, "ml"],
+    "89": ["Elec. resistance ", 100, "Ω"],
+    "90": ["Velocity ", 1, "mm/s"],
+    "91": ["Head/Distance ", 0.0001, "m"],
+    "92": ["Flow ", 10, "m³/h"],
+    "93": ["Flow ", 100, "m3/h"],
+    "94": ["Energy ", 1, "Wh"],
+    "95": ["Flow ", 0.01, "m³/h"],
+    "96": ["Gain ", 0.1, ""],
+    "97 ": ["Torque ", 0.1 , "Nm"],
+    "98": ["Rot. velocity ", 1, "rpm"],
+    "99": ["Volume ", 1, "ltr"],
+    "100": ["Time ", 1, "day"],
+    "101": ["Acceleration ", 0.01, "m/s²"],
+    "102": ["Mass density ", 0.1, "kg/m³"],
+    "103": ["Energy ", 0.1, "kWh"],
+    "104": ["Voltage ", 2, "V"],
+    "105": ["Frequency ", 0.01, "Hz"],
+    "106": ["Volume ", 1, "µl"],
+    "107": ["Percentage ", 0.01, "%"],
+    "108": ["Time Unix time", 1, ""],
+    "109": ["Volume ", 0.1, "ltr"],
+    "110": ["Temperature diff. ", 0.01, "K"],
+    "111": ["Temperature diff. ", 1, "K"],
+    "112": ["Electrical current ", 1, "mA"],
+    "113": ["Percentage ", 1, "ppm"],
+    "114": ["Flow ", 0.1, "l/h"]
 }
