@@ -32,6 +32,16 @@
     - [access, 1]
     - [note, !!python/unicode 'Two hour counter']
 - !!python/object/new:genicontrol.dataitems.Dataitem
+  args: [!!python/unicode 'f_act', 2, 32, 1, !!python/unicode 'Actual control signal
+      (freq. or voltage) applied to pump']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [name, !!python/unicode 'f_act']
+    - [klass, 2]
+    - [id, 32]
+    - [access, 1]
+    - [note, !!python/unicode 'Actual control signal (freq. or voltage) applied to
+        pump']
+- !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'v_dc', 2, 27, 1, !!python/unicode 'Frequency converter
       DC link voltage']
   state: !!python/object/apply:collections.OrderedDict
@@ -49,14 +59,14 @@
     - [access, 1]
     - [note, !!python/unicode 'Temperature in electronics']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 't_m', 2, 29, 1, !!python/unicode 'Temp. in
+  args: [!!python/unicode 't_m', 2, 29, 1, !!python/unicode 'Temp. in motor or in
       frequency converter module']
   state: !!python/object/apply:collections.OrderedDict
   - - [name, !!python/unicode 't_m']
     - [klass, 2]
     - [id, 29]
     - [access, 1]
-    - [note, !!python/unicode 'Temp. in frequency converter module']
+    - [note, !!python/unicode 'Temp. in motor or in frequency converter module']
 - !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'i_mo', 2, 30, 1, !!python/unicode 'Motor current']
   state: !!python/object/apply:collections.OrderedDict
@@ -65,16 +75,6 @@
     - [id, 30]
     - [access, 1]
     - [note, !!python/unicode 'Motor current']
-- !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'f_act', 2, 32, 1, !!python/unicode 'Actual control signal
-      (freq. or voltage) applied to pump']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'f_act']
-    - [klass, 2]
-    - [id, 32]
-    - [access, 1]
-    - [note, !!python/unicode 'Actual control signal (freq. or voltage) applied to
-        pump']
 - !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'p', 2, 34, 1, !!python/unicode 'Power consumption']
   state: !!python/object/apply:collections.OrderedDict
@@ -116,49 +116,6 @@
     - [access, 1]
     - [note, !!python/unicode 'Actual pump flow']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'ref_loc', 2, 40, 1, !!python/unicode 'Local reference setting']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'ref_loc']
-    - [klass, 2]
-    - [id, 40]
-    - [access, 1]
-    - [note, !!python/unicode 'Local reference setting']
-- !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'p_max', 2, 41, 1, !!python/unicode 'Maximum power consumption']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'p_max']
-    - [klass, 2]
-    - [id, 41]
-    - [access, 1]
-    - [note, !!python/unicode 'Maximum power consumption']
-- !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'q_kn1', 2, 42, 1, !!python/unicode 'Minimum possible flow
-      at maximum power consum.']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'q_kn1']
-    - [klass, 2]
-    - [id, 42]
-    - [access, 1]
-    - [note, !!python/unicode 'Minimum possible flow at maximum power consum.']
-- !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'q_max', 2, 43, 1, !!python/unicode 'Maximum possible flow
-      at maximum power consum.']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'q_max']
-    - [klass, 2]
-    - [id, 43]
-    - [access, 1]
-    - [note, !!python/unicode 'Maximum possible flow at maximum power consum.']
-- !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'h_max', 2, 44, 1, !!python/unicode 'Maximum pump head (closed
-      valve)']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'h_max']
-    - [klass, 2]
-    - [id, 44]
-    - [access, 1]
-    - [note, !!python/unicode 'Maximum pump head (closed valve)']
-- !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'led_contr', 2, 47, 1, !!python/unicode 'Status of green
       and red indication diodes']
   state: !!python/object/apply:collections.OrderedDict
@@ -168,22 +125,6 @@
     - [access, 1]
     - [note, !!python/unicode 'Status of green and red indication diodes']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'ref_act', 2, 48, 1, !!python/unicode 'Actual reference']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'ref_act']
-    - [klass, 2]
-    - [id, 48]
-    - [access, 1]
-    - [note, !!python/unicode 'Actual reference']
-- !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'ref_norm', 2, 49, 1, !!python/unicode 'Normalized reference']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'ref_norm']
-    - [klass, 2]
-    - [id, 49]
-    - [access, 1]
-    - [note, !!python/unicode 'Normalized reference']
-- !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 't_w', 2, 58, 1, !!python/unicode 'Water temperature']
   state: !!python/object/apply:collections.OrderedDict
   - - [name, !!python/unicode 't_w']
@@ -192,23 +133,32 @@
     - [access, 1]
     - [note, !!python/unicode 'Water temperature']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'ref_att_loc', 2, 61, 1, !!python/unicode 'Local reference
-      attenuator input']
+  args: [!!python/unicode 'sys_fb', 2, 60, 1, !!python/unicode 'System feedback to 
+      closed loop control']
   state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'ref_att_loc']
+  - - [name, !!python/unicode 'sys_fb']
     - [klass, 2]
-    - [id, 61]
+    - [id, 60]
     - [access, 1]
-    - [note, !!python/unicode 'Local reference attenuator input']
+    - [note, !!python/unicode 'System feedback to closed loop control']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'sys_ref', 2, 62, 1, !!python/unicode 'Selected system control
-      loop reference']
+  args: [!!python/unicode 'r_min', 2, 76, 1, !!python/unicode 'Reference 
+      subinterval minimum']
   state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'sys_ref']
+  - - [name, !!python/unicode 'r_min']
     - [klass, 2]
-    - [id, 62]
+    - [id, 76]
     - [access, 1]
-    - [note, !!python/unicode 'Selected system control loop reference']
+    - [note, !!python/unicode 'Reference subinterval minimum']
+- !!python/object/new:genicontrol.dataitems.Dataitem
+  args: [!!python/unicode 'r_max', 2, 77, 1, !!python/unicode 'Reference 
+      subinterval maximum']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [name, !!python/unicode 'r_max']
+    - [klass, 2]
+    - [id, 77]
+    - [access, 1]
+    - [note, !!python/unicode 'Reference subinterval maximum']
 - !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'start_alarm1', 2, 64, 1, !!python/unicode 'Start Alarm
       No. 1']
@@ -281,31 +231,6 @@
     - [access, 1]
     - [note, !!python/unicode 'Actual Mode Status No. 3']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'loc_setup1', 2, 85, 1, !!python/unicode 'Local setup']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'loc_setup1']
-    - [klass, 2]
-    - [id, 85]
-    - [access, 1]
-    - [note, !!python/unicode 'Local setup']
-- !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'rem_setup1', 2, 87, 1, !!python/unicode 'Remote setup']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'rem_setup1']
-    - [klass, 2]
-    - [id, 87]
-    - [access, 1]
-    - [note, !!python/unicode 'Remote setup']
-- !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'extern_inputs', 2, 89, 1, !!python/unicode 'Logical value
-      of all external control inputs']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'extern_inputs']
-    - [klass, 2]
-    - [id, 89]
-    - [access, 1]
-    - [note, !!python/unicode 'Logical value of all external control inputs']
-- !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'contr_source', 2, 90, 1, !!python/unicode 'Currently active
       contr. source and priority']
   state: !!python/object/apply:collections.OrderedDict
@@ -315,14 +240,13 @@
     - [access, 1]
     - [note, !!python/unicode 'Currently active contr. source and priority']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'curve_no_ref', 2, 97, 1, !!python/unicode 'Selected curve
-      No. (LED bar indicator No.)']
+  args: [!!python/unicode 'ref_act', 2, 48, 1, !!python/unicode 'Actual reference']
   state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'curve_no_ref']
+  - - [name, !!python/unicode 'ref_act']
     - [klass, 2]
-    - [id, 97]
+    - [id, 48]
     - [access, 1]
-    - [note, !!python/unicode 'Selected curve No. (LED bar indicator No.)']
+    - [note, !!python/unicode 'Actual reference']
 - !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'unit_family', 2, 148, 1, !!python/unicode 'Unit family
       code']
@@ -448,15 +372,6 @@
     - [access, 2]
     - [note, !!python/unicode 'Resets pending alarm and attempts a restart']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'USER_BOOT', 3, 4, 2, !!python/unicode 'Returns to factory
-      setting. Pump must be stopped']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'USER_BOOT']
-    - [klass, 3]
-    - [id, 4]
-    - [access, 2]
-    - [note, !!python/unicode 'Returns to factory setting. Pump must be stopped']
-- !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'STOP', 3, 5, 2, !!python/unicode 'Stops the pump (Operation
       Mode Stop)']
   state: !!python/object/apply:collections.OrderedDict
@@ -536,24 +451,6 @@
     - [access, 2]
     - [note, !!python/unicode 'Pump running on max. curve (Oper. Mode Max)']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'LOCK_KEYS', 3, 30, 2, !!python/unicode 'Keys Setting is
-      Locked (buttons at pump disabled)']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'LOCK_KEYS']
-    - [klass, 3]
-    - [id, 30]
-    - [access, 2]
-    - [note, !!python/unicode 'Keys Setting is Locked (buttons at pump disabled)']
-- !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'UNLOCK_KEYS', 3, 31, 2, !!python/unicode 'Keys Setting
-      is Unlocked (buttons at pump enabled)']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'UNLOCK_KEYS']
-    - [klass, 3]
-    - [id, 31]
-    - [access, 2]
-    - [note, !!python/unicode 'Keys Setting is Unlocked (buttons at pump enabled)']
-- !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'REF_UP', 3, 33, 2, !!python/unicode 'Increases setpoint
       one step, like pressing + button']
   state: !!python/object/apply:collections.OrderedDict
@@ -572,15 +469,6 @@
     - [access, 2]
     - [note, !!python/unicode 'Decreases setpoint one step, like pressing - button']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'RESET_HIST', 3, 36, 2, !!python/unicode 'Resets kWh- and
-      h-counter. Pump must be stopped']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'RESET_HIST']
-    - [klass, 3]
-    - [id, 36]
-    - [access, 2]
-    - [note, !!python/unicode 'Resets kWh- and h-counter. Pump must be stopped']
-- !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'RESET_ALARM_LOG', 3, 51, 2, !!python/unicode 'Resets the
       alarm log']
   state: !!python/object/apply:collections.OrderedDict
@@ -598,24 +486,6 @@
     - [id, 52]
     - [access, 2]
     - [note, !!python/unicode 'Sets the pump in AutoAdapt Mode']
-- !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'NIGHT_REDUCT_E+', 3, 66, 2, !!python/unicode 'Enables Night
-      Reduction']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'NIGHT_REDUCT_E+']
-    - [klass, 3]
-    - [id, 66]
-    - [access, 2]
-    - [note, !!python/unicode 'Enables Night Reduction']
-- !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'NIGHT_REDUCT_D+', 3, 67, 2, !!python/unicode 'Disables
-      Night Reduction']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'NIGHT_REDUCT_D+']
-    - [klass, 3]
-    - [id, 67]
-    - [access, 2]
-    - [note, !!python/unicode 'Disables Night Reduction']
 - !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'unit_addr', 4, 46, 3, !!python/unicode 'GENIbus/GENIlink
       unit address']
@@ -671,15 +541,6 @@
     - [access, 3]
     - [note, !!python/unicode 'Proportional Pressure Mode maximum reference']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'ref_steps', 4, 87, 3, !!python/unicode 'No. of discrete
-      reference steps']
-  state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'ref_steps']
-    - [klass, 4]
-    - [id, 87]
-    - [access, 3]
-    - [note, !!python/unicode 'No. of discrete reference steps']
-- !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'ref_rem', 5, 1, 2, !!python/unicode 'GENIbus setpoint (Remote
       reference)']
   state: !!python/object/apply:collections.OrderedDict
@@ -689,14 +550,14 @@
     - [access, 2]
     - [note, !!python/unicode 'GENIbus setpoint (Remote reference)']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'ref_ir', 5, 2, 2, !!python/unicode 'GENIlink setpoint (curve
-      No.)']
+  args: [!!python/unicode 'ref_ir', 5, 2, 2, !!python/unicode 'GENIlink setpoint (IR
+      reference)']
   state: !!python/object/apply:collections.OrderedDict
   - - [name, !!python/unicode 'ref_ir']
     - [klass, 5]
     - [id, 2]
     - [access, 2]
-    - [note, !!python/unicode 'GENIlink setpoint (curve No.)']
+    - [note, !!python/unicode 'GENIlink setpoint (IR reference)']
 - !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'product_name', 7, 1, 1, !!python/unicode '']
   state: !!python/object/apply:collections.OrderedDict
@@ -745,4 +606,35 @@
     - [id, 9]
     - [access, 1]
     - [note, !!python/unicode '']
-
+- !!python/object/new:genicontrol.dataitems.Dataitem
+  args: [!!python/unicode 'power_16', 11, 50, 1, !!python/unicode 'Power consumption 16bit']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [name, !!python/unicode 'power_16']
+    - [klass, 11]
+    - [id, 50]
+    - [access, 1]
+    - [note, !!python/unicode 'Power consumption 16bit']
+- !!python/object/new:genicontrol.dataitems.Dataitem
+  args: [!!python/unicode 't_w_16', 11, 51, 1, !!python/unicode 'Medium temperature 16bit']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [name, !!python/unicode 't_w_16']
+    - [klass, 11]
+    - [id, 51]
+    - [access, 1]
+    - [note, !!python/unicode 'Medium temperature 16bit']
+- !!python/object/new:genicontrol.dataitems.Dataitem
+  args: [!!python/unicode 'diff_press_16', 11, 52, 1, !!python/unicode 'Differential pressure 16bit']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [name, !!python/unicode 'diff_press_16']
+    - [klass, 11]
+    - [id, 52]
+    - [access, 1]
+    - [note, !!python/unicode 'Differential pressure 16bit']
+- !!python/object/new:genicontrol.dataitems.Dataitem
+  args: [!!python/unicode 'flow_16', 11, 53, 1, !!python/unicode 'Actual pump flow 16bit']
+  state: !!python/object/apply:collections.OrderedDict
+  - - [name, !!python/unicode 'flow_16']
+    - [klass, 11]
+    - [id, 53]
+    - [access, 1]
+    - [note, !!python/unicode 'Actual pump flow 16bit']

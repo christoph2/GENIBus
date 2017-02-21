@@ -50,13 +50,13 @@ logger = logging.getLogger("GeniControl")
 
 
 dataReqValues = (
-    "act_mode1", "act_mode2", "act_mode3", "led_contr", "ref_act", "ref_inf", "ref_att_loc", "sys_ref", "h", "q",
-    "h_max", "q_max", "t_2hour_hi", "t_2hour_lo", "contr_source", "p", "energy_hi", "energy_lo", "speed_hi", "speed_lo",
-    "curve_no_ref", "alarm_code", "alarm_log_1", "alarm_log_2", "alarm_log_3", "alarm_log_4", "alarm_log_5"
+    "act_mode1", "act_mode2", "act_mode3", "led_contr", "ref_act", "h", "q", "t_w",
+    "t_2hour_hi", "t_2hour_lo", "contr_source", "p", "energy_hi", "energy_lo", "speed_hi", "speed_lo",
+    "sys_fb", "alarm_code", "alarm_log_1", "alarm_log_2", "alarm_log_3", "alarm_log_4", "alarm_log_5"
 )
 
 infoReqValues = (
-    "h", "q", "p", "speed_hi", "energy_hi"
+    "h", "q", "t_w", "p", "speed_hi", "energy_hi"
 )
 
 refSetValues = (
@@ -68,58 +68,49 @@ commandSetValues = (
 )
 
 DATA_POOL = { # This dictionary is used to 'simulate' communication.
-    defs.ADPUClass.PROTOCOL_DATA: {
+    defs.APDUClass.PROTOCOL_DATA: {
         Item(u"buf_len",            0x46, None),
         Item(u"unit_bus_mode",      0x4e, None)
     },
-    defs.ADPUClass.MEASURERED_DATA: {
-        Item(u"i_mo", 0x7a,          Info(0x80, None, None, None)),
-        #Item("t_mo", 0x42, Info(0x82, 0x15, 0x00, 0x64)),
-        #Item("p_hi", 0x39, Info(0x82, 0x09, 0x00, 0xfa)),
-        #Item("p_lo", 0x80, None),
-        #Item("i_rst_max_stop", 0xc8, Info(0x81, None, None, None)),
-        #Item("t_mo_stop", 0xb5, None),
-
+    defs.APDUClass.MEASURED_DATA: {
+        #      Name   value                   factor unit zero range
+        Item(u"t_2hour_hi", 0x03,        Info(0x82, 0x27, 0x00, 0x7f)),
+        Item(u"t_2hour_lo", 0x47,        Info(0xb0, None, None, None)),
+        Item(u"f_act", 0x57,             Info(0x82, 0x26, 0x00, 0x6e)),
+        Item(u"speed_hi", 0x09,          Info(0x83, 0x62, 0x00, 0x00)),
+        Item(u"speed_lo", 0x70,          Info(0xb0, None, None, None)),
+        Item(u"h", 0x25,                 Info(0x82, 0x19, 0x00, 0x14)),
+        Item(u"q", 0x03,                 Info(0x82, 0x17, 0x00, 0x64)),
+        Item(u"p", 0x0a,                 Info(0x82, 0x09, 0x00, 0x03)),
+        Item(u"t_w", 0x25,               Info(0x82, 0x15, 0x00, 0xfe)),
+        Item(u"t_e", 0x80,               Info(0x83, 0x15, 0x00, 0x00)),
+        Item(u"t_m", 0x2c,               Info(0x83, 0x15, 0x00, 0x00)),
+        Item(u"i_mo", 0x7a,              Info(0x82, 0x01, 0x00, 0x78)),
+        Item(u"v_dc", 0x80,              Info(0x82, 0x68, 0x00, 0xfe)),
+        Item(u"energy_hi", 0x00,         Info(0x82, 0x28, 0x00, 0xfe)),
+        Item(u"energy_lo", 0x14,         Info(0xb0, None, None, None)),
         Item(u"act_mode1", 0x08,         Info(0x81, None, None, None)),
         Item(u"act_mode2", 0x00,         Info(0x81, None, None, None)),
         Item(u"act_mode3", 0x10,         Info(0x81, None, None, None)),
         Item(u"led_contr", 0x01,         Info(0x81, None, None, None)),
-        Item(u"ref_act", 0xa5,           Info(0x82, 0x19, 0x00, 0x0b)),
-        Item(u"ref_inf", 0xfe,           Info(0x82, 0x1e, 0x00, 0x64)),
-        Item(u"ref_att_loc", 0xfe,       Info(0x82, 0x1e, 0x00, 0x64)),
-        Item(u"ref_loc", 0x80,           Info(0x80, None, None, None)),
+        Item(u"ref_act", 0xa5,           Info(0x82, 0x1e, 0x00, 0x64)),
+        Item(u"sys_fb", 0x25,            Info(0x82, 0x19, 0x00, 0x14)),
+        Item(u"r_min", 0x0d,             Info(0x82, 0x1e, 0x00, 0x64)),
+        Item(u"r_max", 0x46,             Info(0x82, 0x1e, 0x00, 0x64)),
+        Item(u"ref_loc", 0x80,           Info(0x80, 0x19, 0x00, 0x64)),
         Item(u"q_kn1", 0x80,             Info(0x82, 0x17, 0x00, 0x0c)),
         Item(u"alarm_code_disp", 0x80,   Info(0xa0, None, None, None)),
         Item(u"unit_version", 0x80,      Info(0x80, None, None, None)),
         Item(u"loc_setup1", 0x80,        Info(0x81, None, None, None)),
-        Item(u"rem_setup1", 0x80,        Info(0x81, None, None, None)),
         Item(u"stop_alarm1", 0x80,       Info(0x81, None, None, None)),
-        Item(u"t_w", 0x80,               Info(0x82, 0x15, 0x00, 0xfe)),
         Item(u"ind_alarm", 0x81,         Info(0x81, None, None, None)),
         Item(u"contr_ref", 0x80,         Info(0x80, None, None, None)),
-        Item(u"t_m", 0x80,               Info(0x82, 0x15, 0x00, 0xfe)),
         Item(u"surv_alarm1", 0x80,       Info(0x81, None, None, None)),
-        Item(u"t_e", 0x80,               Info(0x80, None, None, None)),
-        Item(u"v_dc", 0x80,              Info(0x82, 0x05, 0x00, 0x51)),
         Item(u"start_alarm1", 0x80,      Info(0x81, None, None, None)),
         Item(u"extern_inputs", 0x80,     Info(0x81, None, None, None)),
         Item(u"qsd_alarm1", 0x80,        Info(0x81, None, None, None)),
         Item(u"p_max",      0x80,        Info(0x82, 0x09, 0x00, 0x03)),
-        Item(u"sys_ref", 0x94,           Info(0x82, 0x19, 0x00, 0x0b)),
-        Item(u"h", 0x17,                 Info(0x82, 0x19, 0x00, 0x0b)),
-        Item(u"q", 0x26,                 Info(0x82, 0x17, 0x00, 0x0c)),
-        Item(u"h_max", 0xcd,             Info(0x82, 0x19, 0x00, 0x0b)),
-        Item(u"q_max", 0xb4,             Info(0x82, 0x17, 0x00, 0x0c)),
-        Item(u"f_act", 0x57,             Info(0x82, 0x26, 0x00, 0x47)),
-        Item(u"t_2hour_hi", 0x00,        Info(0x82, 0x27, 0x00, 0x7f)),
-        Item(u"t_2hour_lo", 0x26,        Info(0xb0, None, None, None)),
         Item(u"contr_source", 0x16,      Info(0x81, None, None, None)),
-        Item(u"p", 0x0a,                 Info(0x82, 0x09, 0x00, 0x03)),
-        Item(u"energy_hi", 0x00,         Info(0x82, 0x28, 0x00, 0x7f)),
-        Item(u"energy_lo", 0x00,         Info(0xb0, None, None, None)),
-        Item(u"speed_hi", 0x00,          Info(0x82, 0x13, 0x00, 0x2e)),
-        Item(u"speed_lo", 0x50,          Info(0xb0, None, None, None)),
-        Item(u"curve_no_ref", 0x0e,      Info(0x80, None, None, None)),
         Item(u"alarm_code", 0x00,        Info(0xa0, None, None, None)),
         Item(u"alarm_log_1", 0x20,       Info(0xa0, None, None, None)),
         Item(u"alarm_log_2", 0x39,       Info(0xa0, None, None, None)),
@@ -130,7 +121,14 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"unit_type", 0x01,         Info(0x80, None, None, None)),
     },
 
-    defs.ADPUClass.COMMANDS: {
+    defs.APDUClass.SIXTEENBIT_MEASURED_DATA: {
+        Item(u"t_w_16", 0x77,            Info(0x83, 0x54, 0x00, 0xfe)),
+        Item(u"flow_16", 0x01,           Info(0x83, 0x16, 0x00, 0x01)),
+        Item(u"diff_press_16", 0x06,     Info(0x83, 0x33, 0x00, 0x00)),
+        Item(u"power_16", 0x01,          Info(0x83, 0x07, 0x00, 0x01)),
+    },
+
+    defs.APDUClass.COMMANDS: {
         Item(u"RESET",           None,   Info(None, None, None, None)),
         Item(u"RESET_ALARM",     None,   Info(None, None, None, None)),
         Item(u"USER_BOOT",       None,   Info(None, None, None, None)),
@@ -155,28 +153,26 @@ DATA_POOL = { # This dictionary is used to 'simulate' communication.
         Item(u"NIGHT_REDUCT_E+", None,   Info(None, None, None, None)),
         Item(u"NIGHT_REDUCT_D+", None,   Info(None, None, None, None)),
     },
-    defs.ADPUClass.CONFIGURATION_PARAMETERS: {
+    defs.APDUClass.CONFIGURATION_PARAMETERS: {
         Item(u"unit_addr",         0xe7, Info(0xa0, None, None, None)),
         Item(u"group_addr",        0xf7, Info(0xa0, None, None, None)),
 
-        Item(u"h_const_ref_min",   0x17, Info(0x82, 0x19, 0x00, 0x0b)),
-        Item(u"h_const_ref_max",   0xd0, Info(0x82, 0x19, 0x00, 0x0b)),
-        Item(u"h_prop_ref_min",    0x17, Info(0x82, 0x19, 0x00, 0x0b)),
-        Item(u"h_prop_ref_max",    0xd0, Info(0x82, 0x19, 0x00, 0x0b)),
-
-        Item(u"ref_steps",         0x51, Info(0x80, None, None, None)),
+        Item(u"h_const_ref_min",   0x0d, Info(0x82, 0x1e, 0x00, 0x64)),
+        Item(u"h_const_ref_max",   0x46, Info(0x82, 0x1e, 0x00, 0x64)),
+        Item(u"h_prop_ref_min",    0x17, Info(0x82, 0x1e, 0x00, 0x64)),
+        Item(u"h_prop_ref_max",    0xd0, Info(0x82, 0x1e, 0x00, 0x64))
     },
 
-    defs.ADPUClass.REFERENCE_VALUES: {
-        Item(u"ref_rem",        0x10,    Info(0x80, None, None, None)),
+    defs.APDUClass.REFERENCE_VALUES: {
+        Item(u"ref_rem",        0x10,    Info(0x82, 0x1e, 0x00, 0x64)),
         Item(u"ref_ir",         0x20,    Info(0x82, 0x1e, 0x00, 0x64)),
     },
-    defs.ADPUClass.ASCII_STRINGS: {},
+    defs.APDUClass.ASCII_STRINGS: {},
 }
 
 
 def getParameterValue(name):
-    return [p.value for p in DATA_POOL[defs.ADPUClass.CONFIGURATION_PARAMETERS] if p.name == name][0]
+    return [p.value for p in DATA_POOL[defs.APDUClass.CONFIGURATION_PARAMETERS] if p.name == name][0]
 
 
 def createResponse(request):
@@ -206,9 +202,16 @@ def createResponse(request):
                 #print("KLASS: %s NAME: %s " % (klass, name))
                 value, info = dataItemsByName[name]
                 if ack == defs.OS_GET:
-                    apduLength += 1 # Currently only 8-bit data values.
-                    value = 0xff if value is None else value
-                    pdu.append(value)
+                    if klass == 11:
+                        apduLength += 2 # 16-bit data values.
+                        value1 = 0xff if value is None else value
+                        pdu.append(value1)
+                        value2 = 0xff if value is None else value
+                        pdu.append(value2)
+                    else:
+                        apduLength += 1 # 8-bit data values.
+                        value1 = 0xff if value is None else value
+                        pdu.append(value)
                 elif ack == defs.OS_INFO:
                     sif = info.head & 0b11
                     pdu.append(info.head)
@@ -282,7 +285,7 @@ def printTuple(data, name):
 
     print(")")
 
-def createStaticTelegrams():
+def createStaticTelegrams(destAddr):
     """
     Create telegrams for TestClient.
     """
@@ -305,12 +308,14 @@ def createStaticTelegrams():
             slices = [items]
         for idx, slice in enumerate(slices):
             slice = [n for n,i in slice]
-            if klass == defs.ADPUClass.MEASURERED_DATA:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), measurements = slice)
-            elif klass == defs.ADPUClass.REFERENCE_VALUES:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), references = slice)
-            elif klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), parameter = slice)
+            if klass == defs.APDUClass.MEASURED_DATA:
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
+            elif klass == defs.APDUClass.REFERENCE_VALUES:
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), references = slice)
+            elif klass == defs.APDUClass.CONFIGURATION_PARAMETERS:
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), parameter = slice)
+            elif klass == defs.APDUClass.SIXTEENBIT_MEASURED_DATA:
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
             printTuple(telegram, "INFO_REQUEST%u" % idx)
 
 import sys
@@ -327,9 +332,11 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
             dataItemsByName = dict([(a, (b, c)) for a, b ,c in DATA_POOL[apdu.klass]])
             for name, value in zip(datapoints, apdu.data):
                 _, (head, unit, zero, range) = dataItemsByName[name]
+                unitInfo = units.UnitTable[unit]
                 if head == 0x82:
-                    unitInfo = units.UnitTable[unit]
                     result.append(ValueType(name, unitInfo.unit, conversion.convertForward8(value, zero, range, unitInfo.factor)))
+                elif head == 0x83:
+                    result.append(ValueType(name, unitInfo.unit, conversion.Extended16(value, zero, range, unitInfo.factor)))
         elif valueInterpretation == defs.OS_INFO:
             idx = 0
             values = []
@@ -348,7 +355,7 @@ def rawInterpreteResponse(response, datapoints, valueInterpretation):
     return result
 
 def main():
-    createStaticTelegrams()
+    createStaticTelegrams(0x20)
     telegram = apdu.createGetValuesPDU(apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01), measurements = dataReqValues)
     testResponse(telegram, dataReqValues, defs.OS_GET)
 

@@ -43,7 +43,7 @@ else:
 import genicontrol.apdu as apdu
 import genicontrol.defs as defs
 from genicontrol.dissect import dissectResponse
-from genilib.utils import dumpHex
+from genilib.utils import dumpHex, makeWord
 import genicontrol.dataitems as dataitems
 
 class PendingRequestError(Exception): pass
@@ -51,8 +51,8 @@ class RequestTimeoutError(Exception): pass
 
 
 MAX_RETRIES             = 10
-CYCLE_TIME_STARTUP      = 0.1
-CYCLE_TIME_OPERATIONAL  = 0.5
+CYCLE_TIME_STARTUP      = 0.5
+CYCLE_TIME_OPERATIONAL  = 2
 
 class WorkerThread(threading.Thread):
     logger = logging.getLogger("GeniControl")
@@ -116,12 +116,11 @@ class RequestorThread(threading.Thread):
             self._model._concurrentAccess.acquire()
 
             if self.getState() == RequestorThread.STATE_IDLE:
-
                 self.logger.info('Trying to connect to %s.' % self._model._connection.displayName)
                 self._currentRetry += 1
                 self._model.connect(toDriver = True)
                 if self._model.connected:
-                     self.setState(RequestorThread.STATE_CONNECT_HL)
+                    self.setState(RequestorThread.STATE_CONNECT_HL)
             elif self.getState() == RequestorThread.STATE_CONNECT_HL:
                     self._model.connect(toDriver = False)
             elif self.getState() == RequestorThread.STATE_REQ_INFO:
@@ -129,28 +128,42 @@ class RequestorThread(threading.Thread):
                     req, self._requestedDatapoints = self._infoRequests.pop()
                     self._model.requestInfo(req)
                 else:
-                    #self.setState(RequestorThread.STATE_REQ_REFS)
-                    self.setState(RequestorThread.STATE_REQ_PARAM)
-                    self._requestedDatapoints = ('ref_rem', 'ref_ir')
-                    req = apdu.createGetValuesPDU(
-                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
-                        references = self._requestedDatapoints
-                    )
-                    #self.request(req)
+                     self.setState(RequestorThread.STATE_REQ_PARAM)
             elif self.getState() == RequestorThread.STATE_REQ_PARAM:
-                    self._requestedDatapoints = ('unit_addr', 'group_addr', 'h_const_ref_min', 'h_const_ref_max',
-                        'h_prop_ref_min', 'h_prop_ref_max', 'ref_steps'
-                    )
-                    req = apdu.createGetValuesPDU(
-                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
-                        parameter = self._requestedDatapoints
-                    )
-                    self.request(req)
+                self._requestedDatapoints = ('ref_rem', 'ref_ir')
+                req = apdu.createGetValuesPDU(defs.APDUClass.REFERENCE_VALUES,
+                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                    references = self._requestedDatapoints
+                )
+                self.request(req)
+                self._requestedDatapoints = ('ref_act', 'sys_fb', 'r_min', 'r_max'
+                )
+                req = apdu.createGetValuesPDU(defs.APDUClass.MEASURED_DATA, 
+                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                    measurements = self._requestedDatapoints
+                )
+                self.request(req)
+                self._requestedDatapoints = ('unit_addr', 'group_addr', 'h_const_ref_min', 'h_const_ref_max',
+                    'h_prop_ref_min', 'h_prop_ref_max'
+                )
+                req = apdu.createGetValuesPDU(defs.APDUClass.CONFIGURATION_PARAMETERS,
+                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                    parameter = self._requestedDatapoints
+                )
+                self.request(req)
             elif self.getState() == RequestorThread.STATE_OPERATIONAL:
-                self._requestedDatapoints = ('speed_hi','speed_lo', 'h', 'q', 'p', 'f_act', 'act_mode1', 'act_mode2', 'act_mode3',
+                self._requestedDatapoints = ('speed_hi', 'speed_lo', 'h', 'f_act', 
+                     'act_mode1', 'act_mode2', 'act_mode3',
                      'led_contr', 'contr_source', 'energy_hi', 'energy_lo', 't_2hour_hi', 't_2hour_lo'
                 )
-                req = apdu.createGetValuesPDU(
+                req = apdu.createGetValuesPDU(defs.APDUClass.MEASURED_DATA, 
+                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                    measurements = self._requestedDatapoints
+                )
+                self.request(req)
+                self._requestedDatapoints = ('power_16', 't_w_16', 'diff_press_16', 'flow_16'
+                )
+                req = apdu.createGetValuesPDU(defs.APDUClass.SIXTEENBIT_MEASURED_DATA, 
                     apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
                     measurements = self._requestedDatapoints
                 )
@@ -183,7 +196,6 @@ class RequestorThread(threading.Thread):
             else:
                 if self._model._commandRequested:
                     self._model._commandRequested = False
-                    #print("COMMAND_RESP", response)
                     return
 
                 if self.getState() == RequestorThread.STATE_CONNECT_HL:
@@ -195,16 +207,30 @@ class RequestorThread(threading.Thread):
                     result = interpreteInfoResponse(response, self._requestedDatapoints)
                     self._model.updateInfoDict(result)
                 elif self.getState() == RequestorThread.STATE_REQ_REFS:
-                    result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.REFERENCE_VALUES]
+                    result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.APDUClass.REFERENCE_VALUES]
                     self.setState(RequestorThread.STATE_REQ_PARAM)
-                    #self._model.updateReferences(result)
+                    self._model.updateReferences(result)
                 elif self.getState() == RequestorThread.STATE_REQ_PARAM:
-                    result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.CONFIGURATION_PARAMETERS]
-                    self._model.updateParameter(result)
-                    self.setState(RequestorThread.STATE_OPERATIONAL)
-                    self._cycleTime = CYCLE_TIME_OPERATIONAL
+                    for apdu in response.APDUs:
+                        if apdu.klass == defs.APDUClass.REFERENCE_VALUES:
+                            result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.APDUClass.REFERENCE_VALUES]
+                            self._model.updateReferences(result)
+                            self.setState(RequestorThread.STATE_REQ_PARAM)
+                        elif apdu.klass == defs.APDUClass.MEASURED_DATA:
+                            result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.APDUClass.MEASURED_DATA]
+                            self._model.updateReferences(result)
+                            self.setState(RequestorThread.STATE_REQ_PARAM)
+                        else:
+                            result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.APDUClass.CONFIGURATION_PARAMETERS]
+                            self._model.updateParameter(result)
+                            self.setState(RequestorThread.STATE_OPERATIONAL)
+                            self._cycleTime = CYCLE_TIME_OPERATIONAL
                 elif self.getState() == RequestorThread.STATE_OPERATIONAL:
-                    result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.ADPUClass.MEASURERED_DATA]
+                    for apdu in response.APDUs:
+                        if apdu.klass == defs.APDUClass.MEASURED_DATA:
+                            result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.APDUClass.MEASURED_DATA]
+                        elif apdu.klass == defs.APDUClass.SIXTEENBIT_MEASURED_DATA:
+                            result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.APDUClass.SIXTEENBIT_MEASURED_DATA]
                     self._model.updateMeasurements(result)
                 else:
                     pass
@@ -212,18 +238,18 @@ class RequestorThread(threading.Thread):
     def processConnectResp(self, response):
         unitAddress = response.sa
         for apdu in response.APDUs:
-            if apdu.klass == defs.ADPUClass.PROTOCOL_DATA:
+            if apdu.klass == defs.APDUClass.PROTOCOL_DATA:
                 df_buf_len, unit_bus_mode = apdu.data
-                self.setValue(defs.ADPUClass.PROTOCOL_DATA, 'buf_len', df_buf_len)
-                self.setValue(defs.ADPUClass.PROTOCOL_DATA, 'unit_bus_mode', unit_bus_mode)
-            elif apdu.klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
+                self.setValue(defs.APDUClass.PROTOCOL_DATA, 'buf_len', df_buf_len)
+                self.setValue(defs.APDUClass.PROTOCOL_DATA, 'unit_bus_mode', unit_bus_mode)
+            elif apdu.klass == defs.APDUClass.CONFIGURATION_PARAMETERS:
                 unit_addr, group_addr = apdu.data
-                self.setValue(defs.ADPUClass.CONFIGURATION_PARAMETERS, 'unit_addr', unit_addr)
-                self.setValue(defs.ADPUClass.CONFIGURATION_PARAMETERS, 'group_addr', group_addr)
-            elif apdu.klass == defs.ADPUClass.MEASURERED_DATA:
+                self.setValue(defs.APDUClass.CONFIGURATION_PARAMETERS, 'unit_addr', unit_addr)
+                self.setValue(defs.APDUClass.CONFIGURATION_PARAMETERS, 'group_addr', group_addr)
+            elif apdu.klass == defs.APDUClass.MEASURED_DATA:
                 unit_family, unit_type = apdu.data
-                self.setValue(defs.ADPUClass.MEASURERED_DATA, 'unit_family', unit_family)
-                self.setValue(defs.ADPUClass.MEASURERED_DATA, 'unit_type', unit_type)
+                self.setValue(defs.APDUClass.MEASURED_DATA, 'unit_family', unit_family)
+                self.setValue(defs.APDUClass.MEASURED_DATA, 'unit_type', unit_type)
         self.logger.info('OK, Connected.')
 
     def writeToServer(self, req):
@@ -269,7 +295,7 @@ def createInfoRequestTelegrams(destAddr):
         dd[key] = dict()
     for item in dataitems.DATAITEMS:
         name, klass, _id, _, _ = item
-        if klass not in (defs.ADPUClass.MEASURERED_DATA, defs.ADPUClass.REFERENCE_VALUES, defs.ADPUClass.CONFIGURATION_PARAMETERS):
+        if klass not in (defs.APDUClass.MEASURED_DATA, defs.APDUClass.REFERENCE_VALUES, defs.APDUClass.CONFIGURATION_PARAMETERS, defs.APDUClass.SIXTEENBIT_MEASURED_DATA):
             continue
         dd[klass][name] = _id
     for klass, items in dd.items():
@@ -280,14 +306,14 @@ def createInfoRequestTelegrams(destAddr):
             slices = [items]
         for idx, slice in enumerate(slices):
             slice = [n for n,i in slice]
-            if klass == defs.ADPUClass.MEASURERED_DATA:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
-            elif klass == defs.ADPUClass.REFERENCE_VALUES:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), references = slice)
-            elif klass == defs.ADPUClass.CONFIGURATION_PARAMETERS:
-                telegram = apdu.createGetInfoPDU(apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), parameter = slice)
-
-            #print("IR", telegram)
+            if klass == defs.APDUClass.MEASURED_DATA:
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
+            elif klass == defs.APDUClass.REFERENCE_VALUES:
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), references = slice)
+            elif klass == defs.APDUClass.CONFIGURATION_PARAMETERS:
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), parameter = slice)
+            elif klass == defs.APDUClass.SIXTEENBIT_MEASURED_DATA:
+                telegram = apdu.createGetInfoPDU(klass, apdu.Header(defs.SD_DATA_REQUEST, destAddr, 0x01), measurements = slice)
             result.append((telegram, slice, ))
     return result
 
@@ -318,7 +344,10 @@ def interpreteGetValueResponse(response, datapoints):
         result.setdefault(klass, {})
         values = []
         for idx, datapoint in enumerate(datapoints):
-            result[klass][datapoint] = apdu.data[idx]
+            if klass ==  defs.APDUClass.SIXTEENBIT_MEASURED_DATA: # Catch low and high Byte
+                result[klass][datapoint] = makeWord(apdu.data[2*idx], apdu.data[2*idx+1])
+            else:
+                result[klass][datapoint] = apdu.data[idx]
     return result
 
 def main():

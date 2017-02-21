@@ -29,41 +29,58 @@
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 import genicontrol.dataitems as dataitems
-from genicontrol.model.config import DataitemConfiguration
+from genicontrol.model.config import DataitemConfiguration, PARAMETERS_DICT, REFERENCES_DICT
 import genicontrol.controlids as controlids
-
+from genicontrol.view.refpanel import RefPanel
 
 class ParamPanel(ScrolledPanel):
     def __init__(self, parent):
         ScrolledPanel.__init__(self, parent = parent, id = wx.ID_ANY)
 
-        sizer = self.addValues()
-        self.btnParameters = wx.Button(self, label = "Set Parameters", id = controlids.ID_SET_REFERENCE_VALUES)
+        groupSizer = wx.BoxSizer(wx.HORIZONTAL)
 
+        sizer = self.addValues()
+
+        self.btnParameters = wx.Button(self, label = "Set Parameters", id = controlids.ID_SET_PARAMETER_VALUES)
         sizer.Add(self.btnParameters, ((len(DataitemConfiguration['Parameters']) + 1), 0), wx.DefaultSpan, wx.ALL | wx.ALIGN_LEFT, 5)
 
-        self.SetSizerAndFit(sizer)
+        groupSizer.Add(sizer)
+
+        self.SetSizerAndFit(groupSizer)
+        
         self.SetupScrolling()
 
-    def choiceButton(self, event):
-        self.setControlMode(event.EventObject.controlMode)
-
     def addValues(self):
-        sizer = wx.GridBagSizer(5, 45)
-        for idx, item in enumerate(DataitemConfiguration['Parameters']):
-            key, displayName, unit, controlID = item
-            ditem =  dataitems.PARAMETER[key]
+
+        sizer = wx.GridBagSizer(hgap=5, vgap=5)
+
+        for idx, item in enumerate(DataitemConfiguration['Parameters'], 1):
+            key, displayName, unit, controlIdValue, controlIdUnit = item
+
+            ditem = dataitems.PARAMETER[key]
 
             ctrl = wx.StaticText(self, wx.ID_ANY, displayName, style = wx.ALIGN_RIGHT)
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 0), wx.DefaultSpan, wx.ALL, 5)
 
-            ctrl = wx.TextCtrl(self, controlID, "n/a", style = wx.ALIGN_RIGHT)
+            ctrl = wx.TextCtrl(self, controlIdValue, "n/a", style = wx.ALIGN_RIGHT)
             ctrl.Enable(False)
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 1), wx.DefaultSpan, wx.ALL, 5)
 
-            ctrl = wx.StaticText(self, wx.ID_ANY, unit, style = wx.ALIGN_LEFT)
-            sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_LEFT, 5)
+            ctrl = wx.StaticText(self, controlIdUnit, unit, style = wx.ALIGN_RIGHT)
+            sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
+
         return sizer
 
+    def choiceButton(self, event):
+        self.setControlMode(event.EventObject.controlMode)
+
+    def setValue(self, item, value):
+        entry = PARAMETERS_DICT.get(item, None)
+        if entry:
+            _, _, controlID, _ = entry
+            if controlID:
+                control = self.FindWindowById(controlID)
+                if control:
+                    control.SetValue(str(value))

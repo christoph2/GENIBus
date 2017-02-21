@@ -101,9 +101,7 @@ class Connector(ConnectionIF):
         if self.connected:
              data = bytearray(self.sock.recv(BUF_SIZE))
              return data
-    @property
-    def displayName(self):
-        return "Arduino / TCP"
+
 """
 
 try:

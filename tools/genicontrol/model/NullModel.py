@@ -51,7 +51,7 @@ class NullModel(ModelIf.IModel):
     def initialize(self, quitEvent):
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues']):
             key, displayName, unit, controlIdValue, controlIdUnit = item
-            ditem =  dataitems.MEASUREMENT_VALUES[key]
+            ditem = dataitems.MEASUREMENT_VALUES[key]
             self.sendMessage('Measurements.%s' % key, ModelIf.DATA_NOT_AVAILABLE)
         self.sendMessage('References', ModelIf.DATA_NOT_AVAILABLE)
         self.dataAvailable = False
@@ -83,13 +83,15 @@ class NullModel(ModelIf.IModel):
 
     def connect(self, toDriver = True):
         if toDriver:
-             res = self._connection.connect()
-             self.connected = res
-             if not res:
-                  self._connection.close()
+            res = self._connection.connect()
+            self.connected = res
+            if not res:
+                self._connection.close()
         else:
-             pdu = apdu.createConnectRequestPDU(0x01)
-             self._modelThread.request(pdu)
+            #pdu = apdu.createSetRemotePDU(0x01)
+            #self._modelThread.request(pdu)
+            pdu = apdu.createConnectRequestPDU(0x01)
+            self._modelThread.request(pdu)
 
     def disconnect(self):
         pass
@@ -133,15 +135,15 @@ class NullModel(ModelIf.IModel):
         items = measurements.items()
         for key, value in items:
             if key in NullModel.SPECIAL_DATAPOINTS:
-                 # Special handling of bit fields.
-                 msg = "PUMP_STATUS.%s"
-                 datapoints = dissectPumpStatus(key, value)
-                 for key, value in datapoints:
-                        self.sendMessage(msg % key, str(value))
+                # Special handling of bit fields.
+                msg = "PUMP_STATUS.%s"
+                datapoints = dissectPumpStatus(key, value)
+                for key, value in datapoints:
+                    self.sendMessage(msg % key, str(value))
             elif key.endswith('_lo'):
                 continue
             elif key.endswith('_hi'):
-                info = self.getInfo(defs.ADPUClass.MEASURERED_DATA, key)
+                info = self.getInfo(defs.APDUClass.MEASURED_DATA, key)
                 scalingInfo = getScalingInfo(info)
                 key = key[ : key.index('_hi')]
                 value_hi = value
@@ -151,24 +153,29 @@ class NullModel(ModelIf.IModel):
                     scaledValue = "%.2f" % self.roundValue(conversion.convertExtended16(value, info.zero, info.range, scalingInfo.factor))
                 else:
                     scaledValue = "%.2f" % self.roundValue(conversion.convertForward16(value, info.zero, info.range, scalingInfo.factor))
-                #print("16Bit", key, value_hi, value_lo, value, info.zero, info.range, scalingInfo.factor, scaledValue)
-                msg = "MEASURERED_DATA.%s"
+                msg = "MEASURED_DATA.%s"
                 self.sendMessage(msg % key + '_hi', scaledValue)
+            elif key.endswith('_16'): # 0x83 Extended Precision 16bit
+                info = self.getInfo(defs.APDUClass.SIXTEENBIT_MEASURED_DATA, key)
+                scalingInfo = getScalingInfo(info)
+                if key == 't_w_16':
+                    scaledValue = "%.2f" % self.roundValue(conversion.convertExtended16(value, info.zero, info.range, scalingInfo.factor))
+                    scaledValue = str(float(scaledValue) - 273.15) # Kelvin -> Celsius
+                else:
+                    scaledValue = "%.2f" % self.roundValue(conversion.convertExtended16(value, info.zero, info.range, scalingInfo.factor))
+                msg = "SIXTEENBIT_MEASURED_DATA.%s"
+                self.sendMessage(msg % key, scaledValue)
             else:
-                info = self.getInfo(defs.ADPUClass.MEASURERED_DATA, key)
+                info = self.getInfo(defs.APDUClass.MEASURED_DATA, key)
                 scalingInfo = getScalingInfo(info)
                 if value == 0xff:
                     scaledValue = 'n/a'
                 else:
                     if (info.head & 0x02) == 2:
-                        if key is 'q': # Magna3 delivers wrong flow range of 100
-                            scaledValue = "%.2f" % self.roundValue(conversion.convertForward8(value, info.zero, 127, scalingInfo.factor))
-                        else:
-                            scaledValue = "%.2f" % self.roundValue(conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor))
-                    #print("8Bit", key, value, info.zero, info.range, scalingInfo.factor, scaledValue)
+                        scaledValue = "%.2f" % self.roundValue(conversion.convertForward8(value, info.zero, info.range, scalingInfo.factor))
                     else:
                         scaledValue = str(value) # Unscaled.
-                    msg = "MEASURERED_DATA.%s"
+                    msg = "MEASURED_DATA.%s"
                 self.sendMessage(msg % key, scaledValue)
 
     def updateReferences(self, references):
@@ -177,15 +184,15 @@ class NullModel(ModelIf.IModel):
             self.sendMessage(msg % key, value)
 
     def updateParameter(self, parameter):
+        items = parameter.items()
         msg = "CONFIGURATION_PARAMETERS.%s"
-        for key, value in parameter.items():
+        for key, value in items:
             self.sendMessage(msg % key, value)
 
     def setValue(self, group, datapoint, value):
         self._setValueLock.acquire()
-        #print("SetValue - Group: %s DP: % s Value: %s" % (defs.ADPUClass.toString(group), datapoint, value))
         self._valueDict.setdefault(group, dict())[datapoint] = value
-        self.sendMessage("%s.%s" % (defs.ADPUClass.toString(group), datapoint), value)
+        self.sendMessage("%s.%s" % (defs.APDUClass.toString(group), datapoint), value)
         self._setValueLock.release()
 
     def getValue(self, group, datapoint):
@@ -195,7 +202,7 @@ class NullModel(ModelIf.IModel):
         return group.get(datapoint, None)
 
     def getUnitAddress(self):
-        return self.getValue(defs.ADPUClass.CONFIGURATION_PARAMETERS, 'unit_addr')
+        return self.getValue(defs.APDUClass.CONFIGURATION_PARAMETERS, 'unit_addr')
 
     def updateInfoDict(self, di):
         for key, value in di.items():
@@ -209,8 +216,8 @@ class NullModel(ModelIf.IModel):
 def createDataDictionary():
     ddict = dict()
 
-    # klasses = [x for x in dir(defs.ADPUClass) if x.upper() and not x.startswith('__')]
-    klasses = defs.ADPUClass.nameDict.keys()
+    # klasses = [x for x in dir(defs.APDUClass) if x.upper() and not x.startswith('__')]
+    klasses = defs.APDUClass.nameDict.keys()
     for klass in klasses:
         ddict[klass] = {}
     return ddict

@@ -1,17 +1,11 @@
 #!/bin/env/python
 # -*- coding: utf-8 -*-
 
-from distutils.core import setup, Extension
+from distutils.core import setup,Extension
 from glob import glob
 from setuptools import find_packages
-import sys
 
-VER = sys.version_info.major, sys.version_info.minor
-
-if VER < (3, 4):
-    REQS = ['importlib', 'mako', 'pyserial', 'pyyaml', 'enum']	# 'enum' backport needed.
-else:
-    REQS = ['importlib', 'mako', 'pyserial', 'pyyaml']
+print(find_packages())
 
 setup(
     name = 'genicontrol',
@@ -26,7 +20,7 @@ setup(
                 'GeniControl = genicontrol.GeniControl:main',
         ],
     },
-    install_requires = REQS,
+    install_requires = ['importlib', 'mako', 'pyserial', 'pyyaml', 'enum',],
     data_files = [
             ('genicontrol/config', glob('genicontrol/config/*.*')),
     ],

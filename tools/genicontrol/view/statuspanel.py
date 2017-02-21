@@ -41,31 +41,33 @@ class StatusPanel(wx.Panel):
         groupSizer = wx.StaticBoxSizer(staticBox)
 
         sizer = self.addValues()
-        ctrl = wx.StaticText(self, wx.ID_ANY, 'Performance', style = wx.ALIGN_RIGHT)
-        sizer.Add(ctrl, (7, 0), wx.DefaultSpan, wx.ALL, 5)
 
-        self.gauge = wx.Gauge(parent = self, range = 100, id = controlids.ID_MEAS_PERFORMACE)
+        ctrl = wx.StaticText(self, wx.ID_ANY, 'Performance', style = wx.ALIGN_RIGHT)
+        sizer.Add(ctrl, (len(DataitemConfiguration['MeasurementValues']), 0), wx.DefaultSpan, wx.ALL, 5)
+        self.gauge = wx.Gauge(parent = self, range = 100, id = controlids.ID_MEAS_PERFORMANCE, size=(140, 20))
         self.gauge.SetToolTip(wx.ToolTip('n/a'))
         self.gauge.SetValue(0)
-        sizer.Add(self.gauge, (7, 1), (1, 1), wx.ALL, 5)
-
+        sizer.Add(self.gauge, (len(DataitemConfiguration['MeasurementValues']), 1), (1, 1), wx.ALL, 5)
         ctrl = wx.StaticText(self, wx.ID_ANY, '%', style = wx.ALIGN_RIGHT)
-        sizer.Add(ctrl, (7, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
+        sizer.Add(ctrl, (len(DataitemConfiguration['MeasurementValues']), 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_LEFT, 5)
 
         groupSizer.Add(sizer)
         self.SetSizerAndFit(groupSizer)
+
         self.itemDict = dict([(x[0], x[1:]) for x in DataitemConfiguration['MeasurementValues']])
 
-
     def addValues(self):
-        sizer = wx.GridBagSizer(5, 45)
+
+        sizer = wx.GridBagSizer(hgap=5, vgap=5)
 
         self.ledControl = LEDPanel(self)
         sizer.Add(self.ledControl, (0, 0), wx.DefaultSpan, wx.ALL, 5)
 
         for idx, item in enumerate(DataitemConfiguration['MeasurementValues'], 1):
             key, displayName, unit, controlIdValue, controlIdUnit = item
-            ditem =  dataitems.MEASUREMENT_VALUES[key]
+
+            ditem = dataitems.MEASUREMENT_VALUES[key]
+
             if key in ('f_act', 'unit_family', 'unit_type'):
                 continue
 
@@ -78,8 +80,26 @@ class StatusPanel(wx.Panel):
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 1), wx.DefaultSpan, wx.ALL, 5)
 
-            ctrl = wx.StaticText(self, controlIdUnit, unit, style = wx.ALIGN_RIGHT)
-            sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
+            ctrl = wx.StaticText(self, controlIdUnit, unit, style = wx.ALIGN_LEFT)
+            sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_LEFT, 5)
+
+        for idx, item in enumerate(DataitemConfiguration['MeasurementValues16bit'], 1):
+            key, displayName, unit, controlIdValue, controlIdUnit = item
+        
+            ditem = dataitems.SIXTEENBIT_MEASUREMENT_VALUES[key]
+        
+            ctrl = wx.StaticText(self, wx.ID_ANY, displayName, style = wx.ALIGN_RIGHT)
+            ctrl.SetToolTip(wx.ToolTip(ditem.note))
+            sizer.Add(ctrl, (idx, 3), wx.DefaultSpan, wx.ALL, 5)
+        
+            ctrl = wx.TextCtrl(self, controlIdValue, "n/a", style = wx.ALIGN_RIGHT)
+            ctrl.Enable(False)
+            ctrl.SetToolTip(wx.ToolTip(ditem.note))
+            sizer.Add(ctrl, (idx, 4), wx.DefaultSpan, wx.ALL, 5)
+        
+            ctrl = wx.StaticText(self, controlIdUnit, unit, style = wx.ALIGN_LEFT)
+            sizer.Add(ctrl, (idx, 5), wx.DefaultSpan, wx.ALL | wx.ALIGN_LEFT, 5)
+
         return sizer
 
     def setValue(self, key, value):
@@ -222,12 +242,12 @@ class PumpOperationPanel(wx.Panel):
         return self.FindWindowById(ctrlId)
 
     def setValue(self, item ,value):
+        #print("setValue - Pump", self,item,value)
         ctrl = self.getControlByName(item)
         ctrl.SetValue(value)
 
-
     def addValues(self):
-        sizer = wx.GridBagSizer(5, 45)
+        sizer = wx.GridBagSizer(hgap=5, vgap=5)
         for idx, item in enumerate(self.items):
             displayName, unit, controlID = item
 
@@ -240,6 +260,7 @@ class PumpOperationPanel(wx.Panel):
             #ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 1), wx.DefaultSpan, wx.ALL, 5)
 
-            ctrl = wx.StaticText(self, wx.ID_ANY, unit, style = wx.ALIGN_RIGHT)
-            sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
+            ctrl = wx.StaticText(self, wx.ID_ANY, unit, style = wx.ALIGN_LEFT)
+            sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_LEFT, 5)
+
         return sizer

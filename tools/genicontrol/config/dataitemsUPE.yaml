@@ -101,13 +101,13 @@
     - [access, 1]
     - [note, !!python/unicode 'Power consumption']
 - !!python/object/new:genicontrol.dataitems.Dataitem
-  args: [!!python/unicode 'speed_hi', 2, 35, 1, !!python/unicode 'Pump speed hi']
+  args: [!!python/unicode 'speed', 2, 35, 1, !!python/unicode 'Pump speed']
   state: !!python/object/apply:collections.OrderedDict
-  - - [name, !!python/unicode 'speed_hi']
+  - - [name, !!python/unicode 'speed']
     - [klass, 2]
     - [id, 35]
     - [access, 1]
-    - [note, !!python/unicode 'Pump speed_hi']
+    - [note, !!python/unicode 'Pump speed']
 - !!python/object/new:genicontrol.dataitems.Dataitem
   args: [!!python/unicode 'h', 2, 37, 1, !!python/unicode 'Actual pump head']
   state: !!python/object/apply:collections.OrderedDict

@@ -57,7 +57,7 @@ def initialize(appName):
     try:
         canonicalLocale = locale.setlocale(locale.LC_ALL, (locale.normalize(shortLocale), 'UTF8'))
     except locale.Error:
-        canonicalLocale = locale.setlocale(locale.LC_ALL, '')
+        canonicalLocale = locale.setlocale(locale.LC_ALL, 'C')
     glob= globals()
     glob['shortLocale'] = shortLocale
     glob['codepage'] = codepage

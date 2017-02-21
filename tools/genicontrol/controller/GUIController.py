@@ -35,7 +35,6 @@ import genicontrol.defs as defs
 from genicontrol.scaling import getScalingInfo
 from genicontrol.controller.ControllerIF import IController
 import genicontrol.dd as dd
-#from wx.lib.pubsub import Publisher as Publisher
 from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
 from wx import CallAfter
@@ -64,7 +63,7 @@ class ControllerThread(threading.Thread):
         self.setName(self.__class__.__name__)
         Publisher.subscribe(self.onInfoUpdate, 'INFO')
         Publisher.subscribe(self.onPumpStatus, 'PUMP_STATUS')
-        for klass in defs.ADPUClass.nameDict.values():
+        for klass in defs.APDUClass.nameDict.values():
             Publisher.subscribe(self.onChange, klass)
 
         controls = self._view.notebook.mcPanel.controlsPanel
@@ -85,11 +84,11 @@ class ControllerThread(threading.Thread):
                 break
 
         try:
-            unitFamily = self._model.getValue(defs.ADPUClass.MEASURERED_DATA, 'unit_family')
-            unitType = self._model.getValue(defs.ADPUClass.MEASURERED_DATA, 'unit_type')
+            unitFamily = self._model.getValue(defs.APDUClass.MEASURED_DATA, 'unit_family')
+            unitType = self._model.getValue(defs.APDUClass.MEASURED_DATA, 'unit_type')
         except KeyError:
             self.logger.debug("unitFamily and unitType not available.")
-        #unitVersion = self._model.getValue(defs.ADPUClass.MEASURERED_DATA, 'unit_version') ## TODO: Fixme!
+        #unitVersion = self._model.getValue(defs.APDUClass.MEASURED_DATA, 'unit_version') ## TODO: Fixme!
         else:
             with file(dd.getDeviceFilePath(unitFamily, unitType, 1), 'w') as outf:
                 #outf.write(str(self.infoRecords))
@@ -107,7 +106,6 @@ class ControllerThread(threading.Thread):
                 #self._view.notebook.infoPanel.setItem(key, svalue.physEntity, str(svalue.factor), svalue.unit, str(value.zero), str(value.range))
                 #self._view.notebook.infoPanel.grid.Fit()
         self.infoRecords.append(values)
-        #print(msg.data.values())
 
     def onChange(self, msg):
         if len(msg.topic) == 1:
@@ -115,15 +113,17 @@ class ControllerThread(threading.Thread):
             item = ''
         else:
             group, item = msg.topic
-        #print("Update: '%s' Item:'%s' Data: '%s'" % (group, item, msg.data))
-        if group == 'MEASURERED_DATA':
+        if (group == ('MEASURED_DATA') or ('MEASURED_DATA_16BIT')):
             CallAfter(self._view.notebook.mcPanel.setValue, item, msg.data)
             #self._view.notebook.mcPanel.setValue(item, msg.data)
+        if (group == 'CONFIGURATION_PARAMETERS'):
+            CallAfter(self._view.notebook.paramPanel.setValue, item, msg.data)
+        if (group == 'REFERENCE_VALUES'):
+            CallAfter(self._view.notebook.refPanel.setValue, item, msg.data)
 
     def onPumpStatus(self, msg):
         group, item = msg.topic
         data = msg.data
-        #print("***PS***", item, data)
         CallAfter(self._view.notebook.mcPanel.setPumpStatus, item, data)
         #self._view.notebook.mcPanel.setPumpStatus(item, data)
 

@@ -44,7 +44,6 @@ ID_RB_TCPIP     = wx.NewId()
 ID_RB_SERIAL    = wx.NewId()
 ID_RB_SIM       = wx.NewId()
 
-
 def fixIP(addr):
     return '.'.join(["%3s" % j for j in [i.strip() for i in addr.split('.')]])
 
@@ -62,44 +61,43 @@ class OptionsView(wx.Dialog):
     def createControls(self):
         sizer = wx.BoxSizer(wx.VERTICAL)
 
-        gridsizer = wx.FlexGridSizer(3 ,2)
-
         staticBox = wx.StaticBoxSizer(wx.StaticBox(self, -1, " Driver " ), wx.VERTICAL )
+
+        gridsizer = wx.FlexGridSizer(3 ,2)
 
         self.radioTcp = wx.RadioButton(self, ID_RB_TCPIP, " Arduino / TCP ", style = wx.RB_GROUP)
         gridsizer.Add(self.radioTcp, 1, wx.ALL, 5)
 
         gridsizer2 = wx.FlexGridSizer(3 ,2)
-
         self.addr = createLabeledControl(self, 'Server IP-address', ipaddrctrl.IpAddrCtrl(self, id = ID_IPADDR), gridsizer2, self.tcpControls)
         self.mask = createLabeledControl(self, 'Subnet-mask', ipaddrctrl.IpAddrCtrl(self, id = ID_SUBNET),gridsizer2, self.tcpControls )
         self.port = createLabeledControl(self, 'Server-port', TextCtrl(self, id = ID_PORT, mask = '#####'), gridsizer2, self.tcpControls)
-
         gridsizer.Add(gridsizer2, 1, wx.ALL | wx.ALIGN_TOP, 5)
 
         self.radioSerial = wx.RadioButton(self, ID_RB_SERIAL, " Serial Port ")
         gridsizer.Add(self.radioSerial, 1, wx.ALL, 5)
 
-        boxSizer3 = wx.BoxSizer(wx.HORIZONTAL)
-
-        self.serialPort = createLabeledControl(self, 'Port', TextCtrl(self, id = ID_SERIAL_PORT), boxSizer3, self.serialControls)
-
-        gridsizer.Add(boxSizer3, 1, wx.ALL, 5)
+        boxSizer2 = wx.BoxSizer(wx.HORIZONTAL)
+        self.serialPort = createLabeledControl(self, 'Port', TextCtrl(self, id = ID_SERIAL_PORT), boxSizer2, self.serialControls)
+        gridsizer.Add(boxSizer2, 1, wx.ALL, 5)
 
         self.radioSim = wx.RadioButton(self, ID_RB_SIM, " Simulator ")
         gridsizer.Add(self.radioSim, 1, wx.ALL, 5)
-
         st = wx.StaticText(self, label = '')
         gridsizer.Add(st, 1, wx.ALL, 5)
 
         staticBox.Add(gridsizer)
         sizer.Add(staticBox, 1, wx.ALL, 5)
 
-        boxSizer2 = wx.BoxSizer(wx.HORIZONTAL)
+        boxSizer3 = wx.BoxSizer(wx.HORIZONTAL)
+        self.poll = createLabeledControl(self, 'Polling interval', TextCtrl(self, id = ID_POLL, mask = '#####'), boxSizer3)
+        sizer.Add(boxSizer3, flag=wx.ALL, border=5)
 
-        self.poll = createLabeledControl(self, 'Polling interval', TextCtrl(self, id = ID_POLL, mask = '#####'), boxSizer2)
-
-        sizer.Add(boxSizer2)
+        self.logfile = wx.CheckBox(self, label='Write logfile')
+        self.logfile.SetValue(False)
+        sizer.Add(self.logfile, flag=wx.ALL, border=5)
+  
+        self.Bind(wx.EVT_CHECKBOX, self.SetLogWrite, self.logfile)
 
         line = wx.StaticLine(self, style = wx.LI_HORIZONTAL)
         sizer.Add(line, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
@@ -123,11 +121,18 @@ class OptionsView(wx.Dialog):
 
         self.SetSizerAndFit(sizer)
 
+    def SetLogWrite(self, event):
+        if self.logfile.GetValue():
+            self.logfilewanted = '1'
+        else:
+            self.logfilewanted = '0'
+
     def setInitialValues(self):
         self.addr.SetValue(self.model.getServerIP())
         self.mask.SetValue(self.model.getSubnetMask())
         self.port.SetValue(self.model.getServerPort())
         self.poll.SetValue(self.model.getPollingInterval())
+        self.logfile.SetValue(bool(self.model.getLogFileWanted()))
         self.serialPort.SetValue(self.model.getSerialPort())
         self.driver = self.model.getNetworkDriver()
         if self.driver == 0:
@@ -195,6 +200,7 @@ class OptionsModel(object):
         self.subnetMask = fixIP(self.config.get('network', 'subnetmask'))
         self.serverport = str(self.config.get('network', 'serverport'))
         self.pollinginterval = str(self.config.get('general', 'pollinginterval'))
+        self.logfilewanted = self.config.get('general', 'logfilewanted')
         self.serialPort = self.config.get('serial', 'serialport')
 
     def save(self):
@@ -215,6 +221,12 @@ class OptionsModel(object):
     def getPollingInterval(self):
         return self.pollinginterval
 
+    def getLogFileWanted(self):
+        if self.logfilewanted == '1':
+            return True
+        else:
+            return False
+
     def getSerialPort(self):
         return self.serialPort
 
@@ -232,6 +244,12 @@ class OptionsModel(object):
 
     def setPollingInterval(self, value):
         self.config.set('general', 'pollinginterval', value)
+
+    def setLogFileWanted(self, value):
+        if value:
+            self.config.set('general', 'logfilewanted', '1')
+        else:
+            self.config.set('general', 'logfilewanted', '0')
 
     def setSerialPort(self, value):
         self.config.set('serial', 'serialport', value)
@@ -256,6 +274,7 @@ class OptionsController(object):
             self.model.setSubnetMask(self.view.mask.GetValue())
             self.model.setServerPort(self.view.port.GetValue())
             self.model.setPollingInterval(self.view.poll.GetValue())
+            self.model.setLogFileWanted(self.view.logfile.GetValue())
             self.model.setNetworkDriver(self.view.driver)
             self.model.setSerialPort(self.view.serialPort.GetValue())
 

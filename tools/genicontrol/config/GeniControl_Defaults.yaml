@@ -3,6 +3,7 @@
   - general
   - !!python/tuple
     - !!python/tuple [pollinginterval, 2]
+    - !!python/tuple [logfilewanted, '0']
 - !!python/tuple
   - network
   - !!python/tuple

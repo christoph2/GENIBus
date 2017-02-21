@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 ##
 ##
 ## Grundfos GENIBus Library for Arduino.
@@ -62,36 +63,36 @@ def createGetInfoAPDU(klass, datapoints):
     result = createAPDUNoData(klass, defs.OS_INFO, datapoints)
     return result
 
-def createGetMeasuredDataAPDU(datapoints):
-    result = createAPDUNoData(defs.ADPUClass.MEASURERED_DATA, defs.OS_GET, datapoints)
+def createGetMeasuredDataAPDU(klass, datapoints):
+    result = createAPDUNoData(klass, defs.OS_GET, datapoints)
     return result
 
 def createSetCommandsAPDU(datapoints):
-    result = createAPDUNoData(defs.ADPUClass.COMMANDS, defs.OS_SET, datapoints)
+    result = createAPDUNoData(defs.APDUClass.COMMANDS, defs.OS_SET, datapoints)
     return result
 
 def createGetReferencesAPDU(datapoints):
-    result = createAPDUNoData(defs.ADPUClass.REFERENCE_VALUES, defs.OS_GET, datapoints)
+    result = createAPDUNoData(defs.APDUClass.REFERENCE_VALUES, defs.OS_GET, datapoints)
     return result
 
 def createSetReferencesAPDU(datapoints):
-    result = createAPDU(defs.ADPUClass.REFERENCE_VALUES, defs.OS_SET, datapoints)
+    result = createAPDU(defs.APDUClass.REFERENCE_VALUES, defs.OS_SET, datapoints)
     return result
 
 def createGetStringsAPDU(datapoints):
-    result = createAPDUNoData(defs.ADPUClass.ASCII_STRINGS, defs.OS_GET, datapoints)
+    result = createAPDUNoData(defs.APDUClass.ASCII_STRINGS, defs.OS_GET, datapoints)
     return result
 
 def createGetParametersAPDU(datapoints):
-    result = createAPDUNoData(defs.ADPUClass.CONFIGURATION_PARAMETERS, defs.OS_GET, datapoints)
+    result = createAPDUNoData(defs.APDUClass.CONFIGURATION_PARAMETERS, defs.OS_GET, datapoints)
     return result
 
 def createSetParametersAPDU(datapoints):
-    result = createAPDU(defs.ADPUClass.CONFIGURATION_PARAMETERS, defs.OS_SET, datapoints)
+    result = createAPDU(defs.APDUClass.CONFIGURATION_PARAMETERS, defs.OS_SET, datapoints)
     return result
 
 def createGetProtocolDataAPDU(datapoints):
-    result = createAPDUNoData(defs.ADPUClass.PROTOCOL_DATA, defs.OS_GET, datapoints)
+    result = createAPDUNoData(defs.APDUClass.PROTOCOL_DATA, defs.OS_GET, datapoints)
     return result
 
 
@@ -102,7 +103,7 @@ class Header(object):
         self.sourceAddr = sourceAddr
 
 
-def createGetValuesPDU(header, protocolData = [], measurements = [], parameter = [], references = [], strings = []):
+def createGetValuesPDU(klass, header, protocolData = [], measurements = [], parameter = [], references = [], strings = []):
     if not isinstance(header, Header):
         raise TypeError('Parameter "header" must be of type "Header".')
 
@@ -114,7 +115,7 @@ def createGetValuesPDU(header, protocolData = [], measurements = [], parameter =
         length += len(protocolAPDU)
 
     if measurements:
-        measurementAPDU = createGetMeasuredDataAPDU(measurements)
+        measurementAPDU = createGetMeasuredDataAPDU(klass, measurements)
         length += len(measurementAPDU)
 
     if parameter:
@@ -185,24 +186,26 @@ def createSetValuesPDU(header, parameter = [], references = []):
     return arr
 
 
-def createGetInfoPDU(header, measurements = [], parameter = [], references = []):
+def createGetInfoPDU(klass, header, measurements = [], parameter = [], references = []):
     ## To be defensive, at most 15 datapoints should be requested at once (min.frame length = 70 bytes).
     if not isinstance(header, Header):
         raise TypeError('Parameter "header" must be of type "Header".')
 
     length = 2
     pdu = []
-
     if measurements:
-        measurementsAPDU = createGetInfoAPDU(defs.ADPUClass.MEASURERED_DATA, measurements)
+        if klass == defs.APDUClass.MEASURED_DATA:
+            measurementsAPDU = createGetInfoAPDU(defs.APDUClass.MEASURED_DATA, measurements)
+        if klass == defs.APDUClass.SIXTEENBIT_MEASURED_DATA:
+            measurementsAPDU = createGetInfoAPDU(defs.APDUClass.SIXTEENBIT_MEASURED_DATA, measurements)
         length += len(measurementsAPDU)
 
     if parameter:
-        parameterAPDU = createGetInfoAPDU(defs.ADPUClass.CONFIGURATION_PARAMETERS, parameter)
+        parameterAPDU = createGetInfoAPDU(defs.APDUClass.CONFIGURATION_PARAMETERS, parameter)
         length += len(parameterAPDU)
 
     if references:
-        referencesAPDU = createGetInfoAPDU(defs.ADPUClass.REFERENCE_VALUES, references)
+        referencesAPDU = createGetInfoAPDU(defs.APDUClass.REFERENCE_VALUES, references)
         length += len(referencesAPDU)
 
     pdu.extend([header.startDelimiter, length, header.destAddr, header.sourceAddr])
@@ -248,13 +251,19 @@ def createSetCommandsPDU(header, commands):
 
 
 def createConnectRequestPDU(sourceAddr):
-    return createGetValuesPDU(
+    return createGetValuesPDU(2,
         Header(defs.SD_DATA_REQUEST, defs.CONNECTION_REQ_ADDR, sourceAddr),
         measurements =  ['unit_family', 'unit_type'],
-        protocolData =  ['buf_len',  'unit_bus_mode'],
-        parameter =     ['unit_addr',   'group_addr']
+        protocolData =  ['buf_len', 'unit_bus_mode'],
+        parameter =     ['unit_addr',  'group_addr']
     )
 
+
+def createSetRemotePDU(sourceAddr):
+    return createSetCommandsPDU(
+        Header(defs.SD_DATA_REQUEST, 0x20, sourceAddr),
+        commands = ['REMOTE']
+    )
 
 if __name__ == '__main__':
     print(dumpHex(createConnectRequestPDU(0x01)))
@@ -265,6 +274,6 @@ if __name__ == '__main__':
 
     print(dumpHex(createGetInfoPDU(
         Header(defs.SD_DATA_REQUEST, 0x20, 0x01),
-        measurements = ['h', 'q', 'p', 'speed_hi', 'energy_hi'])
+        measurements = ['h', 'q', 'p', 't_w', 'speed_hi', 'energy_hi'])
     ))
 

@@ -5,9 +5,7 @@ import unittest
 import genicontrol.dataitems as dataitems
 from genicontrol.simu.Simulator import DATA_POOL
 
-@unittest.skip
 class TestDataPool(unittest.TestCase):
-    @unittest.skip
     def testCorrectnessOfKeys(self):
         for klass, values in DATA_POOL.items():
             di = dataitems.DATAITEMS_FOR_CLASS[klass]

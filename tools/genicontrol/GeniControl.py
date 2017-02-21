@@ -31,7 +31,6 @@ import logging
 import os
 import Queue
 import wx
-#from wx.lib.pubsub import Publisher as Publisher
 from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
 from wx import CallAfter
@@ -55,6 +54,8 @@ TR = wx.GetTranslation
 
 class BusmonitorPanel(wx.Panel):
     def __init__(self, parent):
+        self.config = Config("GeniControl")
+        self.logfilewanted = self.config.get('general', 'logfilewanted')
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
         sizer = wx.BoxSizer()
         font = wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL)
@@ -63,7 +64,8 @@ class BusmonitorPanel(wx.Panel):
         sizer.Add(self.tc, 1, wx.EXPAND | wx.GROW)
         self.SetSizerAndFit(sizer)
         self.logFile =  None
-        self.logFile =  file(os.path.join(defs.CONFIGURATION_DIRECTORY, 'busmonitor.log'), 'w')
+        if self.logfilewanted == '1':
+            self.logFile =  file(os.path.join(defs.CONFIGURATION_DIRECTORY, 'busmonitor.log'), 'w')
 
     def __del__(self):
         if self.logFile:

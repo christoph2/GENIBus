@@ -57,7 +57,7 @@ class Config(object):
             try:
                 cls._lock.acquire()
                 if not hasattr(cls, '_instance'):
-                    cls.configurationFile = absConfigurationFilename(".%s.cfg" % applicationName)
+                    cls.configurationFile = absConfigurationFilename("%s.cfg" % applicationName)
                     print("Configuration file is '{0}'.".format(cls.configurationFile))
                     cls.defaultsFile = "%s_Defaults.yaml" % applicationName
                     print("Defaults file is '{0}'.".format(cls.defaultsFile))

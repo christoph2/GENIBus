@@ -24,7 +24,7 @@ class TestCase(unittest.TestCase):
         self.assertEqual(pos, (0, 0))
 
     def testGetSerial(self):
-        self.assertEqual(self.config.get('serial', 'serialport'), '/dev/ttyUSB0')
+        self.assertEqual(self.config.get('serial', 'serialport'), '')
 
     def testGetServerIp(self):
         self.assertEqual(self.config.get('network', 'serverip'), '192.168.178.22')

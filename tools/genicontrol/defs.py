@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -75,12 +74,12 @@ ACC_WR  = 0x03
 
 
 ##
-## ADPU classes.
+## APDU classes.
 ##
-class ADPUClass:
+class APDUClass:
     PROTOCOL_DATA                       = 0
     BUS_DATA                            = 1
-    MEASURERED_DATA                     = 2
+    MEASURED_DATA                       = 2
     COMMANDS                            = 3
     CONFIGURATION_PARAMETERS            = 4
     REFERENCE_VALUES                    = 5
@@ -89,14 +88,14 @@ class ADPUClass:
     MEMORY_BLOCKS                       = 8
     EMBEDDED_PUDS                       = 9
     DATA_OBJECTS                        = 10
-    SIXTEENBIT_MEASURERED_DATA          = 11
+    SIXTEENBIT_MEASURED_DATA            = 11
     SIXTEENBIT_CONFIGURATION_PARAMETERS = 12
     SIXTEENBIT_REFERENCE_VALUES         = 13
 
     nameDict = {
         PROTOCOL_DATA                       : 'PROTOCOL_DATA',
         BUS_DATA                            : 'BUS_DATA',
-        MEASURERED_DATA                     : 'MEASURERED_DATA',
+        MEASURED_DATA                       : 'MEASURED_DATA',
         COMMANDS                            : 'COMMANDS',
         CONFIGURATION_PARAMETERS            : 'CONFIGURATION_PARAMETERS',
         REFERENCE_VALUES                    : 'REFERENCE_VALUES',
@@ -105,31 +104,31 @@ class ADPUClass:
         MEMORY_BLOCKS                       : 'MEMORY_BLOCKS',
         EMBEDDED_PUDS                       : 'EMBEDDED_PUDS',
         DATA_OBJECTS                        : 'DATA_OBJECTS',
-        SIXTEENBIT_MEASURERED_DATA          : 'SIXTEENBIT_MEASURERED_DATA',
+        SIXTEENBIT_MEASURED_DATA            : 'SIXTEENBIT_MEASURED_DATA',
         SIXTEENBIT_CONFIGURATION_PARAMETERS : 'SIXTEENBIT_CONFIGURATION_PARAMETERS',
         SIXTEENBIT_REFERENCE_VALUES         : 'SIXTEENBIT_REFERENCE_VALUES',
     }
 
     @staticmethod
     def toString(klass):
-        return ADPUClass.nameDict[klass]
+        return APDUClass.nameDict[klass]
 
 
 NICE_CLASS_NAMES = {
-    ADPUClass.PROTOCOL_DATA:                       "Protocol Data",
-    ADPUClass.BUS_DATA:                            "Bus Data",
-    ADPUClass.MEASURERED_DATA:                     "Measurered Data",
-    ADPUClass.COMMANDS:                            "Commands",
-    ADPUClass.CONFIGURATION_PARAMETERS:            "Configuration Parameters",
-    ADPUClass.REFERENCE_VALUES:                    "Reference Values",
-    ADPUClass.TEST_DATA:                           "Test Data",
-    ADPUClass.ASCII_STRINGS:                       "ASCII Strings",
-    ADPUClass.MEMORY_BLOCKS:                       "Memory Blocks",
-    ADPUClass.EMBEDDED_PUDS:                       "Embedded PDUs",
-    ADPUClass.DATA_OBJECTS:                        "Data Objects",
-    ADPUClass.SIXTEENBIT_MEASURERED_DATA:          "16Bit Measurered Data",
-    ADPUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS: "16Bit Configuration Parameters",
-    ADPUClass.SIXTEENBIT_REFERENCE_VALUES:         "16Bit Reference Values",
+    APDUClass.PROTOCOL_DATA:                       "Protocol Data",
+    APDUClass.BUS_DATA:                            "Bus Data",
+    APDUClass.MEASURED_DATA:                       "Measured Data",
+    APDUClass.COMMANDS:                            "Commands",
+    APDUClass.CONFIGURATION_PARAMETERS:            "Configuration Parameters",
+    APDUClass.REFERENCE_VALUES:                    "Reference Values",
+    APDUClass.TEST_DATA:                           "Test Data",
+    APDUClass.ASCII_STRINGS:                       "ASCII Strings",
+    APDUClass.MEMORY_BLOCKS:                       "Memory Blocks",
+    APDUClass.EMBEDDED_PUDS:                       "Embedded PDUs",
+    APDUClass.DATA_OBJECTS:                        "Data Objects",
+    APDUClass.SIXTEENBIT_MEASURED_DATA:            "16Bit Measured Data",
+    APDUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS: "16Bit Configuration Parameters",
+    APDUClass.SIXTEENBIT_REFERENCE_VALUES:         "16Bit Reference Values",
 }
 
 
@@ -137,12 +136,13 @@ NICE_CLASS_NAMES = {
 ## Supported classes (by GeniControl).
 ##
 SUPPORTED_CLASSES = (
-    ADPUClass.PROTOCOL_DATA,
-    ADPUClass.MEASURERED_DATA,
-    ADPUClass.COMMANDS,
-    ADPUClass.CONFIGURATION_PARAMETERS,
-    ADPUClass.REFERENCE_VALUES,
-    ADPUClass.ASCII_STRINGS
+    APDUClass.PROTOCOL_DATA,
+    APDUClass.MEASURED_DATA,
+    APDUClass.COMMANDS,
+    APDUClass.CONFIGURATION_PARAMETERS,
+    APDUClass.REFERENCE_VALUES,
+    APDUClass.ASCII_STRINGS,
+    APDUClass.SIXTEENBIT_MEASURED_DATA
 )
 
 
@@ -162,23 +162,23 @@ ACK_ID_UNKNOWN          = 2
 ACK_OPERATION_ILLEGAL   = 3
 
 ##
-## Valid operations for ADPU classes.
+## Valid operations for APDU classes.
 ##
 CLASS_CAPABILITIES = {
-    ADPUClass.PROTOCOL_DATA                       : (OS_GET, ),
-    ADPUClass.BUS_DATA                            : (OS_GET, ),
-    ADPUClass.MEASURERED_DATA                     : (OS_GET, OS_INFO),
-    ADPUClass.COMMANDS                            : (OS_SET, OS_INFO),
-    ADPUClass.CONFIGURATION_PARAMETERS            : (OS_GET, OS_SET, OS_INFO),
-    ADPUClass.REFERENCE_VALUES                    : (OS_GET, OS_SET, OS_INFO),
-    ADPUClass.TEST_DATA                           : (OS_GET, OS_SET, ),
-    ADPUClass.ASCII_STRINGS                       : (OS_GET, ),
-    ADPUClass.MEMORY_BLOCKS                       : (OS_GET, OS_SET, ),
-    ADPUClass.EMBEDDED_PUDS                       : (OS_GET, ),
-    ADPUClass.DATA_OBJECTS                        : (OS_GET, OS_SET, ),
-    ADPUClass.SIXTEENBIT_MEASURERED_DATA          : (OS_GET, OS_INFO),
-    ADPUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS : (OS_GET, OS_SET, OS_INFO),
-    ADPUClass.SIXTEENBIT_REFERENCE_VALUES         : (OS_GET, OS_SET, OS_INFO),
+    APDUClass.PROTOCOL_DATA                       : (OS_GET, ),
+    APDUClass.BUS_DATA                            : (OS_GET, ),
+    APDUClass.MEASURED_DATA                       : (OS_GET, OS_INFO),
+    APDUClass.COMMANDS                            : (OS_SET, OS_INFO),
+    APDUClass.CONFIGURATION_PARAMETERS            : (OS_GET, OS_SET, OS_INFO),
+    APDUClass.REFERENCE_VALUES                    : (OS_GET, OS_SET, OS_INFO),
+    APDUClass.TEST_DATA                           : (OS_GET, OS_SET, ),
+    APDUClass.ASCII_STRINGS                       : (OS_GET, ),
+    APDUClass.MEMORY_BLOCKS                       : (OS_GET, OS_SET, ),
+    APDUClass.EMBEDDED_PUDS                       : (OS_GET, ),
+    APDUClass.DATA_OBJECTS                        : (OS_GET, OS_SET, ),
+    APDUClass.SIXTEENBIT_MEASURED_DATA            : (OS_GET, OS_INFO),
+    APDUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS : (OS_GET, OS_SET, OS_INFO),
+    APDUClass.SIXTEENBIT_REFERENCE_VALUES         : (OS_GET, OS_SET, OS_INFO)
 }
 
 class IllegalOperationError(Exception): pass

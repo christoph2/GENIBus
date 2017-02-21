@@ -25,12 +25,21 @@
 ## 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 ##
 ##
+#import math
+#import genicontrol.conversion as conversion
 
 import wx
+import math
+import threading
+import genicontrol.apdu as apdu
+import genicontrol.defs as defs
+#import genicontrol.model.ModelIf as ModelIf
 from wx.lib.scrolledpanel import ScrolledPanel
 import genicontrol.dataitems as dataitems
-from genicontrol.model.config import DataitemConfiguration
+from genicontrol.model.config import DataitemConfiguration, REFERENCES_DICT
 import genicontrol.controlids as controlids
+from decimal import Decimal as D
+from genilib.utils import dumpHex, makeWord
 
 CONTROL_MODE_AUTOADAPT              = 0
 CONTROL_MODE_CONSTANT_PRESSURE      = 1
@@ -46,10 +55,26 @@ CONTROL_MODE_MAP = {
 
 class RefPanel(ScrolledPanel):
     def __init__(self, parent):
+        self._concurrentAccess = threading.Lock()
+        self._refsetRequested = False
+        self._connected = False
+        #self._model = model
+
         ScrolledPanel.__init__(self, parent = parent, id = wx.ID_ANY)
 
         sizer = self.addValues()
-        self.btnSetRefValues = wx.Button(self, label = "Set Reference Values", id = controlids.ID_SET_REFERENCE_VALUES)
+
+        self.btnSetRefValues = wx.Button(self, label = "Set Reference Value", id = controlids.ID_SET_REFERENCE_VALUES)
+        sizer.Add(self.btnSetRefValues, (len(DataitemConfiguration['ReferenceValues']), 0), wx.DefaultSpan, wx.ALL | wx.ALIGN_LEFT, 5)
+        self.btnSetRefValues.Bind(wx.EVT_BUTTON, self.onRefSet)
+
+        height = ['1.5', '2.0', '2.5', '3.0', '3.5']
+        self.cb = wx.ComboBox(self, choices=height, style=wx.CB_READONLY)
+        self.cb.SetSelection(2)
+        sizer.Add(self.cb, (len(DataitemConfiguration['ReferenceValues']), 1), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
+        self.cb.Bind(wx.EVT_COMBOBOX, self.onSelect)
+        ctrl = wx.StaticText(self, wx.ID_ANY, "m", style = wx.ALIGN_RIGHT)
+        sizer.Add(ctrl, (len(DataitemConfiguration['ReferenceValues']), 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_LEFT, 5)
 
         static_box = wx.StaticBox(self, label = 'Control-Mode')
         groupSizer = wx.StaticBoxSizer(static_box, wx.HORIZONTAL)
@@ -62,7 +87,7 @@ class RefPanel(ScrolledPanel):
         btnAutoAdapt = wx.ToggleButton(self, label = 'AutoAdapt', id = controlids.ID_CMD_AUTOADAPT)
         self.btnBgColor = btnAutoAdapt.GetBackgroundColour()
         groupSizer.Add(btnAutoAdapt, 1, wx.ALL, 5)
-        self.setControlMode(CONTROL_MODE_AUTOADAPT)
+        self.setControlMode(CONTROL_MODE_CONSTANT_PRESSURE)
 
         btnConstPressure.controlMode = CONTROL_MODE_CONSTANT_PRESSURE
         btnPropPressure.controlMode = CONTROL_MODE_PROPORTIONAL_PRESSURE
@@ -74,32 +99,40 @@ class RefPanel(ScrolledPanel):
         self.Bind(wx.EVT_TOGGLEBUTTON, self.choiceButton, btnConstFreq)
         self.Bind(wx.EVT_TOGGLEBUTTON, self.choiceButton, btnAutoAdapt)
 
-        sizer.Add(groupSizer, (len(DataitemConfiguration['ReferenceValues']), 0), (1, 3), wx.ALL | wx.GROW, 5)
-        sizer.Add(self.btnSetRefValues, ((len(DataitemConfiguration['ReferenceValues']) + 1), 0), wx.DefaultSpan, wx.ALL | wx.ALIGN_RIGHT, 5)
+        sizer.Add(groupSizer, ((len(DataitemConfiguration['ReferenceValues']) + 1), 0), (1, 3), wx.ALL | wx.GROW, 5)
 
         self.SetSizerAndFit(sizer)
         self.SetupScrolling()
+
+        self.itemDict = dict([(x[0], x[1:]) for x in DataitemConfiguration['ReferenceValues']])
 
     def choiceButton(self, event):
         self.setControlMode(event.EventObject.controlMode)
 
     def addValues(self):
-        sizer = wx.GridBagSizer(5, 45)
+
+        sizer = wx.GridBagSizer(hgap=5, vgap=5)
+
         for idx, item in enumerate(DataitemConfiguration['ReferenceValues']):
-            key, displayName, unit = item
-            ditem =  dataitems.REFERENCES[key]
+            key, displayName, unit, controlIdValue, controlIdUnit = item
+
+            if key in ('ref_rem', 'ref_ir'):
+                ditem = dataitems.REFERENCES[key]
+            else:
+                ditem = dataitems.MEASUREMENT_VALUES[key]
 
             ctrl = wx.StaticText(self, wx.ID_ANY, displayName, style = wx.ALIGN_RIGHT)
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 0), wx.DefaultSpan, wx.ALL, 5)
 
-            ctrl = wx.TextCtrl(self, wx.ID_ANY, "n/a", style = wx.ALIGN_RIGHT)
+            ctrl = wx.TextCtrl(self, controlIdValue, "n/a", style = wx.ALIGN_RIGHT)
             ctrl.Enable(False)
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 1), wx.DefaultSpan, wx.ALL, 5)
 
-            ctrl = wx.StaticText(self, wx.ID_ANY, unit, style = wx.ALIGN_LEFT)
+            ctrl = wx.StaticText(self, controlIdUnit, unit, style = wx.ALIGN_LEFT)
             sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_LEFT, 5)
+
         return sizer
 
     def getButtonForMode(self, mode):
@@ -119,6 +152,57 @@ class RefPanel(ScrolledPanel):
 
     def getControlMode(self):
         return self._mode
+
+    def setValue(self, item, value):
+        entry = REFERENCES_DICT.get(item, None)
+        if entry:
+            _, _, controlID, _ = entry
+            if controlID:
+                control = self.FindWindowById(controlID)
+                if control:
+                    control.SetValue(str(value))
+
+    def onSelect(self, event):
+        cb_item = event.GetSelection()
+        height = self.cb.GetValue()
+        #print("cb_item:", cb_item, height)
+
+    def writeToServer(self, req):
+        self._model.writeToServer(req)
+        #self._connection.write(req)
+        #self._controller.trace(False, req)
+
+    def calculateSetpoint(self, x, sys_fb_min, sys_fb_max, r_min, r_max):
+#ref_rem = ((height-sys_fb_min)/(sys_fb_max - sys_fb_min)*254 - r_min)*254/(r_max-r_min)
+        return ((D(x) - D(sys_fb_min)) / (D(sys_fb_max) - D(sys_fb_min)) * D('254.0') - D(r_min)) * D('254.0') / (D(r_max) - D(r_min))
+
+    def setRefValue(self):
+        x = self.cb.GetValue()
+        #print("setRefValue height:", x)
+        for idx, item in enumerate(DataitemConfiguration['ReferenceValues'], 1):
+            key, displayName, unit, controlIdValue, controlIdUnit = item
+            _, _, controlID, _ =  self.itemDict[key]
+            control = self.FindWindowById(controlID)
+            if key == 'r_min': r_min = control.GetValue()
+            if key == 'r_max': r_max = control.GetValue()
+            sys_fb_min = u'0'
+            sys_fb_max = u'20'
+        return self.calculateSetpoint(x, sys_fb_min, sys_fb_max, r_min, r_max)
+
+    def onRefSet(self, event):
+        self._concurrentAccess.acquire()
+        self._refsetRequested = True
+        req = apdu.createSetValuesPDU(
+            apdu.Header(defs.SD_DATA_REQUEST, 0x20, 0x01),
+            references = [('ref_rem', int(self.setRefValue()))]
+        )
+        #print("onRefSet:", int(self.setRefValue()), dumpHex(req))
+        self.writeToServer(req)
+        self._concurrentAccess.release()
+
+#    uint8 ref_rem_set[13] = {0x27,0x09,0x20,0x01,0x03,0x81,0x07,0x05,0x82,0x01,0x53,0x00,0x00};
+#    uint8 ref_ir_set[13]  = {0x27,0x06,0x20,0x01,0x05,0x82,0x02,0x53,0x00,0x00}; //2,5m
+#    uint8 ref_ir_set[13]  = {0x27,0x06,0x20,0x01,0x05,0x82,0x02,0x70,0x00,0x00}; //3,0m
 
 """
     def toggledbutton(self, event):

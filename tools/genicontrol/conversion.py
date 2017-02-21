@@ -32,7 +32,7 @@ logger = logging.getLogger("GeniControl")
 
 from decimal import Decimal as D
 
-locale.setlocale(locale.LC_ALL, '')
+locale.setlocale(locale.LC_ALL, 'C')
 
 def asLocaleString(value):
     return locale.format("%0.2f", value, True)

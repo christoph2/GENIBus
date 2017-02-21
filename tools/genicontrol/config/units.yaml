@@ -442,6 +442,12 @@
   - - [physEntity, !!python/unicode 'Energy pr vol.']
     - [factor, 1]
     - [unit, "Wh/m\xB3"]
+84: !!python/object/new:genicontrol.units.Unit
+  args: [!!python/unicode 'Temperature', 0.01, "K"]
+  state: !!python/object/apply:collections.OrderedDict
+  - - [physEntity, !!python/unicode 'Temperature']
+    - [factor, 0.01]
+    - [unit, "K"]
 98: !!python/object/new:genicontrol.units.Unit
   args: [!!python/unicode 'Rot. velocity', 1, !!python/unicode 'rpm']
   state: !!python/object/apply:collections.OrderedDict

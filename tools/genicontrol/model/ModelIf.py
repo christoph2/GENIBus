@@ -29,7 +29,6 @@
 
 import abc
 import logging
-#from wx.lib.pubsub import Publisher as Publisher
 from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
 
@@ -47,8 +46,7 @@ class IModel(object):
         #self.initialize()
 
     def sendMessage(self, topic, data):
-        if data:
-            self._pub.sendMessage(topic, data)
+        self._pub.sendMessage(topic, data)
 
     def subscribe(self, topic, callback):
         self._pub.subscribe(topic = topic, listener = callback)

@@ -27,7 +27,7 @@
 ##
 
 __all__ = [
-    'COMMANDS', 'MEASUREMENT_VALUES', 'REFERENCES', 'PARAMETER', 'STRINGS',
+    'COMMANDS', 'MEASUREMENT_VALUES', 'REFERENCES', 'PARAMETER', 'STRINGS', 'SIXTEENBIT_MEASUREMENT_VALUES',
     'DATAITEMS', 'defs.ACC_RO', 'defs.ACC_WO', 'defs.ACC_WR'
 ]
 
@@ -51,6 +51,7 @@ MEASUREMENT_VALUES = dict()
 REFERENCES = dict()
 PARAMETER = dict()
 STRINGS = dict()
+SIXTEENBIT_MEASUREMENT_VALUES = dict()
 
 
 for item in DATAITEMS:
@@ -66,35 +67,40 @@ for item in DATAITEMS:
         addToDict(REFERENCES, item.name, item)
     elif item.klass == 7:
         addToDict(STRINGS, item.name, item)
+    elif item.klass == 11:
+        addToDict(SIXTEENBIT_MEASUREMENT_VALUES, item.name, item)
 
 DATAITEMS_FOR_CLASS = {
-    defs.ADPUClass.PROTOCOL_DATA:               PROTOCOL_DATA,
-    defs.ADPUClass.MEASURERED_DATA:             MEASUREMENT_VALUES,
-    defs.ADPUClass.COMMANDS:                    COMMANDS,
-    defs.ADPUClass.CONFIGURATION_PARAMETERS:    PARAMETER,
-    defs.ADPUClass.REFERENCE_VALUES:            REFERENCES,
-    defs.ADPUClass.ASCII_STRINGS:               STRINGS
+    defs.APDUClass.PROTOCOL_DATA:               PROTOCOL_DATA,
+    defs.APDUClass.MEASURED_DATA:               MEASUREMENT_VALUES,
+    defs.APDUClass.COMMANDS:                    COMMANDS,
+    defs.APDUClass.CONFIGURATION_PARAMETERS:    PARAMETER,
+    defs.APDUClass.REFERENCE_VALUES:            REFERENCES,
+    defs.APDUClass.ASCII_STRINGS:               STRINGS,
+    defs.APDUClass.SIXTEENBIT_MEASURED_DATA:    SIXTEENBIT_MEASUREMENT_VALUES
 }
 
 dataItemsById = lambda klass : dict([(v[2], (k, v[3], v[4])) for k, v in DATAITEMS_FOR_CLASS[klass].items()])
 dataItemsByName = lambda klass : dict([(k, (v[2], v[3], v[4])) for k, v in DATAITEMS_FOR_CLASS[klass].items()])
 
 DATAITEMS_BY_ID = {
-    defs.ADPUClass.PROTOCOL_DATA:               dataItemsById(defs.ADPUClass.PROTOCOL_DATA),
-    defs.ADPUClass.MEASURERED_DATA:             dataItemsById(defs.ADPUClass.MEASURERED_DATA),
-    defs.ADPUClass.COMMANDS:                    dataItemsById(defs.ADPUClass.COMMANDS),
-    defs.ADPUClass.CONFIGURATION_PARAMETERS:    dataItemsById(defs.ADPUClass.CONFIGURATION_PARAMETERS),
-    defs.ADPUClass.REFERENCE_VALUES:            dataItemsById(defs.ADPUClass.REFERENCE_VALUES),
-    defs.ADPUClass.ASCII_STRINGS:               dataItemsById(defs.ADPUClass.ASCII_STRINGS),
+    defs.APDUClass.PROTOCOL_DATA:               dataItemsById(defs.APDUClass.PROTOCOL_DATA),
+    defs.APDUClass.MEASURED_DATA:               dataItemsById(defs.APDUClass.MEASURED_DATA),
+    defs.APDUClass.COMMANDS:                    dataItemsById(defs.APDUClass.COMMANDS),
+    defs.APDUClass.CONFIGURATION_PARAMETERS:    dataItemsById(defs.APDUClass.CONFIGURATION_PARAMETERS),
+    defs.APDUClass.REFERENCE_VALUES:            dataItemsById(defs.APDUClass.REFERENCE_VALUES),
+    defs.APDUClass.ASCII_STRINGS:               dataItemsById(defs.APDUClass.ASCII_STRINGS),
+    defs.APDUClass.SIXTEENBIT_MEASURED_DATA:    dataItemsById(defs.APDUClass.SIXTEENBIT_MEASURED_DATA)
 }
 
 DATAITEMS_BY_NAME = {
-    defs.ADPUClass.PROTOCOL_DATA:               dataItemsByName(defs.ADPUClass.PROTOCOL_DATA),
-    defs.ADPUClass.MEASURERED_DATA:             dataItemsByName(defs.ADPUClass.MEASURERED_DATA),
-    defs.ADPUClass.COMMANDS:                    dataItemsByName(defs.ADPUClass.COMMANDS),
-    defs.ADPUClass.CONFIGURATION_PARAMETERS:    dataItemsByName(defs.ADPUClass.CONFIGURATION_PARAMETERS),
-    defs.ADPUClass.REFERENCE_VALUES:            dataItemsByName(defs.ADPUClass.REFERENCE_VALUES),
-    defs.ADPUClass.ASCII_STRINGS:               dataItemsByName(defs.ADPUClass.ASCII_STRINGS),
+    defs.APDUClass.PROTOCOL_DATA:               dataItemsByName(defs.APDUClass.PROTOCOL_DATA),
+    defs.APDUClass.MEASURED_DATA:               dataItemsByName(defs.APDUClass.MEASURED_DATA),
+    defs.APDUClass.COMMANDS:                    dataItemsByName(defs.APDUClass.COMMANDS),
+    defs.APDUClass.CONFIGURATION_PARAMETERS:    dataItemsByName(defs.APDUClass.CONFIGURATION_PARAMETERS),
+    defs.APDUClass.REFERENCE_VALUES:            dataItemsByName(defs.APDUClass.REFERENCE_VALUES),
+    defs.APDUClass.ASCII_STRINGS:               dataItemsByName(defs.APDUClass.ASCII_STRINGS),
+    defs.APDUClass.SIXTEENBIT_MEASURED_DATA:    dataItemsByName(defs.APDUClass.SIXTEENBIT_MEASURED_DATA)
 }
 
 

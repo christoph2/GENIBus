@@ -29,7 +29,6 @@
 import abc
 import logging
 import threading
-#from wx.lib.pubsub import Publisher as Publisher
 from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
 from genilib.configuration import Config

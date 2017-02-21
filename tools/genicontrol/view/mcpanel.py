@@ -30,7 +30,7 @@ from collections import namedtuple
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 import genicontrol.controlids as controlids
-from genicontrol.model.config import DataitemConfiguration, MEAS_VALUES_DICT
+from genicontrol.model.config import DataitemConfiguration, MEAS_VALUES_DICT, MEAS_VALUES_DICT_16BIT
 import genicontrol.dataitems as dataitems
 from genicontrol.view.statuspanel import StatusPanel, AlarmPanel, PumpOperationPanel
 import genicontrol.view.buttons as buttons
@@ -135,22 +135,23 @@ class MCPanel(ScrolledPanel):
     def getLEDState(self, num):
         return self.statusPanel.ledControl.getState(num)
 
-    def setValue(self, item ,value):
+    def setValue(self, item, value):
         if item == 'led_contr': ## LED are special...
             self.updateLED(int(value))
-        entry = MEAS_VALUES_DICT.get(item, None)
+        if item.endswith('_16'):
+            entry = MEAS_VALUES_DICT_16BIT.get(item, None)
+        else:
+            entry = MEAS_VALUES_DICT.get(item, None)
         if entry:
             _, _, controlID, _ = entry
             if controlID:
                 control = self.statusPanel.FindWindowById(controlID)
                 if control:
-                    #print("**ITEM ***", item, value)
                     if item == 'f_act':
                         value = float(value)
                     control.SetValue(value)
 
     def setPumpStatus(self, item, value):
-        #print("PS: ", item ,value)
         itemMap = {
             'activeSource': "Control Source",
             'operationMode': "Operation Mode",
