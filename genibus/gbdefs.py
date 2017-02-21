@@ -67,7 +67,7 @@ class APDUClass(enum.IntEnum):
 
     PROTOCOL_DATA                       = 0
     BUS_DATA                            = 1
-    MEASURERED_DATA                     = 2
+    MEASURED_DATA                       = 2
     COMMANDS                            = 3
     CONFIGURATION_PARAMETERS            = 4
     REFERENCE_VALUES                    = 5
@@ -76,7 +76,7 @@ class APDUClass(enum.IntEnum):
     MEMORY_BLOCKS                       = 8
     EMBEDDED_PUDS                       = 9
     DATA_OBJECTS                        = 10
-    SIXTEENBIT_MEASURERED_DATA          = 11
+    SIXTEENBIT_MEASURED_DATA            = 11
     SIXTEENBIT_CONFIGURATION_PARAMETERS = 12
     SIXTEENBIT_REFERENCE_VALUES         = 13
 
@@ -84,7 +84,7 @@ class APDUClass(enum.IntEnum):
 NICE_CLASS_NAMES = {
     APDUClass.PROTOCOL_DATA:                       "Protocol Data",
     APDUClass.BUS_DATA:                            "Bus Data",
-    APDUClass.MEASURERED_DATA:                     "Measurered Data",
+    APDUClass.MEASURED_DATA:                       "Measurered Data",
     APDUClass.COMMANDS:                            "Commands",
     APDUClass.CONFIGURATION_PARAMETERS:            "Configuration Parameters",
     APDUClass.REFERENCE_VALUES:                    "Reference Values",
@@ -93,7 +93,7 @@ NICE_CLASS_NAMES = {
     APDUClass.MEMORY_BLOCKS:                       "Memory Blocks",
     APDUClass.EMBEDDED_PUDS:                       "Embedded PDUs",
     APDUClass.DATA_OBJECTS:                        "Data Objects",
-    APDUClass.SIXTEENBIT_MEASURERED_DATA:          "16Bit Measurered Data",
+    APDUClass.SIXTEENBIT_MEASURED_DATA:            "16Bit Measurered Data",
     APDUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS: "16Bit Configuration Parameters",
     APDUClass.SIXTEENBIT_REFERENCE_VALUES:         "16Bit Reference Values",
 }
@@ -117,7 +117,7 @@ class Acknowledge(enum.IntEnum):
 CLASS_CAPABILITIES = {
     APDUClass.PROTOCOL_DATA                       : (Operation.GET, ),
     APDUClass.BUS_DATA                            : (Operation.GET, ),
-    APDUClass.MEASURERED_DATA                     : (Operation.GET, Operation.INFO),
+    APDUClass.MEASURED_DATA                       : (Operation.GET, Operation.INFO),
     APDUClass.COMMANDS                            : (Operation.SET, Operation.INFO),
     APDUClass.CONFIGURATION_PARAMETERS            : (Operation.GET, Operation.SET, Operation.INFO),
     APDUClass.REFERENCE_VALUES                    : (Operation.GET, Operation.SET, Operation.INFO),
@@ -126,7 +126,7 @@ CLASS_CAPABILITIES = {
     APDUClass.MEMORY_BLOCKS                       : (Operation.GET, Operation.SET, ),
     APDUClass.EMBEDDED_PUDS                       : (Operation.GET, ),
     APDUClass.DATA_OBJECTS                        : (Operation.GET, Operation.SET, ),
-    APDUClass.SIXTEENBIT_MEASURERED_DATA          : (Operation.GET, Operation.INFO),
+    APDUClass.SIXTEENBIT_MEASURED_DATA            : (Operation.GET, Operation.INFO),
     APDUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS : (Operation.GET, Operation.SET, Operation.INFO),
     APDUClass.SIXTEENBIT_REFERENCE_VALUES         : (Operation.GET, Operation.SET, Operation.INFO),
 }
