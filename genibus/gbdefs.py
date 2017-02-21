@@ -63,7 +63,7 @@ class Access(enum.IntEnum):
     WR  = 0x03
 
 
-class ADPUClass(enum.IntEnum):
+class APDUClass(enum.IntEnum):
 
     PROTOCOL_DATA                       = 0
     BUS_DATA                            = 1
@@ -82,20 +82,20 @@ class ADPUClass(enum.IntEnum):
 
 
 NICE_CLASS_NAMES = {
-    ADPUClass.PROTOCOL_DATA:                       "Protocol Data",
-    ADPUClass.BUS_DATA:                            "Bus Data",
-    ADPUClass.MEASURERED_DATA:                     "Measurered Data",
-    ADPUClass.COMMANDS:                            "Commands",
-    ADPUClass.CONFIGURATION_PARAMETERS:            "Configuration Parameters",
-    ADPUClass.REFERENCE_VALUES:                    "Reference Values",
-    ADPUClass.TEST_DATA:                           "Test Data",
-    ADPUClass.ASCII_STRINGS:                       "ASCII Strings",
-    ADPUClass.MEMORY_BLOCKS:                       "Memory Blocks",
-    ADPUClass.EMBEDDED_PUDS:                       "Embedded PDUs",
-    ADPUClass.DATA_OBJECTS:                        "Data Objects",
-    ADPUClass.SIXTEENBIT_MEASURERED_DATA:          "16Bit Measurered Data",
-    ADPUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS: "16Bit Configuration Parameters",
-    ADPUClass.SIXTEENBIT_REFERENCE_VALUES:         "16Bit Reference Values",
+    APDUClass.PROTOCOL_DATA:                       "Protocol Data",
+    APDUClass.BUS_DATA:                            "Bus Data",
+    APDUClass.MEASURERED_DATA:                     "Measurered Data",
+    APDUClass.COMMANDS:                            "Commands",
+    APDUClass.CONFIGURATION_PARAMETERS:            "Configuration Parameters",
+    APDUClass.REFERENCE_VALUES:                    "Reference Values",
+    APDUClass.TEST_DATA:                           "Test Data",
+    APDUClass.ASCII_STRINGS:                       "ASCII Strings",
+    APDUClass.MEMORY_BLOCKS:                       "Memory Blocks",
+    APDUClass.EMBEDDED_PUDS:                       "Embedded PDUs",
+    APDUClass.DATA_OBJECTS:                        "Data Objects",
+    APDUClass.SIXTEENBIT_MEASURERED_DATA:          "16Bit Measurered Data",
+    APDUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS: "16Bit Configuration Parameters",
+    APDUClass.SIXTEENBIT_REFERENCE_VALUES:         "16Bit Reference Values",
 }
 
 
@@ -115,20 +115,20 @@ class Acknowledge(enum.IntEnum):
 
 
 CLASS_CAPABILITIES = {
-    ADPUClass.PROTOCOL_DATA                       : (Operation.GET, ),
-    ADPUClass.BUS_DATA                            : (Operation.GET, ),
-    ADPUClass.MEASURERED_DATA                     : (Operation.GET, Operation.INFO),
-    ADPUClass.COMMANDS                            : (Operation.SET, Operation.INFO),
-    ADPUClass.CONFIGURATION_PARAMETERS            : (Operation.GET, Operation.SET, Operation.INFO),
-    ADPUClass.REFERENCE_VALUES                    : (Operation.GET, Operation.SET, Operation.INFO),
-    ADPUClass.TEST_DATA                           : (Operation.GET, Operation.SET, ),
-    ADPUClass.ASCII_STRINGS                       : (Operation.GET, ),
-    ADPUClass.MEMORY_BLOCKS                       : (Operation.GET, Operation.SET, ),
-    ADPUClass.EMBEDDED_PUDS                       : (Operation.GET, ),
-    ADPUClass.DATA_OBJECTS                        : (Operation.GET, Operation.SET, ),
-    ADPUClass.SIXTEENBIT_MEASURERED_DATA          : (Operation.GET, Operation.INFO),
-    ADPUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS : (Operation.GET, Operation.SET, Operation.INFO),
-    ADPUClass.SIXTEENBIT_REFERENCE_VALUES         : (Operation.GET, Operation.SET, Operation.INFO),
+    APDUClass.PROTOCOL_DATA                       : (Operation.GET, ),
+    APDUClass.BUS_DATA                            : (Operation.GET, ),
+    APDUClass.MEASURERED_DATA                     : (Operation.GET, Operation.INFO),
+    APDUClass.COMMANDS                            : (Operation.SET, Operation.INFO),
+    APDUClass.CONFIGURATION_PARAMETERS            : (Operation.GET, Operation.SET, Operation.INFO),
+    APDUClass.REFERENCE_VALUES                    : (Operation.GET, Operation.SET, Operation.INFO),
+    APDUClass.TEST_DATA                           : (Operation.GET, Operation.SET, ),
+    APDUClass.ASCII_STRINGS                       : (Operation.GET, ),
+    APDUClass.MEMORY_BLOCKS                       : (Operation.GET, Operation.SET, ),
+    APDUClass.EMBEDDED_PUDS                       : (Operation.GET, ),
+    APDUClass.DATA_OBJECTS                        : (Operation.GET, Operation.SET, ),
+    APDUClass.SIXTEENBIT_MEASURERED_DATA          : (Operation.GET, Operation.INFO),
+    APDUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS : (Operation.GET, Operation.SET, Operation.INFO),
+    APDUClass.SIXTEENBIT_REFERENCE_VALUES         : (Operation.GET, Operation.SET, Operation.INFO),
 }
 
 class IllegalOperationError(Exception): pass
