@@ -1,5 +1,5 @@
 #PyQt5
-#enum34
+enum34
 mako
 pyserial
 enum

@@ -8,7 +8,7 @@ import sys
 
 
 if sys.version_info < (3, 4):
-    REQS = ['mako', 'pyserial', 'enum']	# 'PyQt5'
+    REQS = ['mako', 'pyserial', 'enum34']	# 'PyQt5'
 else:
     REQS = ['mako', 'pyserial']
     
