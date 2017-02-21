@@ -26,13 +26,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-
-import array
 import logging
 from genibus.devices.db import DeviceDB
 import genibus.gbdefs as defs
 from genibus.utils.crc import calcuteCrc
 from genibus.utils.helper import hexDump
+from genibus.utils.bytes import toBytes
 
 
 logger = logging.getLogger("Genibus")
@@ -44,7 +43,7 @@ def createAPDUHeader(apdu, klass, operationSpecifier, length):
     apdu.append((operationSpecifier << 6) | (length & 0x3F))
 
 def createAPDU(klass, op, datapoints):
-    di = dataitems.DATAITEMS_FOR_CLASS[klass]
+    di = db.dataitemsByClass("magna", klass)
     result = []
     createAPDUHeader(result, klass, op, len(datapoints) * 2)
     for dp, value in datapoints:
@@ -54,7 +53,7 @@ def createAPDU(klass, op, datapoints):
     return result
 
 def createAPDUNoData(klass, op, datapoints):
-    di = dataitems.DATAITEMS_FOR_CLASS[klass]
+    di = db.dataitemsByClass("magna", klass)
     result = []
     createAPDUHeader(result, klass, op, len(datapoints))
     for dp in datapoints:
@@ -150,12 +149,10 @@ def createGetValuesPDU(klass, header, protocolData = [], measurements = [], para
     if strings:
         pdu.extend(stringsAPDU)
 
-    crc = calcuteCrc(pdu)
-    pdu.extend(bytes(crc))
+    crc = toBytes(calcuteCrc(pdu))
+    pdu.extend(crc)
 
-    arr = array.array('B', pdu)
-    # TODO: arr.tostring() for I/O!
-    return arr
+    return bytes(pdu)
 
 
 def createSetValuesPDU(header, parameter = [], references = []):
@@ -181,12 +178,12 @@ def createSetValuesPDU(header, parameter = [], references = []):
     if references:
         pdu.extend(referencesAPDU)
 
-    crc = calcuteCrc(pdu)
-    pdu.extend(bytes(crc))
+    crc = toBytes(calcuteCrc(pdu))
+    pdu.extend(crc)
 
-    arr = array.array('B', pdu)
+    #arr = array.array('B', pdu)
     # TODO: arr.tostring() for I/O!
-    return arr
+    return bytes(pdu)
 
 
 def createGetInfoPDU(klass, header, measurements = [], parameter = [], references = []):
@@ -222,12 +219,10 @@ def createGetInfoPDU(klass, header, measurements = [], parameter = [], reference
     if references:
         pdu.extend(referencesAPDU)
 
-    crc = calcuteCrc(pdu)
-    pdu.extend(bytes(crc))
+    crc = toBytes(calcuteCrc(pdu))
+    pdu.extend(crc)
 
-    arr = array.array('B', pdu)
-    # TODO: arr.tostring() for I/O!
-    return arr
+    return bytes(pdu)
 
 
 def createSetCommandsPDU(header, commands):
@@ -244,12 +239,10 @@ def createSetCommandsPDU(header, commands):
 
     pdu.extend(commandsAPDU)
 
-    crc = calcuteCrc(pdu)
-    pdu.extend(bytes(crc))
+    crc = toBytes(calcuteCrc(pdu))
+    pdu.extend(crc)
 
-    arr = array.array('B', pdu)
-    # TODO: arr.tostring() for I/O!
-    return arr
+    return bytes(pdu)
 
 
 
@@ -268,15 +261,4 @@ def createSetRemotePDU(sourceAddr):
         commands = ['REMOTE']
     )
 
-if __name__ == '__main__':
-    print(hexDump(createConnectRequestPDU(0x01)))
-
-    print(hexDump(createSetCommandsPDU(Header(defs.FrameType.SD_DATA_REQUEST, 0x20, 0x01), ['REMOTE', 'START'])))
-
-    print(hexDump(createSetValuesPDU(Header(defs.FrameType.SD_DATA_REQUEST, 0x20, 0x01), references = [('ref_rem', 0xa5, )])))
-
-    print(hexDump(createGetInfoPDU(
-        Header(defs.FrameType.SD_DATA_REQUEST, 0x20, 0x01),
-        measurements = ['h', 'q', 'p', 't_w', 'speed_hi', 'energy_hi'])
-    ))
 
