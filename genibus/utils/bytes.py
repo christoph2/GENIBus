@@ -37,7 +37,7 @@ def hiByte(w):
 def loByte(w):
     return w & 0x00ff
 
-def bytes(w):
+def toBytes(w):
     return tuple((hiByte(w), loByte(w)))
 
 def makeBuffer(arr):
