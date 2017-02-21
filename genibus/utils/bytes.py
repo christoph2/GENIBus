@@ -26,9 +26,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 __author__  = 'Christoph Schueler'
 __version__ = '0.1.0'
 
+import array
 
 def makeWord(bh, bl):
-    return (bh <<8) | bl
+    return (bh << 8) | bl
 
 def hiByte(w):
     return (w & 0xff00) >> 8

@@ -42,7 +42,7 @@ APDU_HEADER1    = 1
 APDU_DATA       = 2
 
 APDU = namedtuple('APDU', 'klass ack data')
-DissectionResult = namedtuple('DissectionResult', 'sd da sa APDUs')
+ParseResult = namedtuple('ParseResult', 'sd da sa APDUs')
 
 class ADPUClassNotSupportedError(Exception): pass
 class FramingError(Exception): pass
@@ -95,7 +95,7 @@ def parse(frame):
     frameCrc = makeWord(arr[defs.CRC_HIGH], arr[defs.CRC_LOW])
     if crc.get() != frameCrc:
         raise CrcError("Frame CRC doesn't match calculated CRC.")
-    return DissectionResult(sd, da, sa, result)
+    return ParseResult(defs.FrameType(sd), da, sa, result)
 
 
 
