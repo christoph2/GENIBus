@@ -48,9 +48,12 @@ SLAVE_ADDR_OFFSET   = 32
 CONNECTION_REQ_ADDR = 254
 BROADCAST_ADDR      = 255
 
-SD_DATA_REQUEST     = 0x27
-SD_DATA_REPLY       = 0x24
-SD_DATA_MESSAGE     = 0x26
+
+class FrameType(enum.IntEnum):
+
+    SD_DATA_REQUEST     = 0x27
+    SD_DATA_REPLY       = 0x24
+    SD_DATA_MESSAGE     = 0x26
 
 
 class Access(enum.IntEnum):
