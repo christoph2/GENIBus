@@ -26,6 +26,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+from collections import namedtuple
 import glob
 import json
 import os
@@ -35,6 +36,9 @@ import sqlite3
 import sys
 import genibus.devices
 from genibus.utils.classes import SingletonBase
+
+DataitemByClass = namedtuple('DataitemByClass', 'name, id, access, note')
+DataitemByClassAndName = namedtuple('DataitemByClassAndName', 'id, klass, access, note')
 
 class DeviceDB(SingletonBase):
 
@@ -68,7 +72,8 @@ class DeviceDB(SingletonBase):
         for dp in glob.glob("{0}{1}*.json".format(_dir, os.sep)):
             _, fullname = os.path.split(dp)
             model = fullname.split('.')[0]
-            data = json.load(open(dp))
+            with open(dp) as filePointer:
+                data = json.load(filePointer)
             for row  in data:
                 self.conn.execute("INSERT INTO dataitems VALUES(?, ?, ?, ?, ?, ?)", (model, *row))
         self.conn.commit()
@@ -86,36 +91,33 @@ class DeviceDB(SingletonBase):
 
     def dataitems(self, model):
         self.cursor.execute("SELECT * FROM dataitems WHERE model = ? ORDER BY class, id;", (model, ))
-        result = self.cursor.fetchall();
+        result = self.cursor.fetchall()
         return result
 
     def dataitemsByClass(self, model, klass):
-        self.cursor.execute("SELECT * FROM dataitems WHERE model = ? AND class = ? ORDER BY id;", (model, klass))
-        result = self.cursor.fetchall();
+        self.cursor.execute("SELECT name, id, access, note FROM dataitems WHERE model = ? AND class = ? ORDER BY id;", (model, klass))
+        result = self.cursor.fetchall()
+        if result:
+            return {d.name: d for d in [DataitemByClass(*x) for x in result] }
         return result
+
+    def dataitemByClassAndName(self, model, name):
+        self.cursor.execute("SELECT id, class, access, note FROM dataitems WHERE model = ? AND name = ?;", (model, name))
+        result = self.cursor.fetchall()
+        return DataitemByClassAndName(*result[0]) if result else []
 
     def units(self):
         self.cursor.execute("SELECT * FROM units ORDER BY id;")
-        result = self.cursor.fetchall();
+        result = self.cursor.fetchall()
         return result
 
     def unitEnities(self):
         self.cursor.execute("SELECT DISTINCT(physicalEntity) FROM units ORDER BY 1;")
-        result = self.cursor.fetchall();
+        result = self.cursor.fetchall()
         return result
 
     def unitsByEntity(self, entity):
         self.cursor.execute("SELECT * FROM units WHERE physicalEntity = ? ORDER BY id;", (entity, ))
-        result = self.cursor.fetchall();
+        result = self.cursor.fetchall()
         return result
-
-
-##
-##import genibus.gbdefs as defs
-##
-##db = DeviceDB()
-##pprint(db.dataitemsByClass("magna", defs.ADPUClass.COMMANDS))
-##pprint(db.unitEnities())
-##pprint(db.unitsByEntity("Voltage"))
-##
 
