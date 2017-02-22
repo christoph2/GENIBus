@@ -26,7 +26,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
+from array import array
 import logging
+
 from genibus.devices.db import DeviceDB
 import genibus.gbdefs as defs
 from genibus.utils.crc import calcuteCrc
@@ -152,7 +154,7 @@ def createGetValuesPDU(klass, header, protocolData = [], measurements = [], para
     crc = toBytes(calcuteCrc(pdu))
     pdu.extend(crc)
 
-    return bytes(pdu)
+    return array('B', pdu)
 
 
 def createSetValuesPDU(header, parameter = [], references = []):
@@ -183,7 +185,7 @@ def createSetValuesPDU(header, parameter = [], references = []):
 
     #arr = array.array('B', pdu)
     # TODO: arr.tostring() for I/O!
-    return bytes(pdu)
+    return array('B', pdu)
 
 
 def createGetInfoPDU(klass, header, measurements = [], parameter = [], references = []):
@@ -222,7 +224,7 @@ def createGetInfoPDU(klass, header, measurements = [], parameter = [], reference
     crc = toBytes(calcuteCrc(pdu))
     pdu.extend(crc)
 
-    return bytes(pdu)
+    return array('B', pdu)
 
 
 def createSetCommandsPDU(header, commands):
@@ -242,7 +244,7 @@ def createSetCommandsPDU(header, commands):
     crc = toBytes(calcuteCrc(pdu))
     pdu.extend(crc)
 
-    return bytes(pdu)
+    return array('B', pdu)
 
 
 
