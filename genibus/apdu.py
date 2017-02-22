@@ -32,9 +32,7 @@ import logging
 from genibus.devices.db import DeviceDB
 import genibus.gbdefs as defs
 from genibus.utils.crc import calcuteCrc
-from genibus.utils.helper import hexDump
-from genibus.utils.bytes import toBytes
-
+from genibus.utils.helper import hexDump, wordToBytes
 
 logger = logging.getLogger("Genibus")
 
@@ -151,7 +149,7 @@ def createGetValuesPDU(klass, header, protocolData = [], measurements = [], para
     if strings:
         pdu.extend(stringsAPDU)
 
-    crc = toBytes(calcuteCrc(pdu))
+    crc = wordToBytes(calcuteCrc(pdu))
     pdu.extend(crc)
 
     return array('B', pdu)
@@ -180,7 +178,7 @@ def createSetValuesPDU(header, parameter = [], references = []):
     if references:
         pdu.extend(referencesAPDU)
 
-    crc = toBytes(calcuteCrc(pdu))
+    crc = wordToBytes(calcuteCrc(pdu))
     pdu.extend(crc)
 
     #arr = array.array('B', pdu)
@@ -221,7 +219,7 @@ def createGetInfoPDU(klass, header, measurements = [], parameter = [], reference
     if references:
         pdu.extend(referencesAPDU)
 
-    crc = toBytes(calcuteCrc(pdu))
+    crc = wordToBytes(calcuteCrc(pdu))
     pdu.extend(crc)
 
     return array('B', pdu)
@@ -241,7 +239,7 @@ def createSetCommandsPDU(header, commands):
 
     pdu.extend(commandsAPDU)
 
-    crc = toBytes(calcuteCrc(pdu))
+    crc = wordToBytes(calcuteCrc(pdu))
     pdu.extend(crc)
 
     return array('B', pdu)
