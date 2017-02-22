@@ -26,14 +26,17 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 __author__  = 'Christoph Schueler'
 __version__ = '0.1.0'
 
-
-import operator
+import six
 
 def hexDump(data):
-    return ', '.join(["0x%02x" % x for x in data])
-
-checksum = lambda frame: reduce(operator.xor, frame, 0xff)
+    if six.PY3:
+        return ', '.join(["0x{:02x}".format(x) for x in data])
+    else:
+        return ', '.join(["0x{:02x}".format(ord(x)) for x in data])
 
 def wordToBytes(w):
-    return [(w & 0xff00) >> 8, w & 0xff]
+    return tuple(((w & 0xff00) >> 8, w & 0xff))
+
+
+#flatten = lambda l: [item for sublist in l for item in sublist]
 
