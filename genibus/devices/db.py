@@ -67,6 +67,15 @@ class DeviceDB(SingletonBase):
         self.cursor = self.conn.cursor()
         self.createSchema()
 
+    def toList(self, *args):
+        result = []
+        for elem in args:
+            if isinstance(elem, (list, tuple)):
+                result.extend(list(elem))
+            else:
+                result.append(elem)
+        return result
+
     def importFiles(self):
         _dir = os.path.dirname(sys.modules['genibus.devices'].__file__)
         for dp in glob.glob("{0}{1}*.json".format(_dir, os.sep)):
@@ -75,13 +84,13 @@ class DeviceDB(SingletonBase):
             with open(dp) as filePointer:
                 data = json.load(filePointer)
             for row  in data:
-                self.conn.execute("INSERT INTO dataitems VALUES(?, ?, ?, ?, ?, ?)", (model, *row))
+                self.conn.execute("INSERT INTO dataitems VALUES(?, ?, ?, ?, ?, ?)", self.toList(model, row))
         self.conn.commit()
         data = pkgutil.get_data('genibus.config', 'units.json')
         units = json.loads(data.decode('latin-1'), encoding = 'utf-8')
         for key, unit in units.items():
             unit[0] = unit[0].strip()
-            self.conn.execute("INSERT INTO units VALUES(?, ?, ?, ?)", (key, *unit))
+            self.conn.execute("INSERT INTO units VALUES(?, ?, ?, ?)", self.toList(key, unit))
         self.conn.commit()
 
     def close(self):
