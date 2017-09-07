@@ -26,13 +26,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 __author__  = 'Christoph Schueler'
 __version__ = '0.1.0'
 
-import six
-
 def hexDump(data):
-    if six.PY3:
-        return ', '.join(["0x{:02x}".format(x) for x in data])
-    else:
-        return ', '.join(["0x{:02x}".format(ord(x)) for x in data])
+    return ', '.join(["0x{:02x}".format(x) for x in bytearray(data)])
 
 def wordToBytes(w):
     return tuple(((w & 0xff00) >> 8, w & 0xff))

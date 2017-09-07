@@ -28,7 +28,6 @@ __version__ = '0.1.0'
 
 
 import unittest
-import six
 
 from genibus.utils import helper
 
@@ -36,7 +35,7 @@ from genibus.utils import helper
 class TestHelpers(unittest.TestCase):
 
     def testHexDump(self):
-        self.assertEqual(helper.hexDump(six.b('\x01\x02\x03\x04\x05\x06\x07\x08\x09\x00')), '0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x00')
+        self.assertEqual(helper.hexDump(b'\x01\x02\x03\x04\x05\x06\x07\x08\x09\x00'), '0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x00')
 
     def testWordToBytes(self):
         self.assertEqual(helper.wordToBytes(0x4711), (71, 17))
