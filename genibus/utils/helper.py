@@ -29,9 +29,6 @@ __version__ = '0.1.0'
 def hexDump(data):
     return ', '.join(["0x{:02x}".format(x) for x in bytearray(data)])
 
-def wordToBytes(w):
-    return tuple(((w & 0xff00) >> 8, w & 0xff))
-
 
 #flatten = lambda l: [item for sublist in l for item in sublist]
 

@@ -31,8 +31,7 @@ from collections import namedtuple
 import logging
 
 import genibus.gbdefs as defs
-from genibus.utils.crc import Crc, CrcError
-from genibus.utils.bytes import makeWord
+import genibus.utils.crc as crc
 
 logger = logging.getLogger("GeniControl")
 
@@ -51,18 +50,13 @@ def parse(frame):
 #    arr = tuple([ord(x) for x in frame])
     arr = frame
 
-    crc = Crc(0xffff)
-    actualValue = 0
+    crc.check_tel(frame)
     sd = arr[defs.START_DELIMITER]
     length = arr[defs.LENGTH]
     da = arr[defs.DESTINATION_ADRESS]
     sa = arr[defs.SOURCE_ADDRESS]
-    crc.update(length)
-    crc.update(da)
-    crc.update(sa)
 
     dissectingState = APDU_HEADER0
-    numberOfDataBytes = 0
     byteCount = 0
     result = []
 
@@ -70,7 +64,6 @@ def parse(frame):
         raise FramingError("Frame length doesn't match length byte.")
     for idx in range(defs.PDU_START, length + 2):
         ch = arr[idx]
-        crc.update(ch)
         if dissectingState == APDU_HEADER0:
             klass = ch & 0x0f
             if klass not in defs.ADPUClass.__members__.values():
@@ -92,9 +85,6 @@ def parse(frame):
             if byteCount <= 0:
                 dissectingState = APDU_HEADER0
                 result.append(APDU(klass, opAck, data))
-    frameCrc = makeWord(arr[defs.CRC_HIGH], arr[defs.CRC_LOW])
-    if crc.get() != frameCrc:
-        raise CrcError("Frame CRC doesn't match calculated CRC.")
     return ParseResult(defs.FrameType(sd), da, sa, result)
 
 
