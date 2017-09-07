@@ -38,7 +38,7 @@ def calc_raw(_bytes):
 
 def append_tel(telegram):
     crc = calc_raw(telegram[1:])
-    return telegram + bytearray((crc >> 8, crc & 0xff))
+    return telegram + [crc >> 8, crc & 0xff]
 
 def check_tel(telegram, silent=False):
     telegram = bytearray(telegram)
