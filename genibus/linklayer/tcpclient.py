@@ -36,9 +36,10 @@ socket.setdefaulttimeout(0.5)
 
 
 class Connector(ConnectionIF):
-    DRIVER = 'Arduino / TCP'
+    DRIVER = 'TCP'
 
     def __init__(self, serverIP, serverPort):
+        super(Connector, self).__init__()
         self.serverIP = serverIP
         self.serverPort = serverPort
         self.connected = False
@@ -61,9 +62,6 @@ class Connector(ConnectionIF):
     def close(self):
         self.connected = False
         self.sock.close()
-
-    def __del__(self):
-        self.close()
 
     def write(self, data):
         if self.connected:

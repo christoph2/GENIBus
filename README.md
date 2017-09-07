@@ -9,4 +9,4 @@ Grundfos GENIBus Library (not only) for Arduino boards.
 	- GeniGen: API/Code Generator (comming soon).
 
 
-![Screenshot of GeniControl](https://github.com/christoph2/GENIBus/blob/master/doc/GeniControl.png)
+![Screenshot of GeniControl](doc/GeniControl.png)
