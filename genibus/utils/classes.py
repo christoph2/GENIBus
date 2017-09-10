@@ -30,7 +30,6 @@ __version__ = '0.1.0'
 import threading
 import types
 from genibus.utils import helper
-from array import array
 
 
 class SingletonBase(object):
@@ -60,7 +59,7 @@ class RepresentationMixIn(object):
                 line = "    %s = 0x%X" % (key, value)
             elif isinstance(value, (float, types.NoneType)):
                 line = "    %s = %s" % (key, value)
-            elif isinstance(value, array):
+            elif isinstance(value, bytearray):
                 line = "    %s = %s" % (key, helper.hexDump(value))
             else:
                 line = "    %s = '%s'" % (key, value)

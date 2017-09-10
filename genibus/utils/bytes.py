@@ -26,7 +26,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 __author__  = 'Christoph Schueler'
 __version__ = '0.1.0'
 
-import array
 
 def makeWord(bh, bl):
     return (bh << 8) | bl
@@ -41,7 +40,7 @@ def toBytes(w):
     return tuple((hiByte(w), loByte(w)))
 
 def makeBuffer(arr):
-    return buffer(array.array('B', arr))
+    return buffer(bytearray(arr))
 
 def makeArray(buf):
     return tuple([ord(x) for x in str(buf)])

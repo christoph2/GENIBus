@@ -27,7 +27,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 """
 
 
-import array
 import logging
 import threading
 from genibus.linklayer.connection import ConnectionIF
@@ -80,7 +79,7 @@ class SerialPort(ConnectionIF):
 
     def read(self, length):
         self.output(False)
-        result = array.array('B', self._port.read(length))
+        result = bytearray(self._port.read(length))
         return result
 
     def output(self, enable):
