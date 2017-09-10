@@ -244,9 +244,6 @@ def createSetCommandsPDU(header, commands):
 def createConnectRequestPDU(sourceAddr):
     return createGetValuesPDU(2,
         Header(defs.FrameType.SD_DATA_REQUEST, defs.CONNECTION_REQ_ADDR, sourceAddr),
-        measurements =  ['unit_family', 'unit_type'],
-        protocolData =  ['buf_len', 'unit_bus_mode'],
-        parameter =     ['unit_addr',  'group_addr']
     )
 
 
