@@ -33,9 +33,17 @@ class CrcError(Exception):
     pass
 
 
-def calcuteCrc(frame):
-    return binascii.crc_hqx(bytearray(frame)[1:], 0xffff) ^ 0xffff
+def calc_raw(_bytes):
+    return binascii.crc_hqx(bytearray(_bytes), 0xffff) ^ 0xffff
 
+def append_tel(telegram):
+    crc = calc_raw(telegram[1:])
+    return telegram + [crc >> 8, crc & 0xff]
 
-def checkCrc(frame):
-    return calcuteCrc(frame[:-2])
+def check_tel(telegram, silent=False):
+    telegram = bytearray(telegram)
+    match = calc_raw(telegram[1:-2]) == (telegram[-2] << 8) + telegram[-1]
+    if not match and not silent:
+        raise CrcError('Telegram CRC not match!')
+    else:
+        return match

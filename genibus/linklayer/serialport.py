@@ -43,12 +43,13 @@ else:
     serialAvailable = True
 
 class SerialPort(ConnectionIF):
+    DRIVER = 'Serial port'
     _lock = threading.Lock()
-    _logger = logger
     counter = 0
 
     def __init__(self, portName, baudrate = 9600, bytesize = serial.EIGHTBITS,
                  parity = serial.PARITY_NONE, stopbits = serial.STOPBITS_ONE, timeout = 0.5):
+        super(SerialPort, self).__init__()
         self._portName = portName
         self._port = None
         self._baudrate = baudrate
@@ -98,9 +99,5 @@ class SerialPort(ConnectionIF):
             self._port.close()
 
     close = disconnect
-
-    @property
-    def displayName(self):
-        return "Serial port"
 
 

@@ -30,11 +30,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 import abc
 import logging
 
-logger = logging.getLogger("GeniControl")
-
 class ConnectionIF(object):
     __metaclass__ = abc.ABCMeta
-    logger = logging.getLogger("GeniControl")
+
+    def __init__(self):
+        self._logger = logging.getLogger('GeniControl:' + self.DRIVER)
+
+    def __del__(self):
+        self.close()
 
     @abc.abstractmethod
     def connect(self): pass
@@ -52,5 +55,9 @@ class ConnectionIF(object):
     def close(self): pass
 
     def getDriver(self):
+        return self.DRIVER
+
+    @property
+    def displayName(self):
         return self.DRIVER
 
