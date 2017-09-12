@@ -77,9 +77,9 @@ class SerialPort(ConnectionIF):
         self._port.write(bytearray(list(data)))
         self.flush()
 
-    def read(self, length):
+    def read(self):
         self.output(False)
-        result = bytearray(self._port.read(length))
+        result = bytearray(self._port.read(self._port.in_waiting))
         return result
 
     def output(self, enable):
