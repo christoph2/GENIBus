@@ -94,7 +94,7 @@ class SerialPort(ConnectionIF):
         self._port.flush()
 
     def disconnect(self):
-        if self._port.isOpen() == True:
+        if self.connected == True:
             self._port.close()
 
     close = disconnect
