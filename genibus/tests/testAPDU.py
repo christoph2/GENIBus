@@ -37,7 +37,7 @@ class TestAPDUs(unittest.TestCase):
         return [x for x in arr]
 
     def testConnectRequest(self):
-        self.assertEqual(self.toHex(apdu.createConnectRequestPDU(0x01)), [0x27, 0x02, 0xfe, 0x01, 0x7d, 0xec])
+        self.assertEqual(self.toHex(apdu.createConnectRequestPDU(0x01)), [0x27, 0x0e, 0xfe, 0x01, 0x00, 0x02, 0x02, 0x03, 0x04, 0x02, 0x2e, 0x2f, 0x02, 0x02, 0x94, 0x95, 0xa2, 0xaa])
 
     def testSetCommands(self):
         self.assertEqual(self.toHex(apdu.createSetCommandsPDU(apdu.Header(defs.FrameType.SD_DATA_REQUEST, 0x20, 0x01), ['REMOTE', 'START'])),
