@@ -26,7 +26,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-from array import array
 import logging
 
 from genibus.devices.db import DeviceDB
@@ -109,7 +108,7 @@ def createGetValuesPDU(klass, header, protocolData = [], measurements = [], para
         raise TypeError('Parameter "header" must be of type "Header".')
 
     length = 2
-    pdu = []
+    pdu = bytearray()
 
     if protocolData:
         protocolAPDU = createGetProtocolDataAPDU(protocolData)
@@ -150,7 +149,7 @@ def createGetValuesPDU(klass, header, protocolData = [], measurements = [], para
 
     pdu = crc.append_tel(pdu)
 
-    return array('B', pdu)
+    return pdu
 
 
 def createSetValuesPDU(header, parameter = [], references = []):
@@ -158,7 +157,7 @@ def createSetValuesPDU(header, parameter = [], references = []):
         raise TypeError('Parameter "header" must be of type "Header".')
 
     length = 2
-    pdu = []
+    pdu = bytearray()
 
     if parameter:
         parameterAPDU = createSetParametersAPDU(parameter)
@@ -178,9 +177,7 @@ def createSetValuesPDU(header, parameter = [], references = []):
 
     pdu = crc.append_tel(pdu)
 
-    #arr = array.array('B', pdu)
-    # TODO: arr.tostring() for I/O!
-    return array('B', pdu)
+    return pdu
 
 
 def createGetInfoPDU(klass, header, measurements = [], parameter = [], references = []):
@@ -189,7 +186,7 @@ def createGetInfoPDU(klass, header, measurements = [], parameter = [], reference
         raise TypeError('Parameter "header" must be of type "Header".')
 
     length = 2
-    pdu = []
+    pdu = bytearray()
     if measurements:
         if klass == defs.APDUClass.MEASURED_DATA:
             measurementsAPDU = createGetInfoAPDU(defs.APDUClass.MEASURED_DATA, measurements)
@@ -218,7 +215,7 @@ def createGetInfoPDU(klass, header, measurements = [], parameter = [], reference
 
     pdu = crc.append_tel(pdu)
 
-    return array('B', pdu)
+    return pdu
 
 
 def createSetCommandsPDU(header, commands):
@@ -226,7 +223,7 @@ def createSetCommandsPDU(header, commands):
         raise TypeError('Parameter "header" must be of type "Header".')
 
     length = 2
-    pdu = []
+    pdu = bytearray()
 
     commandsAPDU = createSetCommandsAPDU(commands)
     length += len(commandsAPDU)
@@ -237,7 +234,7 @@ def createSetCommandsPDU(header, commands):
 
     pdu = crc.append_tel(pdu)
 
-    return array('B', pdu)
+    return pdu
 
 
 
@@ -245,8 +242,8 @@ def createConnectRequestPDU(sourceAddr):
     return createGetValuesPDU(2,
         Header(defs.FrameType.SD_DATA_REQUEST, defs.CONNECTION_REQ_ADDR, sourceAddr),
         measurements =  ['unit_family', 'unit_type'],
-        protocolData =  ['buf_len', 'unit_bus_mode'],
-        parameter =     ['unit_addr',  'group_addr']
+-       protocolData =  ['buf_len', 'unit_bus_mode'],
+-       parameter =     ['unit_addr',  'group_addr']                              
     )
 
 
