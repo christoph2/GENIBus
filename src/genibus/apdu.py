@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __version__ = "0.1.0"
 
@@ -27,27 +26,27 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 """
 
 import logging
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import List, Optional, Sequence, Tuple
 
-from genibus.devices.db import DeviceDB
 import genibus.gbdefs as defs
 import genibus.utils.crc as crc
+from genibus.devices.db import DeviceDB
 
 logger = logging.getLogger("Genibus")
 
 db = DeviceDB()
 
-DatapointValue = Tuple[str, int]
+DatapointValue = tuple[str, int]
 
-def createAPDUHeader(apdu: List[int], klass: int, operationSpecifier: int, length: int) -> None:
+def createAPDUHeader(apdu: list[int], klass: int, operationSpecifier: int, length: int) -> None:
     apdu.append(klass)
     apdu.append((operationSpecifier << 6) | (length & 0x3F))
 
 
-def createAPDU(klass: int, op: int, datapoints: Sequence[DatapointValue]) -> List[int]:
+def createAPDU(klass: int, op: int, datapoints: Sequence[DatapointValue]) -> list[int]:
     di = db.dataitemsByClass("magna", klass)
-    result: List[int] = []
+    result: list[int] = []
     createAPDUHeader(result, klass, op, len(datapoints) * 2)
     for dp, value in datapoints:
         item = di[dp]
@@ -56,54 +55,58 @@ def createAPDU(klass: int, op: int, datapoints: Sequence[DatapointValue]) -> Lis
     return result
 
 
-def createAPDUNoData(klass: int, op: int, datapoints: Sequence[str]) -> List[int]:
+def createAPDUNoData(klass: int, op: int, datapoints: Sequence[str]) -> list[int]:
     di = db.dataitemsByClass("magna", klass)
-    result: List[int] = []
+    result: list[int] = []
     createAPDUHeader(result, klass, op, len(datapoints))
     for dp in datapoints:
         item = di[dp]
         result.append(item.id)
     return result
 
-def createGetInfoAPDU(klass: int, datapoints: Sequence[str]) -> List[int]:
+def createGetInfoAPDU(klass: int, datapoints: Sequence[str]) -> list[int]:
     result = createAPDUNoData(klass, defs.Operation.INFO, datapoints)
     return result
 
-def createGetMeasuredDataAPDU(klass: int, datapoints: Sequence[str]) -> List[int]:
+def createGetMeasuredDataAPDU(klass: int, datapoints: Sequence[str]) -> list[int]:
     result = createAPDUNoData(klass, defs.Operation.GET, datapoints)
     return result
 
-def createSetCommandsAPDU(datapoints: Sequence[str]) -> List[int]:
+def createSetCommandsAPDU(datapoints: Sequence[str]) -> list[int]:
     result = createAPDUNoData(defs.APDUClass.COMMANDS, defs.Operation.SET, datapoints)
     return result
 
-def createGetReferencesAPDU(datapoints: Sequence[str]) -> List[int]:
+def createGetReferencesAPDU(datapoints: Sequence[str]) -> list[int]:
     result = createAPDUNoData(defs.APDUClass.REFERENCE_VALUES, defs.Operation.GET, datapoints)
     return result
 
-def createSetReferencesAPDU(datapoints: Sequence[DatapointValue]) -> List[int]:
+def createSetReferencesAPDU(datapoints: Sequence[DatapointValue]) -> list[int]:
     result = createAPDU(defs.APDUClass.REFERENCE_VALUES, defs.Operation.SET, datapoints)
     return result
 
-def createGetStringsAPDU(datapoints: Sequence[str]) -> List[int]:
+def createGetStringsAPDU(datapoints: Sequence[str]) -> list[int]:
     result = createAPDUNoData(defs.APDUClass.ASCII_STRINGS, defs.Operation.GET, datapoints)
     return result
 
-def createGetParametersAPDU(datapoints: Sequence[str]) -> List[int]:
-    result = createAPDUNoData(defs.APDUClass.CONFIGURATION_PARAMETERS, defs.Operation.GET, datapoints)
+def createGetParametersAPDU(datapoints: Sequence[str]) -> list[int]:
+    result = createAPDUNoData(
+        defs.APDUClass.CONFIGURATION_PARAMETERS,
+        defs.Operation.GET,
+        datapoints,
+    )
     return result
 
-def createSetParametersAPDU(datapoints: Sequence[DatapointValue]) -> List[int]:
+def createSetParametersAPDU(datapoints: Sequence[DatapointValue]) -> list[int]:
     result = createAPDU(defs.APDUClass.CONFIGURATION_PARAMETERS, defs.Operation.SET, datapoints)
     return result
 
-def createGetProtocolDataAPDU(datapoints: Sequence[str]) -> List[int]:
+def createGetProtocolDataAPDU(datapoints: Sequence[str]) -> list[int]:
     result = createAPDUNoData(defs.APDUClass.PROTOCOL_DATA, defs.Operation.GET, datapoints)
     return result
 
 
 @dataclass(frozen=True)
-class Header(object):
+class Header:
     startDelimiter: int
     destAddr: int
     sourceAddr: int
@@ -112,11 +115,11 @@ class Header(object):
 def createGetValuesPDU(
     klass: int,
     header: Header,
-    protocolData: Optional[Sequence[str]] = None,
-    measurements: Optional[Sequence[str]] = None,
-    parameter: Optional[Sequence[str]] = None,
-    references: Optional[Sequence[str]] = None,
-    strings: Optional[Sequence[str]] = None,
+    protocolData: Sequence[str] | None = None,
+    measurements: Sequence[str] | None = None,
+    parameter: Sequence[str] | None = None,
+    references: Sequence[str] | None = None,
+    strings: Sequence[str] | None = None,
 ) -> bytearray:
     if not isinstance(header, Header):
         raise TypeError('Parameter "header" must be of type "Header".')
@@ -174,8 +177,8 @@ def createGetValuesPDU(
 
 def createSetValuesPDU(
     header: Header,
-    parameter: Optional[Sequence[DatapointValue]] = None,
-    references: Optional[Sequence[DatapointValue]] = None,
+    parameter: Sequence[DatapointValue] | None = None,
+    references: Sequence[DatapointValue] | None = None,
 ) -> bytearray:
     if not isinstance(header, Header):
         raise TypeError('Parameter "header" must be of type "Header".')
@@ -210,11 +213,11 @@ def createSetValuesPDU(
 def createGetInfoPDU(
     klass: int,
     header: Header,
-    measurements: Optional[Sequence[str]] = None,
-    parameter: Optional[Sequence[str]] = None,
-    references: Optional[Sequence[str]] = None,
+    measurements: Sequence[str] | None = None,
+    parameter: Sequence[str] | None = None,
+    references: Sequence[str] | None = None,
 ) -> bytearray:
-    ## To be defensive, at most 15 datapoints should be requested at once (min.frame length = 70 bytes).
+    # At most 15 datapoints should be requested at once.
     if not isinstance(header, Header):
         raise TypeError('Parameter "header" must be of type "Header".')
 
@@ -225,13 +228,16 @@ def createGetInfoPDU(
     length = 2
     pdu = bytearray()
     if measurements:
-        measurementsAPDU: List[int]
+        measurementsAPDU: list[int]
         if klass == defs.APDUClass.MEASURED_DATA:
             measurementsAPDU = createGetInfoAPDU(defs.APDUClass.MEASURED_DATA, measurements)
         elif klass == defs.APDUClass.SIXTEENBIT_MEASURED_DATA:
-            measurementsAPDU = createGetInfoAPDU(defs.APDUClass.SIXTEENBIT_MEASURED_DATA, measurements)
+            measurementsAPDU = createGetInfoAPDU(
+                defs.APDUClass.SIXTEENBIT_MEASURED_DATA,
+                measurements,
+            )
         else:
-            raise ValueError("Invalid APDU class for measurements info request: %r" % (klass, ))
+            raise ValueError(f"Invalid APDU class for measurements info request: {klass!r}")
         length += len(measurementsAPDU)
 
     if parameter:
@@ -294,62 +300,62 @@ def createSetRemotePDU(sourceAddr: int) -> bytearray:
     )
 
 
-def create_apdu_header(apdu: List[int], klass: int, operation_specifier: int, length: int) -> None:
+def create_apdu_header(apdu: list[int], klass: int, operation_specifier: int, length: int) -> None:
     createAPDUHeader(apdu, klass, operation_specifier, length)
 
 
-def create_apdu(klass: int, op: int, datapoints: Sequence[DatapointValue]) -> List[int]:
+def create_apdu(klass: int, op: int, datapoints: Sequence[DatapointValue]) -> list[int]:
     return createAPDU(klass, op, datapoints)
 
 
-def create_apdu_no_data(klass: int, op: int, datapoints: Sequence[str]) -> List[int]:
+def create_apdu_no_data(klass: int, op: int, datapoints: Sequence[str]) -> list[int]:
     return createAPDUNoData(klass, op, datapoints)
 
 
-def create_get_info_apdu(klass: int, datapoints: Sequence[str]) -> List[int]:
+def create_get_info_apdu(klass: int, datapoints: Sequence[str]) -> list[int]:
     return createGetInfoAPDU(klass, datapoints)
 
 
-def create_get_measured_data_apdu(klass: int, datapoints: Sequence[str]) -> List[int]:
+def create_get_measured_data_apdu(klass: int, datapoints: Sequence[str]) -> list[int]:
     return createGetMeasuredDataAPDU(klass, datapoints)
 
 
-def create_set_commands_apdu(datapoints: Sequence[str]) -> List[int]:
+def create_set_commands_apdu(datapoints: Sequence[str]) -> list[int]:
     return createSetCommandsAPDU(datapoints)
 
 
-def create_get_references_apdu(datapoints: Sequence[str]) -> List[int]:
+def create_get_references_apdu(datapoints: Sequence[str]) -> list[int]:
     return createGetReferencesAPDU(datapoints)
 
 
-def create_set_references_apdu(datapoints: Sequence[DatapointValue]) -> List[int]:
+def create_set_references_apdu(datapoints: Sequence[DatapointValue]) -> list[int]:
     return createSetReferencesAPDU(datapoints)
 
 
-def create_get_strings_apdu(datapoints: Sequence[str]) -> List[int]:
+def create_get_strings_apdu(datapoints: Sequence[str]) -> list[int]:
     return createGetStringsAPDU(datapoints)
 
 
-def create_get_parameters_apdu(datapoints: Sequence[str]) -> List[int]:
+def create_get_parameters_apdu(datapoints: Sequence[str]) -> list[int]:
     return createGetParametersAPDU(datapoints)
 
 
-def create_set_parameters_apdu(datapoints: Sequence[DatapointValue]) -> List[int]:
+def create_set_parameters_apdu(datapoints: Sequence[DatapointValue]) -> list[int]:
     return createSetParametersAPDU(datapoints)
 
 
-def create_get_protocol_data_apdu(datapoints: Sequence[str]) -> List[int]:
+def create_get_protocol_data_apdu(datapoints: Sequence[str]) -> list[int]:
     return createGetProtocolDataAPDU(datapoints)
 
 
 def create_get_values_pdu(
     klass: int,
     header: Header,
-    protocol_data: Optional[Sequence[str]] = None,
-    measurements: Optional[Sequence[str]] = None,
-    parameter: Optional[Sequence[str]] = None,
-    references: Optional[Sequence[str]] = None,
-    strings: Optional[Sequence[str]] = None,
+    protocol_data: Sequence[str] | None = None,
+    measurements: Sequence[str] | None = None,
+    parameter: Sequence[str] | None = None,
+    references: Sequence[str] | None = None,
+    strings: Sequence[str] | None = None,
 ) -> bytearray:
     return createGetValuesPDU(
         klass,
@@ -364,8 +370,8 @@ def create_get_values_pdu(
 
 def create_set_values_pdu(
     header: Header,
-    parameter: Optional[Sequence[DatapointValue]] = None,
-    references: Optional[Sequence[DatapointValue]] = None,
+    parameter: Sequence[DatapointValue] | None = None,
+    references: Sequence[DatapointValue] | None = None,
 ) -> bytearray:
     return createSetValuesPDU(header, parameter=parameter, references=references)
 
@@ -373,9 +379,9 @@ def create_set_values_pdu(
 def create_get_info_pdu(
     klass: int,
     header: Header,
-    measurements: Optional[Sequence[str]] = None,
-    parameter: Optional[Sequence[str]] = None,
-    references: Optional[Sequence[str]] = None,
+    measurements: Sequence[str] | None = None,
+    parameter: Sequence[str] | None = None,
+    references: Sequence[str] | None = None,
 ) -> bytearray:
     return createGetInfoPDU(
         klass,
