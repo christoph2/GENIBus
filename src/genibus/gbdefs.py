@@ -37,8 +37,6 @@ from typing import Dict, Tuple
 START_DELIMITER     = 0
 LENGTH              = 1
 DESTINATION_ADDRESS = 2
-# Backward-compatible alias for historic typo.
-DESTINATION_ADRESS  = DESTINATION_ADDRESS
 SOURCE_ADDRESS      = 3
 PDU_START           = 4
 

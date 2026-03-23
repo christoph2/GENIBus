@@ -26,7 +26,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 __author__  = 'Christoph Schueler'
 __version__ = '0.1.0'
 
-LOCALS = {
+LOCALES = {
     1025: ('Arabic (Saudi-Arabia)', 'ar', 'ar-sa'),
     1026: ('Bulgarian', 'bg', 'bg'),
     1027: ('Catalan', 'ca', 'ca'),
@@ -203,9 +203,12 @@ LOCALS = {
     20490: ('Spanish (Puerto-Rico)', 'es', 'es-pr')
 }
 
+# Backward-compatible alias for historical name.
+LOCALS = LOCALES
+
 
 def get_locale_code(locale: int) -> str:
-    result = LOCALS.get(locale, ('?', '?', '?', ))[2]
+    result = LOCALES.get(locale, ('?', '?', '?', ))[2]
     if '-' in result:
         l, r = result.split('-')
         return "%s-%s" % (l.lower(), r.upper())
