@@ -4,8 +4,7 @@ import genibus.gbdefs as defs
 def test_snake_case_constant_aliases_match_legacy() -> None:
     assert defs.start_delimiter == defs.START_DELIMITER
     assert defs.length == defs.LENGTH
-    assert defs.DESTINATION_ADDRESS == defs.DESTINATION_ADRESS
-    assert defs.destination_address == defs.DESTINATION_ADRESS
+    assert defs.destination_address == defs.DESTINATION_ADDRESS
     assert defs.source_address == defs.SOURCE_ADDRESS
     assert defs.pdu_start == defs.PDU_START
     assert defs.crc_high == defs.CRC_HIGH

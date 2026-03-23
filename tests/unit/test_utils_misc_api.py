@@ -1,6 +1,7 @@
 import logging
 
 from genibus.utils import bytes as byte_utils
+from genibus.utils import locales
 from genibus.utils.locales import getLocalCode, get_locale_code
 from genibus.utils.logger import Logger
 
@@ -21,6 +22,7 @@ def test_bytes_snake_case_and_legacy_aliases() -> None:
 
 
 def test_locale_code_snake_case_and_legacy_aliases() -> None:
+    assert locales.LOCALES is locales.LOCALS
     assert get_locale_code(1031) == "de-DE"
     assert getLocalCode(1031) == "de-DE"
     assert get_locale_code(999999) == "?"
