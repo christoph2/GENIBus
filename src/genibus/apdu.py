@@ -225,10 +225,13 @@ def createGetInfoPDU(
     length = 2
     pdu = bytearray()
     if measurements:
+        measurementsAPDU: List[int]
         if klass == defs.APDUClass.MEASURED_DATA:
             measurementsAPDU = createGetInfoAPDU(defs.APDUClass.MEASURED_DATA, measurements)
-        if klass == defs.APDUClass.SIXTEENBIT_MEASURED_DATA:
+        elif klass == defs.APDUClass.SIXTEENBIT_MEASURED_DATA:
             measurementsAPDU = createGetInfoAPDU(defs.APDUClass.SIXTEENBIT_MEASURED_DATA, measurements)
+        else:
+            raise ValueError("Invalid APDU class for measurements info request: %r" % (klass, ))
         length += len(measurementsAPDU)
 
     if parameter:
