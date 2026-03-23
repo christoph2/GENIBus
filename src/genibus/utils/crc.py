@@ -28,6 +28,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 
 import logging
+from typing import Iterable
 
 class CrcError(Exception): pass
 
@@ -70,43 +71,64 @@ Crc_Table16 = (
 class Crc(object):
     logger = logging.getLogger("GeniControl")
 
-    def __init__(self, data):
+    def __init__(self, data: int):
         self.init(data)
 
-    def update(self, data):
+    def update(self, data: int) -> None:
         data &= 0xff
         self._accum = (((self._accum << 8) & 0xffff) ^ Crc_Table16[((self._accum >> 8) ^ data) & 0xff]) & 0xffff
 
-    def init(self, data):
+    def init(self, data: int) -> None:
         self._accum = data
 
-    def get(self):
+    def get(self) -> int:
         return (self._accum ^ (0xffff)) & 0xffff
 
 
-def calc_raw(_bytes):
+def calculate_crc(data: Iterable[int]) -> int:
     crc = Crc(0xffff)
-    for byte in bytearray(_bytes):
+    for byte in bytearray(data):
         crc.update(byte)
     return crc.get()
 
 
-def append_tel(telegram):
-    crc_value = calc_raw(bytearray(telegram)[1:])
+def append_telegram(telegram: Iterable[int]) -> bytearray:
+    crc_value = calculate_crc(bytearray(telegram)[1:])
     return bytearray(telegram) + bytearray([crc_value >> 8, crc_value & 0xff])
 
 
-def check_tel(telegram, silent=False):
+def check_telegram(telegram: Iterable[int], silent: bool = False) -> bool:
     telegram = bytearray(telegram)
-    match = calc_raw(telegram[1:-2]) == ((telegram[-2] << 8) + telegram[-1])
+    match = calculate_crc(telegram[1:-2]) == ((telegram[-2] << 8) + telegram[-1])
     if not match and not silent:
         raise CrcError('Telegram CRC not match!')
     return match
 
 
+def calc_raw(_bytes: Iterable[int]) -> int:
+    return calculate_crc(_bytes)
+
+
+def append_tel(telegram: Iterable[int]) -> bytearray:
+    return append_telegram(telegram)
+
+
+def check_tel(telegram: Iterable[int], silent: bool = False) -> bool:
+    return check_telegram(telegram, silent=silent)
+
+
+def check_crc(frame: Iterable[int]) -> int:
+    return calculate_crc(bytearray(frame)[1:-2])
+
+
+def calculate_frame_crc(frame: Iterable[int]) -> int:
+    return calculate_crc(bytearray(frame)[1:])
+
+
 def checkCrc(frame):
-    return calc_raw(bytearray(frame)[1:-2])
+    return check_crc(frame)
+
 
 def calcuteCrc(frame):
-    return calc_raw(bytearray(frame)[1:])
+    return calculate_frame_crc(frame)
 
