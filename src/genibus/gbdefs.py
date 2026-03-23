@@ -49,6 +49,20 @@ SLAVE_ADDR_OFFSET   = 32
 CONNECTION_REQ_ADDR = 254
 BROADCAST_ADDR      = 255
 
+# snake_case aliases for modern call sites.
+start_delimiter = START_DELIMITER
+length = LENGTH
+destination_address = DESTINATION_ADRESS
+source_address = SOURCE_ADDRESS
+pdu_start = PDU_START
+crc_high = CRC_HIGH
+crc_low = CRC_LOW
+max_telegram_len = MAX_TELEGRAM_LEN
+max_pdu_len = MAX_PDU_LEN
+slave_addr_offset = SLAVE_ADDR_OFFSET
+connection_req_addr = CONNECTION_REQ_ADDR
+broadcast_addr = BROADCAST_ADDR
+
 
 class FrameType(enum.IntEnum):
 
@@ -99,6 +113,9 @@ NICE_CLASS_NAMES: Dict[APDUClass, str] = {
     APDUClass.SIXTEENBIT_REFERENCE_VALUES:         "16Bit Reference Values",
 }
 
+# snake_case alias for modern call sites.
+nice_class_names = NICE_CLASS_NAMES
+
 
 class Operation(enum.IntEnum):
 
@@ -131,6 +148,9 @@ CLASS_CAPABILITIES: Dict[APDUClass, Tuple[Operation, ...]] = {
     APDUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS : (Operation.GET, Operation.SET, Operation.INFO),
     APDUClass.SIXTEENBIT_REFERENCE_VALUES         : (Operation.GET, Operation.SET, Operation.INFO),
 }
+
+# snake_case alias for modern call sites.
+class_capabilities = CLASS_CAPABILITIES
 
 class IllegalOperationError(Exception):
     pass
