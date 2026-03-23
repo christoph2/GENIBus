@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __version__ = "0.1.0"
 
@@ -26,10 +25,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-
-from dataclasses import dataclass
 import enum
-from typing import Dict, Tuple
+from dataclasses import dataclass
 
 ##
 ## GeniBus constants.
@@ -96,7 +93,7 @@ class APDUClass(enum.IntEnum):
     SIXTEENBIT_REFERENCE_VALUES         = 13
 
 
-NICE_CLASS_NAMES: Dict[APDUClass, str] = {
+NICE_CLASS_NAMES: dict[APDUClass, str] = {
     APDUClass.PROTOCOL_DATA:                       "Protocol Data",
     APDUClass.BUS_DATA:                            "Bus Data",
     APDUClass.MEASURED_DATA:                       "Measured Data",
@@ -132,7 +129,7 @@ class Acknowledge(enum.IntEnum):
     OPERATION_ILLEGAL   = 3
 
 
-CLASS_CAPABILITIES: Dict[APDUClass, Tuple[Operation, ...]] = {
+CLASS_CAPABILITIES: dict[APDUClass, tuple[Operation, ...]] = {
     APDUClass.PROTOCOL_DATA                       : (Operation.GET, ),
     APDUClass.BUS_DATA                            : (Operation.GET, ),
     APDUClass.MEASURED_DATA                       : (Operation.GET, Operation.INFO),
