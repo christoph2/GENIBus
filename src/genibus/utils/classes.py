@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __copyright__ = """
 Grundfos GENIBus Library.
@@ -28,12 +27,12 @@ __version__ = "0.1.0"
 
 
 import threading
-from typing import Any, List
+from typing import Any
 
 from genibus.utils import helper
 
 
-class SingletonBase(object):
+class SingletonBase:
     _lock = threading.Lock()
 
     def __new__(cls, *args: Any, **kws: Any) -> Any:
@@ -42,28 +41,28 @@ class SingletonBase(object):
             try:
                 cls._lock.acquire()
                 if not hasattr(cls, "_instance"):
-                    cls._instance = super(SingletonBase, cls).__new__(cls)
+                    cls._instance = super().__new__(cls)
             finally:
                 cls._lock.release()
         return cls._instance
 
 
-class RepresentationMixIn(object):
+class RepresentationMixIn:
 
-    def _repr_lines(self) -> List[str]:
+    def _repr_lines(self) -> list[str]:
         keys = [k for k in self.__dict__ if not (k.startswith("__") and k.endswith("__"))]
         result = []
-        result.append("%s {" % self.__class__.__name__)
+        result.append(f"{self.__class__.__name__} {{")
         for key in keys:
             value = getattr(self, key)
             if isinstance(value, int):
-                line = "    %s = 0x%X" % (key, value)
+                line = f"    {key} = 0x{value:X}"
             elif isinstance(value, (float, type(None))):
-                line = "    %s = %s" % (key, value)
+                line = f"    {key} = {value}"
             elif isinstance(value, bytearray):
-                line = "    %s = %s" % (key, helper.hex_dump(value))
+                line = f"    {key} = {helper.hex_dump(value)}"
             else:
-                line = "    %s = '%s'" % (key, value)
+                line = f"    {key} = '{value}'"
             result.append(line)
         result.append("}")
         return result
