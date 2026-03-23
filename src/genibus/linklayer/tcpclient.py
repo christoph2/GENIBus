@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __version__ = "0.1.0"
 
@@ -28,7 +27,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import logging
 import socket
-from typing import Iterable, Optional
+from collections.abc import Iterable
 
 from genibus.linklayer.connection import ConnectionIF
 
@@ -44,19 +43,19 @@ class Connector(ConnectionIF):
 
     def __init__(
         self,
-        server_ip: Optional[str] = None,
-        server_port: Optional[int] = None,
-        serverIP: Optional[str] = None,
-        serverPort: Optional[int] = None,
+        server_ip: str | None = None,
+        server_port: int | None = None,
+        serverIP: str | None = None,
+        serverPort: int | None = None,
         timeout: float = 0.5,
         buffer_size: int = BUF_SIZE,
     ) -> None:
-        super(Connector, self).__init__()
+        super().__init__()
         self.server_ip = server_ip if server_ip is not None else serverIP
         self.server_port = server_port if server_port is not None else serverPort
         self.timeout = timeout
         self.buffer_size = buffer_size
-        self.sock: Optional[socket.socket] = None
+        self.sock: socket.socket | None = None
         self.connected = False
 
         # Legacy attribute aliases.
@@ -93,7 +92,7 @@ class Connector(ConnectionIF):
             raise RuntimeError("TCP connector is not connected.")
         self.sock.sendall(bytearray(data))
 
-    def read(self) -> Optional[bytearray]:
+    def read(self) -> bytearray | None:
         if not self.connected or self.sock is None:
             return None
         data = bytearray(self.sock.recv(self.buffer_size))
