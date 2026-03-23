@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __copyright__ = """
 Grundfos GENIBus Library.
@@ -23,12 +22,13 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
-__author__  = 'Christoph Schueler'
-__version__ = '0.1.0'
+__author__ = "Christoph Schueler"
+__version__ = "0.1.0"
 
-import itertools
-import os
-from typing import Any, Callable, Dict, List, Optional, Sequence, TypeVar, cast
+import ctypes
+import subprocess
+from collections.abc import Callable, Sequence
+from typing import Any, TypeVar, cast
 
 T = TypeVar("T")
 
@@ -36,18 +36,23 @@ T = TypeVar("T")
 def slicer(
     iterable: Sequence[T],
     sliceLength: int,
-    converter: Optional[Callable[[Sequence[T]], Any]] = None,
-) -> List[Any]:
+    converter: Callable[[Sequence[T]], Any] | None = None,
+) -> list[Any]:
     converter_fn: Callable[[Sequence[T]], Any]
     if converter is None:
         converter_fn = cast(Callable[[Sequence[T]], Any], type(iterable))
     else:
         converter_fn = converter
+
     length = len(iterable)
-    return [converter_fn(iterable[item : item + sliceLength]) for item in range(0, length, sliceLength)]
+    return [
+        converter_fn(iterable[item : item + sliceLength])
+        for item in range(0, length, sliceLength)
+    ]
 
 
 CYG_PREFIX = "/cygdrive/"
+
 
 def cygpathToWin(path: str) -> str:
     return cygpath_to_win(path)
@@ -55,48 +60,42 @@ def cygpathToWin(path: str) -> str:
 
 def cygpath_to_win(path: str) -> str:
     if path.startswith(CYG_PREFIX):
-        path = path[len(CYG_PREFIX) : ]
-        driveLetter = "{0}:\\".format(path[0])
-        path = path[2 : ].replace("/", "\\")
-        path = "{0}{1}".format(driveLetter, path)
+        path = path[len(CYG_PREFIX) :]
+        drive_letter = f"{path[0]}:\\"
+        path = path[2:].replace("/", "\\")
+        path = f"{drive_letter}{path}"
     return path
 
-import ctypes
 
 class StructureWithEnums(ctypes.Structure):
-    """Add missing enum feature to ctypes Structures.
-    """
-    _map: Dict[str, Any] = {}
+    """Add missing enum feature to ctypes Structures."""
+
+    _map: dict[str, Any] = {}
 
     def __getattribute__(self, name: str) -> Any:
-        _map = ctypes.Structure.__getattribute__(self, '_map')
+        enum_map = ctypes.Structure.__getattribute__(self, "_map")
         value = ctypes.Structure.__getattribute__(self, name)
-        if name in _map:
-            EnumClass = _map[name]
+        if name in enum_map:
+            enum_class = enum_map[name]
             if isinstance(value, ctypes.Array):
-                return [EnumClass(x) for x in value]
-            else:
-                return EnumClass(value)
-        else:
-            return value
+                return [enum_class(x) for x in value]
+            return enum_class(value)
+        return value
 
     def __str__(self) -> str:
-        result = []
-        result.append("struct {0} {{".format(self.__class__.__name__))
+        result = [f"struct {self.__class__.__name__} {{"]
         for field in self._fields_:
             attr = field[0]
-            attrType = field[1]
+            attr_type = field[1]
             if attr in self._map:
-                attrType = self._map[attr]
+                attr_type = self._map[attr]
             value = getattr(self, attr)
-            result.append("    {0} [{1}] = {2!r};".format(attr, attrType.__name__, value))
+            result.append(f"    {attr} [{attr_type.__name__}] = {value!r};")
         result.append("};")
-        return '\n'.join(result)
+        return "\n".join(result)
 
     __repr__ = __str__
 
-
-import subprocess
 
 class CommandError(Exception):
     pass
@@ -107,7 +106,12 @@ def runCommand(cmd: str) -> bytes:
 
 
 def run_command(cmd: str) -> bytes:
-    proc = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    proc = subprocess.Popen(
+        cmd,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
     result = proc.communicate()
     proc.wait()
     if proc.returncode:
