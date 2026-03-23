@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __version__ = "0.1.0"
 
@@ -27,10 +26,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 """
 
 
-from abc import ABC, abstractmethod
 import logging
+from abc import ABC, abstractmethod
+from collections.abc import Iterable
 from types import TracebackType
-from typing import ClassVar, Iterable, Optional, Type
+from typing import ClassVar
 
 
 class ConnectionIF(ABC):
@@ -52,9 +52,9 @@ class ConnectionIF(ABC):
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc: Optional[BaseException],
-        tb: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc: BaseException | None,
+        tb: TracebackType | None,
     ) -> None:
         self.close()
 
@@ -71,7 +71,7 @@ class ConnectionIF(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def read(self) -> Optional[bytearray]:
+    def read(self) -> bytearray | None:
         raise NotImplementedError
 
     @abstractmethod
