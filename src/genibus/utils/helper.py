@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __copyright__ = """
 Grundfos GENIBus Library.
@@ -26,11 +25,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 __author__ = "Christoph Schueler"
 __version__ = "0.1.0"
 
-from typing import Iterable
+from collections.abc import Iterable
 
 
 def hex_dump(data: Iterable[int]) -> str:
-    return ", ".join(["0x{:02x}".format(value) for value in bytearray(data)])
+    return ", ".join([f"0x{value:02x}" for value in bytearray(data)])
 
 
 def hexDump(data: Iterable[int]) -> str:
