@@ -169,7 +169,7 @@ def dissect_pump_status(dp: str, value: int) -> list[StatusEntry]:
         sourceMode = 'Local' if sm == 1 else 'Remote'
         result.append(('sourceMode', sourceMode))
     elif dp == 'contr_source':
-        cs = (value & 0x0f) >> 4
+        cs = (value & 0xF0) >> 4
         if cs == 0b0001:
             contrSource = "Buttons"
         elif cs == 0b0010:
