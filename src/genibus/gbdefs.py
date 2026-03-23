@@ -36,7 +36,9 @@ from typing import Dict, Tuple
 ##
 START_DELIMITER     = 0
 LENGTH              = 1
-DESTINATION_ADRESS  = 2
+DESTINATION_ADDRESS = 2
+# Backward-compatible alias for historic typo.
+DESTINATION_ADRESS  = DESTINATION_ADDRESS
 SOURCE_ADDRESS      = 3
 PDU_START           = 4
 
@@ -52,7 +54,7 @@ BROADCAST_ADDR      = 255
 # snake_case aliases for modern call sites.
 start_delimiter = START_DELIMITER
 length = LENGTH
-destination_address = DESTINATION_ADRESS
+destination_address = DESTINATION_ADDRESS
 source_address = SOURCE_ADDRESS
 pdu_start = PDU_START
 crc_high = CRC_HIGH
@@ -99,7 +101,7 @@ class APDUClass(enum.IntEnum):
 NICE_CLASS_NAMES: Dict[APDUClass, str] = {
     APDUClass.PROTOCOL_DATA:                       "Protocol Data",
     APDUClass.BUS_DATA:                            "Bus Data",
-    APDUClass.MEASURED_DATA:                       "Measurered Data",
+    APDUClass.MEASURED_DATA:                       "Measured Data",
     APDUClass.COMMANDS:                            "Commands",
     APDUClass.CONFIGURATION_PARAMETERS:            "Configuration Parameters",
     APDUClass.REFERENCE_VALUES:                    "Reference Values",
@@ -108,7 +110,7 @@ NICE_CLASS_NAMES: Dict[APDUClass, str] = {
     APDUClass.MEMORY_BLOCKS:                       "Memory Blocks",
     APDUClass.EMBEDDED_PUDS:                       "Embedded PDUs",
     APDUClass.DATA_OBJECTS:                        "Data Objects",
-    APDUClass.SIXTEENBIT_MEASURED_DATA:            "16Bit Measurered Data",
+    APDUClass.SIXTEENBIT_MEASURED_DATA:            "16Bit Measured Data",
     APDUClass.SIXTEENBIT_CONFIGURATION_PARAMETERS: "16Bit Configuration Parameters",
     APDUClass.SIXTEENBIT_REFERENCE_VALUES:         "16Bit Reference Values",
 }
