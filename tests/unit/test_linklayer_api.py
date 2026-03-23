@@ -1,14 +1,14 @@
-from typing import Iterable, Optional
+from collections.abc import Iterable
 
-from genibus.linklayer.connection import ConnectionIF
 from genibus.linklayer import serialport
+from genibus.linklayer.connection import ConnectionIF
 
 
 class DummyConnection(ConnectionIF):
     DRIVER = "Dummy"
 
     def __init__(self) -> None:
-        super(DummyConnection, self).__init__()
+        super().__init__()
         self.connected = False
 
     def connect(self) -> bool:
@@ -21,7 +21,7 @@ class DummyConnection(ConnectionIF):
     def write(self, data: Iterable[int]) -> None:
         _ = list(data)
 
-    def read(self) -> Optional[bytearray]:
+    def read(self) -> bytearray | None:
         return bytearray([0x01])
 
     def close(self) -> None:
