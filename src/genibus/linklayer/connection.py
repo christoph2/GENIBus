@@ -27,37 +27,61 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 """
 
 
-import abc
+from abc import ABC, abstractmethod
 import logging
+from typing import ClassVar, Iterable, Optional
 
-class ConnectionIF(object):
-    __metaclass__ = abc.ABCMeta
 
-    def __init__(self):
-        self._logger = logging.getLogger('GeniControl:' + self.DRIVER)
+class ConnectionIF(ABC):
+    DRIVER: ClassVar[str] = "Unknown"
 
-    def __del__(self):
+    def __init__(self) -> None:
+        self._logger = logging.getLogger("GeniControl:" + self.DRIVER)
+
+    def __del__(self) -> None:
+        try:
+            self.close()
+        except Exception:
+            # Destructors must not raise.
+            pass
+
+    def __enter__(self):
+        self.connect()
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
         self.close()
 
-    @abc.abstractmethod
-    def connect(self): pass
+    @abstractmethod
+    def connect(self) -> bool:
+        raise NotImplementedError
 
-    @abc.abstractmethod
-    def disconnect(self): pass
+    @abstractmethod
+    def disconnect(self) -> None:
+        raise NotImplementedError
 
-    @abc.abstractmethod
-    def write(self, data): pass
+    @abstractmethod
+    def write(self, data: Iterable[int]) -> None:
+        raise NotImplementedError
 
-    @abc.abstractmethod
-    def read(self): pass
+    @abstractmethod
+    def read(self) -> Optional[bytearray]:
+        raise NotImplementedError
 
-    @abc.abstractmethod
-    def close(self): pass
+    @abstractmethod
+    def close(self) -> None:
+        raise NotImplementedError
 
-    def getDriver(self):
+    def get_driver(self) -> str:
+        return self.DRIVER
+
+    def getDriver(self) -> str:
+        return self.get_driver()
+
+    @property
+    def display_name(self) -> str:
         return self.DRIVER
 
     @property
-    def displayName(self):
-        return self.DRIVER
-
+    def displayName(self) -> str:
+        return self.display_name
