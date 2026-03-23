@@ -26,9 +26,13 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
 
-
+import logging
 import socket
+from typing import Iterable, Optional
+
 from genibus.linklayer.connection import ConnectionIF
+
+logger = logging.getLogger("GeniControl")
 
 BUF_SIZE = 1024
 
@@ -36,92 +40,71 @@ socket.setdefaulttimeout(0.5)
 
 
 class Connector(ConnectionIF):
-    DRIVER = 'TCP'
+    DRIVER = "TCP"
 
-    def __init__(self, serverIP, serverPort):
+    def __init__(
+        self,
+        server_ip: Optional[str] = None,
+        server_port: Optional[int] = None,
+        serverIP: Optional[str] = None,
+        serverPort: Optional[int] = None,
+        timeout: float = 0.5,
+        buffer_size: int = BUF_SIZE,
+    ) -> None:
         super(Connector, self).__init__()
-        self.serverIP = serverIP
-        self.serverPort = serverPort
+        self.server_ip = server_ip if server_ip is not None else serverIP
+        self.server_port = server_port if server_port is not None else serverPort
+        self.timeout = timeout
+        self.buffer_size = buffer_size
+        self.sock = None
         self.connected = False
 
-    def connect(self):
+        # Legacy attribute aliases.
+        self.serverIP = self.server_ip
+        self.serverPort = self.server_port
+
+    def connect(self) -> bool:
+        if self.server_ip is None or self.server_port is None:
+            raise ValueError("server_ip and server_port must be set before connect().")
+
         try:
-             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-             self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-             self.sock.settimeout(0.5)
-             self.connection = self.sock.connect((self.serverIP, int(self.serverPort)))
-             self.connected = True
-             return True
-        except Exception as e:
-             print(str(e))
-             return False
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.sock.settimeout(self.timeout)
+            self.sock.connect((self.server_ip, int(self.server_port)))
+            self.connected = True
+            return True
+        except Exception as exc:
+            self._logger.error("TCP connect failed: %s", exc)
+            self.connected = False
+            return False
 
-    def disconnect(self):
+    def disconnect(self) -> None:
+        if self.sock is not None:
+            self.sock.close()
+        self.sock = None
         self.connected = False
 
-    def close(self):
-        self.connected = False
-        self.sock.close()
+    def close(self) -> None:
+        self.disconnect()
 
-    def write(self, data):
-        if self.connected:
-             self.sock.send(bytearray(data))
+    def write(self, data: Iterable[int]) -> None:
+        if not self.connected or self.sock is None:
+            raise RuntimeError("TCP connector is not connected.")
+        self.sock.sendall(bytearray(data))
 
-    def read(self):
-        if self.connected:
-             data = bytearray(self.sock.recv(BUF_SIZE))
-             return data
-
-"""
-
-import logging
-
-logger = logging.getLogger("GeniControl")
-
-#SERVER = '192.168.178.22'  # TODO: Adjust to the IP-address of your Arduino board!
-
-#SERVER = 'localhost'
-SERVER = socket.gethostname()
-PORT = 6734
-
-def hexDump(data):
-    return [hex(x) for x in data]
+    def read(self) -> Optional[bytearray]:
+        if not self.connected or self.sock is None:
+            return None
+        data = bytearray(self.sock.recv(self.buffer_size))
+        return data
 
 
-def ConnectionFactory(driver):
-    if driver == '0':
-        value = 'Simulator'
-    else:
-        value = 'Arduino / TCP'
+def connection_factory(driver: str) -> str:
+    if driver == "0":
+        return "Simulator"
+    return "Arduino / TCP"
 
-try:
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.settimeout(0.5)
 
-    conn = s.connect((SERVER, PORT))
-except Exception as e:
-    print e.message
-    msg = "%s: %s -- Press Return to exit." % (e.errno, e.message)
-    raw_input(msg)
-    sys.exit(1)
-print "TCP-client up and running."
-
-while True:
-    print "Connect request..."
-    try:
-        s.send(bytearray(CONNECT_REQ))
-    except socket.error as e:
-     #print str(e)
-         if e.errno != 32: # 'Broken pipe' error isn't that dramatic.
-              raise
-    try:
-      data = s.recv(1024)
-      print "Response: ", hexDump(bytearray(data))
-      print
-    except Exception as e:
-        print "Response: ", str(e)
-    time.sleep(1.0)
-s.close()
-
-"""
+def ConnectionFactory(driver: str) -> str:
+    return connection_factory(driver)
