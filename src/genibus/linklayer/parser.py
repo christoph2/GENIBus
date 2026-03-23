@@ -29,6 +29,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 from collections import namedtuple
 import logging
+from typing import Sequence
 
 import genibus.gbdefs as defs
 import genibus.utils.crc as crc
@@ -55,7 +56,7 @@ ADPUClassNotSupportedError = APDUClassNotSupportedError
 class FramingError(Exception):
     pass
 
-def parse(frame):
+def parse_frame(frame: Sequence[int]) -> ParseResult:
 #    arr = tuple([ord(x) for x in frame])
     arr = tuple(frame)
 
@@ -106,8 +107,12 @@ def parse(frame):
     return ParseResult(defs.FrameType(sd), da, sa, result)
 
 
+def parse(frame: Sequence[int]) -> ParseResult:
+    return parse_frame(frame)
 
-def dissectPumpStatus(dp, value):
+
+
+def dissect_pump_status(dp: str, value: int):
     result = []
     if dp == 'act_mode1':
         operationMode = (value & 0x7)
@@ -176,6 +181,10 @@ def dissectPumpStatus(dp, value):
     return result
 
 
+def dissectPumpStatus(dp, value):
+    return dissect_pump_status(dp, value)
+
+
 FRAMES = (
 # TX
     (0x27, 0x12, 0x20, 0x04, 0x02, 0x0e, 0x23, 0x25, 0x27, 0x22, 0x20, 0x51, 0x52, 0x53, 0x2f, 0x5a, 0x98, 0x99, 0x18, 0x19, 0x61, 0x5b),
@@ -205,7 +214,7 @@ FRAMES = (
 ## TODO: rename to parser.py
 def main():
     for frame in FRAMES:
-        result = parse(frame)
+        result = parse_frame(frame)
         print(result)
 
 

@@ -43,9 +43,9 @@ class DeviceDB(SingletonBase):
 
     def __init__(self):
         self.open()
-        self.importFiles()
+        self.import_files()
 
-    def createSchema(self):
+    def create_schema(self):
         self.cursor.execute(
             """
             CREATE TABLE dataitems(
@@ -67,9 +67,9 @@ class DeviceDB(SingletonBase):
     def open(self) -> None:
         self.conn = sqlite3.connect(":memory:")
         self.cursor = self.conn.cursor()
-        self.createSchema()
+        self.create_schema()
 
-    def toList(self, *args: Any) -> List[Any]:
+    def to_list(self, *args: Any) -> List[Any]:
         result: List[Any] = []
         for elem in args:
             if isinstance(elem, (list, tuple)):
@@ -78,7 +78,7 @@ class DeviceDB(SingletonBase):
                 result.append(elem)
         return result
 
-    def importFiles(self) -> None:
+    def import_files(self) -> None:
         devices_root = resources.files("genibus.devices")
         for datapoint_file in devices_root.iterdir():
             file_name = Path(datapoint_file.name)
@@ -92,7 +92,7 @@ class DeviceDB(SingletonBase):
             for row in data:
                 self.conn.execute(
                     "INSERT INTO dataitems VALUES(?, ?, ?, ?, ?, ?)",
-                    self.toList(model, row),
+                    self.to_list(model, row),
                 )
         self.conn.commit()
 
@@ -100,7 +100,7 @@ class DeviceDB(SingletonBase):
         units = json.loads(units_json)
         for key, unit in units.items():
             unit[0] = unit[0].strip()
-            self.conn.execute("INSERT INTO units VALUES(?, ?, ?, ?)", self.toList(int(key), unit))
+            self.conn.execute("INSERT INTO units VALUES(?, ?, ?, ?)", self.to_list(int(key), unit))
         self.conn.commit()
 
     def close(self):
@@ -108,12 +108,12 @@ class DeviceDB(SingletonBase):
         self.cursor.close()
         self.conn.close()
 
-    def dataitems(self, model):
+    def data_items(self, model):
         self.cursor.execute("SELECT * FROM dataitems WHERE model = ? ORDER BY class, id;", (model,))
         result = self.cursor.fetchall()
         return result
 
-    def dataitemsByClass(self, model, klass):
+    def data_items_by_class(self, model, klass):
         self.cursor.execute(
             "SELECT name, id, access, note FROM dataitems WHERE model = ? AND class = ? ORDER BY id;",
             (model, klass),
@@ -123,7 +123,7 @@ class DeviceDB(SingletonBase):
             return {d.name: d for d in [DataitemByClass(*x) for x in result]}
         return result
 
-    def dataitemByClassAndName(self, model, name):
+    def data_item_by_class_and_name(self, model, name):
         self.cursor.execute(
             "SELECT id, class, access, note FROM dataitems WHERE model = ? AND name = ?;",
             (model, name),
@@ -136,13 +136,38 @@ class DeviceDB(SingletonBase):
         result = self.cursor.fetchall()
         return result
 
-    def unitEnities(self):
+    def unit_entities(self):
         self.cursor.execute("SELECT DISTINCT(physicalEntity) FROM units ORDER BY 1;")
         result = self.cursor.fetchall()
         return result
 
-    def unitsByEntity(self, entity):
+    def units_by_entity(self, entity):
         self.cursor.execute("SELECT * FROM units WHERE physicalEntity = ? ORDER BY id;", (entity,))
         result = self.cursor.fetchall()
         return result
+
+    # Backward-compatible camelCase aliases.
+    def createSchema(self):
+        return self.create_schema()
+
+    def toList(self, *args: Any) -> List[Any]:
+        return self.to_list(*args)
+
+    def importFiles(self) -> None:
+        return self.import_files()
+
+    def dataitems(self, model):
+        return self.data_items(model)
+
+    def dataitemsByClass(self, model, klass):
+        return self.data_items_by_class(model, klass)
+
+    def dataitemByClassAndName(self, model, name):
+        return self.data_item_by_class_and_name(model, name)
+
+    def unitEnities(self):
+        return self.unit_entities()
+
+    def unitsByEntity(self, entity):
+        return self.units_by_entity(entity)
 
