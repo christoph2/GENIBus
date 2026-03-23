@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __version__ = "0.1.0"
 
@@ -29,7 +28,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 import logging
 import threading
-from typing import Iterable
+from collections.abc import Iterable
 
 from genibus.linklayer.connection import ConnectionIF
 
@@ -68,7 +67,7 @@ class SerialPort(ConnectionIF):
         stopbits: int = _STOPBITS_DEFAULT,
         timeout: float = 0.5,
     ) -> None:
-        super(SerialPort, self).__init__()
+        super().__init__()
         self._portName = portName
         self._port = None
         self._baudrate = baudrate
