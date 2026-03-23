@@ -59,7 +59,12 @@ def test_connector_connect_write_read_disconnect(monkeypatch) -> None:
     fake_socket = FakeSocketModule()
     monkeypatch.setattr(tcpclient, "socket", fake_socket)
 
-    connector = tcpclient.Connector(server_ip="127.0.0.1", server_port=6734, timeout=0.2, buffer_size=16)
+    connector = tcpclient.Connector(
+        server_ip="127.0.0.1",
+        server_port=6734,
+        timeout=0.2,
+        buffer_size=16,
+    )
 
     assert connector.connect() is True
     assert connector.connected is True
