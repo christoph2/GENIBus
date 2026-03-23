@@ -4,6 +4,7 @@ import genibus.gbdefs as defs
 def test_snake_case_constant_aliases_match_legacy() -> None:
     assert defs.start_delimiter == defs.START_DELIMITER
     assert defs.length == defs.LENGTH
+    assert defs.DESTINATION_ADDRESS == defs.DESTINATION_ADRESS
     assert defs.destination_address == defs.DESTINATION_ADRESS
     assert defs.source_address == defs.SOURCE_ADDRESS
     assert defs.pdu_start == defs.PDU_START
@@ -19,6 +20,8 @@ def test_snake_case_constant_aliases_match_legacy() -> None:
 def test_snake_case_mapping_aliases_match_legacy() -> None:
     assert defs.nice_class_names is defs.NICE_CLASS_NAMES
     assert defs.class_capabilities is defs.CLASS_CAPABILITIES
+    assert defs.nice_class_names[defs.APDUClass.MEASURED_DATA] == "Measured Data"
+    assert defs.nice_class_names[defs.APDUClass.SIXTEENBIT_MEASURED_DATA] == "16Bit Measured Data"
 
 
 def test_dataclasses_still_work() -> None:
