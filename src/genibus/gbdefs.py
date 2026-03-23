@@ -27,8 +27,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 """
 
 
-from collections import namedtuple
+from dataclasses import dataclass
 import enum
+from typing import Dict, Tuple
 
 ##
 ## GeniBus constants.
@@ -81,7 +82,7 @@ class APDUClass(enum.IntEnum):
     SIXTEENBIT_REFERENCE_VALUES         = 13
 
 
-NICE_CLASS_NAMES = {
+NICE_CLASS_NAMES: Dict[APDUClass, str] = {
     APDUClass.PROTOCOL_DATA:                       "Protocol Data",
     APDUClass.BUS_DATA:                            "Bus Data",
     APDUClass.MEASURED_DATA:                       "Measurered Data",
@@ -114,7 +115,7 @@ class Acknowledge(enum.IntEnum):
     OPERATION_ILLEGAL   = 3
 
 
-CLASS_CAPABILITIES = {
+CLASS_CAPABILITIES: Dict[APDUClass, Tuple[Operation, ...]] = {
     APDUClass.PROTOCOL_DATA                       : (Operation.GET, ),
     APDUClass.BUS_DATA                            : (Operation.GET, ),
     APDUClass.MEASURED_DATA                       : (Operation.GET, Operation.INFO),
@@ -131,8 +132,21 @@ CLASS_CAPABILITIES = {
     APDUClass.SIXTEENBIT_REFERENCE_VALUES         : (Operation.GET, Operation.SET, Operation.INFO),
 }
 
-class IllegalOperationError(Exception): pass
+class IllegalOperationError(Exception):
+    pass
 
-Item = namedtuple('Item', 'name value info')
-Info = namedtuple('Info', 'head unit zero range')
+
+@dataclass(frozen=True)
+class Info:
+    head: str
+    unit: str
+    zero: float
+    range: float
+
+
+@dataclass(frozen=True)
+class Item:
+    name: str
+    value: int
+    info: Info
 

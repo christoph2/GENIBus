@@ -43,12 +43,24 @@ APDU_DATA       = 2
 APDU = namedtuple('APDU', 'klass ack data')
 ParseResult = namedtuple('ParseResult', 'sd da sa APDUs')
 
-class ADPUClassNotSupportedError(Exception): pass
-class FramingError(Exception): pass
+
+class APDUClassNotSupportedError(Exception):
+    pass
+
+
+# Backward-compatible alias for historic typo.
+ADPUClassNotSupportedError = APDUClassNotSupportedError
+
+
+class FramingError(Exception):
+    pass
 
 def parse(frame):
 #    arr = tuple([ord(x) for x in frame])
-    arr = frame
+    arr = tuple(frame)
+
+    if len(arr) < 6:
+        raise FramingError("Frame too short.")
 
     crc.check_tel(frame)
     sd = arr[defs.START_DELIMITER]
@@ -60,14 +72,16 @@ def parse(frame):
     byteCount = 0
     result = []
 
+    valid_apdu_classes = tuple(item.value for item in defs.APDUClass)
+
     if not (length == len(arr) - 4):
         raise FramingError("Frame length doesn't match length byte.")
     for idx in range(defs.PDU_START, length + 2):
         ch = arr[idx]
         if dissectingState == APDU_HEADER0:
             klass = ch & 0x0f
-            if klass not in defs.ADPUClass.__members__.values():
-                raise ADPUClassNotSupportedError("APDU class '%u' not supported by GeniControl." % klass)
+            if klass not in valid_apdu_classes:
+                raise APDUClassNotSupportedError("APDU class '%u' not supported by GeniControl." % klass)
             dissectingState = APDU_HEADER1
             data = []
         elif dissectingState == APDU_HEADER1:
@@ -85,6 +99,10 @@ def parse(frame):
             if byteCount <= 0:
                 dissectingState = APDU_HEADER0
                 result.append(APDU(klass, opAck, data))
+
+    if dissectingState != APDU_HEADER0:
+        raise FramingError("Incomplete APDU payload in frame.")
+
     return ParseResult(defs.FrameType(sd), da, sa, result)
 
 
@@ -184,13 +202,12 @@ FRAMES = (
     (0x24, 0x0e, 0x01, 0x20, 0x00, 0x02, 0x46, 0xce, 0x04, 0x02, 0x20, 0xf7, 0x02, 0x02, 0x01, 0x0a, 0x37, 0x66),
 )
 
-for frame in FRAMES:
-    result = parse(frame)
-    print(result)
-
-    ## TODO: rename to parser.py
+## TODO: rename to parser.py
 def main():
-    pass
+    for frame in FRAMES:
+        result = parse(frame)
+        print(result)
+
 
 if __name__ == '__main__':
     main()

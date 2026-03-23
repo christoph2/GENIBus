@@ -27,18 +27,17 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 """
 
 from collections import namedtuple
-import glob
+from importlib import resources
 import json
-import os
-import pkgutil
-from pprint import pprint
+from pathlib import Path
 import sqlite3
-import sys
-import genibus.devices
+from typing import Any, List
+
 from genibus.utils.classes import SingletonBase
 
-DataitemByClass = namedtuple('DataitemByClass', 'name, id, access, note')
-DataitemByClassAndName = namedtuple('DataitemByClassAndName', 'id, klass, access, note')
+DataitemByClass = namedtuple("DataitemByClass", "name, id, access, note")
+DataitemByClassAndName = namedtuple("DataitemByClassAndName", "id, klass, access, note")
+
 
 class DeviceDB(SingletonBase):
 
@@ -47,28 +46,31 @@ class DeviceDB(SingletonBase):
         self.importFiles()
 
     def createSchema(self):
-        #print("Creating schema...")
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             CREATE TABLE dataitems(
                 model CHAR(64) NOT NULL, name CHAR(64) NOT NULL,
                 class INT NOT NULL, id INT NOT NULL, access INT NOT NULL, note CHAR(64) DEFAULT NULL,
                 PRIMARY KEY(model, name)
             );
-        """)
+        """
+        )
 
-        self.cursor.execute("""CREATE TABLE units(
+        self.cursor.execute(
+            """CREATE TABLE units(
             id INT NOT NULL PRIMARY KEY,physicalEntity CHAR(64), prefix DOUBLE, Unit CHAR(8)
             );
-        """)
+        """
+        )
         self.conn.commit()
 
-    def open(self):
+    def open(self) -> None:
         self.conn = sqlite3.connect(":memory:")
         self.cursor = self.conn.cursor()
         self.createSchema()
 
-    def toList(self, *args):
-        result = []
+    def toList(self, *args: Any) -> List[Any]:
+        result: List[Any] = []
         for elem in args:
             if isinstance(elem, (list, tuple)):
                 result.extend(list(elem))
@@ -76,21 +78,29 @@ class DeviceDB(SingletonBase):
                 result.append(elem)
         return result
 
-    def importFiles(self):
-        _dir = os.path.dirname(sys.modules['genibus.devices'].__file__)
-        for dp in glob.glob("{0}{1}*.json".format(_dir, os.sep)):
-            _, fullname = os.path.split(dp)
-            model = fullname.split('.')[0]
-            with open(dp) as filePointer:
+    def importFiles(self) -> None:
+        devices_root = resources.files("genibus.devices")
+        for datapoint_file in devices_root.iterdir():
+            file_name = Path(datapoint_file.name)
+            if file_name.suffix.lower() != ".json":
+                continue
+
+            model = file_name.stem
+            with datapoint_file.open(encoding="utf-8") as filePointer:
                 data = json.load(filePointer)
-            for row  in data:
-                self.conn.execute("INSERT INTO dataitems VALUES(?, ?, ?, ?, ?, ?)", self.toList(model, row))
+
+            for row in data:
+                self.conn.execute(
+                    "INSERT INTO dataitems VALUES(?, ?, ?, ?, ?, ?)",
+                    self.toList(model, row),
+                )
         self.conn.commit()
-        data = pkgutil.get_data('genibus.config', 'units.json')
-        units = json.loads(data.decode('latin-1'), encoding = 'utf-8')
+
+        units_json = resources.files("genibus.config").joinpath("units.json").read_text(encoding="latin-1")
+        units = json.loads(units_json)
         for key, unit in units.items():
             unit[0] = unit[0].strip()
-            self.conn.execute("INSERT INTO units VALUES(?, ?, ?, ?)", self.toList(key, unit))
+            self.conn.execute("INSERT INTO units VALUES(?, ?, ?, ?)", self.toList(int(key), unit))
         self.conn.commit()
 
     def close(self):
@@ -99,19 +109,25 @@ class DeviceDB(SingletonBase):
         self.conn.close()
 
     def dataitems(self, model):
-        self.cursor.execute("SELECT * FROM dataitems WHERE model = ? ORDER BY class, id;", (model, ))
+        self.cursor.execute("SELECT * FROM dataitems WHERE model = ? ORDER BY class, id;", (model,))
         result = self.cursor.fetchall()
         return result
 
     def dataitemsByClass(self, model, klass):
-        self.cursor.execute("SELECT name, id, access, note FROM dataitems WHERE model = ? AND class = ? ORDER BY id;", (model, klass))
+        self.cursor.execute(
+            "SELECT name, id, access, note FROM dataitems WHERE model = ? AND class = ? ORDER BY id;",
+            (model, klass),
+        )
         result = self.cursor.fetchall()
         if result:
-            return {d.name: d for d in [DataitemByClass(*x) for x in result] }
+            return {d.name: d for d in [DataitemByClass(*x) for x in result]}
         return result
 
     def dataitemByClassAndName(self, model, name):
-        self.cursor.execute("SELECT id, class, access, note FROM dataitems WHERE model = ? AND name = ?;", (model, name))
+        self.cursor.execute(
+            "SELECT id, class, access, note FROM dataitems WHERE model = ? AND name = ?;",
+            (model, name),
+        )
         result = self.cursor.fetchall()
         return DataitemByClassAndName(*result[0]) if result else []
 
@@ -126,7 +142,7 @@ class DeviceDB(SingletonBase):
         return result
 
     def unitsByEntity(self, entity):
-        self.cursor.execute("SELECT * FROM units WHERE physicalEntity = ? ORDER BY id;", (entity, ))
+        self.cursor.execute("SELECT * FROM units WHERE physicalEntity = ? ORDER BY id;", (entity,))
         result = self.cursor.fetchall()
         return result
 

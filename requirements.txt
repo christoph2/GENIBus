@@ -1,2 +1,1 @@
-enum34; python_version < '3.4'
-pyserial
+pyserial>=3.5
