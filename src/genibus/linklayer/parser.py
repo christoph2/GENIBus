@@ -29,7 +29,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 from collections import namedtuple
 import logging
-from typing import Sequence
+from typing import List, Sequence, Tuple, Union
 
 import genibus.gbdefs as defs
 import genibus.utils.crc as crc
@@ -43,6 +43,8 @@ APDU_DATA       = 2
 
 APDU = namedtuple('APDU', 'klass ack data')
 ParseResult = namedtuple('ParseResult', 'sd da sa APDUs')
+StatusValue = Union[int, str]
+StatusEntry = Tuple[str, StatusValue]
 
 
 class APDUClassNotSupportedError(Exception):
@@ -71,7 +73,7 @@ def parse_frame(frame: Sequence[int]) -> ParseResult:
 
     dissectingState = APDU_HEADER0
     byteCount = 0
-    result = []
+    result: List[APDU] = []
 
     valid_apdu_classes = tuple(item.value for item in defs.APDUClass)
 
@@ -84,7 +86,7 @@ def parse_frame(frame: Sequence[int]) -> ParseResult:
             if klass not in valid_apdu_classes:
                 raise APDUClassNotSupportedError("APDU class '%u' not supported by GeniControl." % klass)
             dissectingState = APDU_HEADER1
-            data = []
+            data: List[int] = []
         elif dissectingState == APDU_HEADER1:
             numberOfDataBytes = ch & 0x3F
             opAck = (ch & 0xC0) >> 6
@@ -112,8 +114,8 @@ def parse(frame: Sequence[int]) -> ParseResult:
 
 
 
-def dissect_pump_status(dp: str, value: int):
-    result = []
+def dissect_pump_status(dp: str, value: int) -> List[StatusEntry]:
+    result: List[StatusEntry] = []
     if dp == 'act_mode1':
         operationMode = (value & 0x7)
         controlMode = (value & 0x38) >> 3
@@ -181,7 +183,7 @@ def dissect_pump_status(dp: str, value: int):
     return result
 
 
-def dissectPumpStatus(dp, value):
+def dissectPumpStatus(dp: str, value: int) -> List[StatusEntry]:
     return dissect_pump_status(dp, value)
 
 
@@ -212,7 +214,7 @@ FRAMES = (
 )
 
 ## TODO: rename to parser.py
-def main():
+def main() -> None:
     for frame in FRAMES:
         result = parse_frame(frame)
         print(result)

@@ -31,7 +31,7 @@ from importlib import resources
 import json
 from pathlib import Path
 import sqlite3
-from typing import Any, List
+from typing import Any, Dict, List, Sequence
 
 from genibus.utils.classes import SingletonBase
 
@@ -41,11 +41,11 @@ DataitemByClassAndName = namedtuple("DataitemByClassAndName", "id, klass, access
 
 class DeviceDB(SingletonBase):
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.open()
         self.import_files()
 
-    def create_schema(self):
+    def create_schema(self) -> None:
         self.cursor.execute(
             """
             CREATE TABLE dataitems(
@@ -103,17 +103,17 @@ class DeviceDB(SingletonBase):
             self.conn.execute("INSERT INTO units VALUES(?, ?, ?, ?)", self.to_list(int(key), unit))
         self.conn.commit()
 
-    def close(self):
+    def close(self) -> None:
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
 
-    def data_items(self, model):
+    def data_items(self, model: str) -> List[Sequence[Any]]:
         self.cursor.execute("SELECT * FROM dataitems WHERE model = ? ORDER BY class, id;", (model,))
         result = self.cursor.fetchall()
         return result
 
-    def data_items_by_class(self, model, klass):
+    def data_items_by_class(self, model: str, klass: int) -> Any:
         self.cursor.execute(
             "SELECT name, id, access, note FROM dataitems WHERE model = ? AND class = ? ORDER BY id;",
             (model, klass),
@@ -123,7 +123,7 @@ class DeviceDB(SingletonBase):
             return {d.name: d for d in [DataitemByClass(*x) for x in result]}
         return result
 
-    def data_item_by_class_and_name(self, model, name):
+    def data_item_by_class_and_name(self, model: str, name: str) -> Any:
         self.cursor.execute(
             "SELECT id, class, access, note FROM dataitems WHERE model = ? AND name = ?;",
             (model, name),
@@ -131,23 +131,23 @@ class DeviceDB(SingletonBase):
         result = self.cursor.fetchall()
         return DataitemByClassAndName(*result[0]) if result else []
 
-    def units(self):
+    def units(self) -> List[Sequence[Any]]:
         self.cursor.execute("SELECT * FROM units ORDER BY id;")
         result = self.cursor.fetchall()
         return result
 
-    def unit_entities(self):
+    def unit_entities(self) -> List[Sequence[Any]]:
         self.cursor.execute("SELECT DISTINCT(physicalEntity) FROM units ORDER BY 1;")
         result = self.cursor.fetchall()
         return result
 
-    def units_by_entity(self, entity):
+    def units_by_entity(self, entity: str) -> List[Sequence[Any]]:
         self.cursor.execute("SELECT * FROM units WHERE physicalEntity = ? ORDER BY id;", (entity,))
         result = self.cursor.fetchall()
         return result
 
     # Backward-compatible camelCase aliases.
-    def createSchema(self):
+    def createSchema(self) -> None:
         return self.create_schema()
 
     def toList(self, *args: Any) -> List[Any]:
@@ -156,18 +156,18 @@ class DeviceDB(SingletonBase):
     def importFiles(self) -> None:
         return self.import_files()
 
-    def dataitems(self, model):
+    def dataitems(self, model: str) -> List[Sequence[Any]]:
         return self.data_items(model)
 
-    def dataitemsByClass(self, model, klass):
+    def dataitemsByClass(self, model: str, klass: int) -> Any:
         return self.data_items_by_class(model, klass)
 
-    def dataitemByClassAndName(self, model, name):
+    def dataitemByClassAndName(self, model: str, name: str) -> Any:
         return self.data_item_by_class_and_name(model, name)
 
-    def unitEnities(self):
+    def unitEnities(self) -> List[Sequence[Any]]:
         return self.unit_entities()
 
-    def unitsByEntity(self, entity):
+    def unitsByEntity(self, entity: str) -> List[Sequence[Any]]:
         return self.units_by_entity(entity)
 

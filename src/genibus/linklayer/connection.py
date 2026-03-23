@@ -29,7 +29,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 from abc import ABC, abstractmethod
 import logging
-from typing import ClassVar, Iterable, Optional
+from types import TracebackType
+from typing import ClassVar, Iterable, Optional, Type
 
 
 class ConnectionIF(ABC):
@@ -45,11 +46,16 @@ class ConnectionIF(ABC):
             # Destructors must not raise.
             pass
 
-    def __enter__(self):
+    def __enter__(self) -> "ConnectionIF":
         self.connect()
         return self
 
-    def __exit__(self, exc_type, exc, tb) -> None:
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
+    ) -> None:
         self.close()
 
     @abstractmethod

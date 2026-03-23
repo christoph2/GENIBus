@@ -36,7 +36,7 @@ from genibus.linklayer.connection import ConnectionIF
 logger = logging.getLogger("GeniControl")
 
 try:
-    import serial
+    import serial  # type: ignore[import-untyped]
 except ImportError:
     logger.debug("pySerial not installed.")
     serial = None
@@ -97,6 +97,8 @@ class SerialPort(ConnectionIF):
             self._logger.error("%s", exc)
             raise
 
+        assert self._port is not None
+
         self._logger.info(
             "Serial port openend as '%s' @ %d Bits/Sec.",
             self._port.portstr,
@@ -133,7 +135,7 @@ class SerialPort(ConnectionIF):
             self._port.rts = True
             self._port.dtr = True
 
-    def output(self, enable):
+    def output(self, enable: bool) -> None:
         self.set_output(bool(enable))
 
     def flush_output(self) -> None:
@@ -141,7 +143,7 @@ class SerialPort(ConnectionIF):
             raise RuntimeError("Serial port is not connected.")
         self._port.flush()
 
-    def flush(self):
+    def flush(self) -> None:
         self.flush_output()
 
     def disconnect(self) -> None:

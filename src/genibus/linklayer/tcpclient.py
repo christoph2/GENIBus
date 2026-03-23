@@ -56,7 +56,7 @@ class Connector(ConnectionIF):
         self.server_port = server_port if server_port is not None else serverPort
         self.timeout = timeout
         self.buffer_size = buffer_size
-        self.sock = None
+        self.sock: Optional[socket.socket] = None
         self.connected = False
 
         # Legacy attribute aliases.

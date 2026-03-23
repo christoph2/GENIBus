@@ -47,7 +47,7 @@ def createAPDUHeader(apdu: List[int], klass: int, operationSpecifier: int, lengt
 
 def createAPDU(klass: int, op: int, datapoints: Sequence[DatapointValue]) -> List[int]:
     di = db.dataitemsByClass("magna", klass)
-    result = []
+    result: List[int] = []
     createAPDUHeader(result, klass, op, len(datapoints) * 2)
     for dp, value in datapoints:
         item = di[dp]
@@ -58,7 +58,7 @@ def createAPDU(klass: int, op: int, datapoints: Sequence[DatapointValue]) -> Lis
 
 def createAPDUNoData(klass: int, op: int, datapoints: Sequence[str]) -> List[int]:
     di = db.dataitemsByClass("magna", klass)
-    result = []
+    result: List[int] = []
     createAPDUHeader(result, klass, op, len(datapoints))
     for dp in datapoints:
         item = di[dp]
