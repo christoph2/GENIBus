@@ -68,7 +68,7 @@ def parse_frame(frame: Sequence[int]) -> ParseResult:
     crc.check_tel(frame)
     sd = arr[defs.START_DELIMITER]
     length = arr[defs.LENGTH]
-    da = arr[defs.DESTINATION_ADRESS]
+    da = arr[defs.DESTINATION_ADDRESS]
     sa = arr[defs.SOURCE_ADDRESS]
 
     dissectingState = APDU_HEADER0
