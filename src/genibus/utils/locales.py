@@ -203,11 +203,17 @@ LOCALS = {
     20490: ('Spanish (Puerto-Rico)', 'es', 'es-pr')
 }
 
-def getLocalCode(locale):
+
+def get_locale_code(locale: int) -> str:
     result = LOCALS.get(locale, ('?', '?', '?', ))[2]
     if '-' in result:
         l, r = result.split('-')
         return "%s-%s" % (l.lower(), r.upper())
     else:
         return result
+
+
+def getLocalCode(locale: int) -> str:
+    return get_locale_code(locale)
+
 

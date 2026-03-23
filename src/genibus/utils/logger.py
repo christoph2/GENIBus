@@ -23,68 +23,79 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
-__author__  = 'Christoph Schueler'
-__version__ = '0.1.0'
+__author__ = "Christoph Schueler"
+__version__ = "0.1.0"
 
 import logging
+from typing import Optional, Tuple, Union
 
 
 class Logger(object):
 
-     LOGGER_BASE_NAME = 'genibus'
-     FORMAT = "[%(levelname)s (%(name)s)]: %(message)s"
+    LOGGER_BASE_NAME = "genibus"
+    FORMAT = "[%(levelname)s (%(name)s)]: %(message)s"
 
-     def __init__(self, level = logging.WARN):
-         self.logger = logging.getLogger("{0}".format(self.LOGGER_BASE_NAME))
-         self.logger.setLevel(level)
-         handler = logging.StreamHandler()
-         handler.setLevel(level)
-         formatter = logging.Formatter(self.FORMAT)
-         handler.setFormatter(formatter)
-         self.logger.addHandler(handler)
-         self.lastMessage = None
-         self.lastSeverity = None
+    def __init__(self, level: int = logging.WARN) -> None:
+        self.logger = logging.getLogger("{0}".format(self.LOGGER_BASE_NAME))
+        self.logger.setLevel(level)
 
-     def getLastError(self):
-         result = (self.lastSeverity, self.lastMessage)
-         self.lastSeverity = self.lastMessage = None
-         return result
+        if not self.logger.handlers:
+            handler = logging.StreamHandler()
+            handler.setLevel(level)
+            formatter = logging.Formatter(self.FORMAT)
+            handler.setFormatter(formatter)
+            self.logger.addHandler(handler)
 
-     def log(self, message, level):
-         self.lastSeverity = level
-         self.lastMessage = message
-         self.logger.log(level, "{0}".format(message))
+        self.lastMessage: Optional[str] = None
+        self.lastSeverity: Optional[int] = None
 
-     def info(self, message):
-         self.log(message, logging.INFO)
+    def get_last_error(self) -> Tuple[Optional[int], Optional[str]]:
+        result = (self.lastSeverity, self.lastMessage)
+        self.lastSeverity = None
+        self.lastMessage = None
+        return result
 
-     def warn(self, message):
-         self.log(message, logging.WARN)
+    def getLastError(self) -> Tuple[Optional[int], Optional[str]]:
+        return self.get_last_error()
 
-     def error(self, message):
-         self.log(message, logging.ERROR)
+    def log(self, message: str, level: int) -> None:
+        self.lastSeverity = level
+        self.lastMessage = message
+        self.logger.log(level, "{0}".format(message))
 
-     def debug(self, message):
-         self.log(message, logging.DEBUG)
+    def info(self, message: str) -> None:
+        self.log(message, logging.INFO)
 
-     def critical(self, message):
-         self.log(message, logging.CRITICAL)
+    def warn(self, message: str) -> None:
+        self.log(message, logging.WARN)
 
-     def verbose(self):
-         self.logger.setLevel(logging.DEBUG)
+    def error(self, message: str) -> None:
+        self.log(message, logging.ERROR)
 
-     def silent(self):
-         self.logger.setLevel(logging.CRITICAL)
+    def debug(self, message: str) -> None:
+        self.log(message, logging.DEBUG)
 
-     def setLevel(self, level):
-         LEVEL_MAP = {
-             "INFO": logging.INFO,
-             "WARN": logging.WARN,
-             "DEBUG": logging.DEBUG,
-             "ERROR": logging.ERROR,
-             "CRITICAL": logging.CRITICAL,
-         }
-         if isinstance(level, str):
-             level = LEVEL_MAP.get(level.upper(), logging.WARN)
-         self.logger.setLevel(level)
+    def critical(self, message: str) -> None:
+        self.log(message, logging.CRITICAL)
 
+    def verbose(self) -> None:
+        self.logger.setLevel(logging.DEBUG)
+
+    def silent(self) -> None:
+        self.logger.setLevel(logging.CRITICAL)
+
+    def set_level(self, level: Union[str, int]) -> None:
+        level_map = {
+            "INFO": logging.INFO,
+            "WARN": logging.WARN,
+            "DEBUG": logging.DEBUG,
+            "ERROR": logging.ERROR,
+            "CRITICAL": logging.CRITICAL,
+        }
+        normalized = level
+        if isinstance(level, str):
+            normalized = level_map.get(level.upper(), logging.WARN)
+        self.logger.setLevel(int(normalized))
+
+    def setLevel(self, level: Union[str, int]) -> None:
+        self.set_level(level)

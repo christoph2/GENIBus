@@ -28,16 +28,23 @@ __version__ = '0.1.0'
 
 import itertools
 import os
-from typing import Any, Dict, List, Optional, Sequence, Type, TypeVar
+from typing import Any, Callable, Dict, List, Optional, Sequence, TypeVar, cast
 
 T = TypeVar("T")
 
 
-def slicer(iterable: Sequence[T], sliceLength: int, converter: Optional[Type[Any]] = None) -> List[Any]:
+def slicer(
+    iterable: Sequence[T],
+    sliceLength: int,
+    converter: Optional[Callable[[Sequence[T]], Any]] = None,
+) -> List[Any]:
+    converter_fn: Callable[[Sequence[T]], Any]
     if converter is None:
-        converter = type(iterable)
+        converter_fn = cast(Callable[[Sequence[T]], Any], type(iterable))
+    else:
+        converter_fn = converter
     length = len(iterable)
-    return [converter((iterable[item : item + sliceLength])) for item in range(0, length, sliceLength)]
+    return [converter_fn(iterable[item : item + sliceLength]) for item in range(0, length, sliceLength)]
 
 
 CYG_PREFIX = "/cygdrive/"
@@ -73,7 +80,8 @@ class StructureWithEnums(ctypes.Structure):
         result = []
         result.append("struct {0} {{".format(self.__class__.__name__))
         for field in self._fields_:
-            attr, attrType = field
+            attr = field[0]
+            attrType = field[1]
             if attr in self._map:
                 attrType = self._map[attr]
             value = getattr(self, attr)
@@ -95,6 +103,7 @@ def runCommand(cmd: str) -> bytes:
     result = proc.communicate()
     proc.wait()
     if proc.returncode:
-        raise CommandError("{0}".format(result[1]))
+        stderr_output = result[1].decode("utf-8", errors="replace")
+        raise CommandError(stderr_output)
     return result[0]
 
