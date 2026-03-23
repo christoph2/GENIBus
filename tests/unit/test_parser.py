@@ -1,5 +1,6 @@
 import pytest
 
+import genibus.gbdefs as defs
 from genibus.linklayer import parser
 from genibus.utils import crc
 
@@ -13,6 +14,14 @@ def test_parse_frame_valid_crc_vector() -> None:
     assert parsed.da == 0x20
     assert parsed.sa == 0x01
     assert len(parsed.APDUs) == 1
+
+
+def test_parse_frame_uses_destination_address_constant() -> None:
+    frame = (0x27, 0x07, 0x20, 0x01, 0x02, 0xC3, 0x02, 0x10, 0x1A, 0x90, 0x1C)
+
+    parsed = parser.parse_frame(frame)
+
+    assert parsed.da == frame[defs.DESTINATION_ADDRESS]
 
 
 def test_parse_alias_points_to_snake_case() -> None:
