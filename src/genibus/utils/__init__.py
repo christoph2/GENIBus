@@ -50,6 +50,10 @@ def slicer(
 CYG_PREFIX = "/cygdrive/"
 
 def cygpathToWin(path: str) -> str:
+    return cygpath_to_win(path)
+
+
+def cygpath_to_win(path: str) -> str:
     if path.startswith(CYG_PREFIX):
         path = path[len(CYG_PREFIX) : ]
         driveLetter = "{0}:\\".format(path[0])
@@ -99,6 +103,10 @@ class CommandError(Exception):
 
 
 def runCommand(cmd: str) -> bytes:
+    return run_command(cmd)
+
+
+def run_command(cmd: str) -> bytes:
     proc = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     result = proc.communicate()
     proc.wait()
