@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __copyright__ = """
 Grundfos GENIBus Library.
@@ -26,7 +25,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 __author__ = "Christoph Schueler"
 __version__ = "0.1.0"
 
-from typing import Iterable, List, Sequence, Tuple
+from collections.abc import Iterable, Sequence
 
 
 def make_word(byte_high: int, byte_low: int) -> int:
@@ -41,7 +40,7 @@ def lo_byte(word: int) -> int:
     return word & 0x00FF
 
 
-def to_bytes(word: int) -> Tuple[int, int]:
+def to_bytes(word: int) -> tuple[int, int]:
     return (hi_byte(word), lo_byte(word))
 
 
@@ -49,11 +48,11 @@ def make_buffer(values: Iterable[int]) -> memoryview:
     return memoryview(bytearray(values))
 
 
-def make_array(buf: Sequence[int]) -> Tuple[int, ...]:
+def make_array(buf: Sequence[int]) -> tuple[int, ...]:
     return tuple(bytearray(buf))
 
 
-def dump_hex(values: Iterable[int]) -> List[str]:
+def dump_hex(values: Iterable[int]) -> list[str]:
     return [hex(value) for value in values]
 
 
@@ -69,7 +68,7 @@ def loByte(w: int) -> int:
     return lo_byte(w)
 
 
-def toBytes(w: int) -> Tuple[int, int]:
+def toBytes(w: int) -> tuple[int, int]:
     return to_bytes(w)
 
 
@@ -77,9 +76,9 @@ def makeBuffer(arr: Iterable[int]) -> memoryview:
     return make_buffer(arr)
 
 
-def makeArray(buf: Sequence[int]) -> Tuple[int, ...]:
+def makeArray(buf: Sequence[int]) -> tuple[int, ...]:
     return make_array(buf)
 
 
-def dumpHex(arr: Iterable[int]) -> List[str]:
+def dumpHex(arr: Iterable[int]) -> list[str]:
     return dump_hex(arr)
