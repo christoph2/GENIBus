@@ -291,3 +291,107 @@ def createSetRemotePDU(sourceAddr: int) -> bytearray:
     )
 
 
+def create_apdu_header(apdu: List[int], klass: int, operation_specifier: int, length: int) -> None:
+    createAPDUHeader(apdu, klass, operation_specifier, length)
+
+
+def create_apdu(klass: int, op: int, datapoints: Sequence[DatapointValue]) -> List[int]:
+    return createAPDU(klass, op, datapoints)
+
+
+def create_apdu_no_data(klass: int, op: int, datapoints: Sequence[str]) -> List[int]:
+    return createAPDUNoData(klass, op, datapoints)
+
+
+def create_get_info_apdu(klass: int, datapoints: Sequence[str]) -> List[int]:
+    return createGetInfoAPDU(klass, datapoints)
+
+
+def create_get_measured_data_apdu(klass: int, datapoints: Sequence[str]) -> List[int]:
+    return createGetMeasuredDataAPDU(klass, datapoints)
+
+
+def create_set_commands_apdu(datapoints: Sequence[str]) -> List[int]:
+    return createSetCommandsAPDU(datapoints)
+
+
+def create_get_references_apdu(datapoints: Sequence[str]) -> List[int]:
+    return createGetReferencesAPDU(datapoints)
+
+
+def create_set_references_apdu(datapoints: Sequence[DatapointValue]) -> List[int]:
+    return createSetReferencesAPDU(datapoints)
+
+
+def create_get_strings_apdu(datapoints: Sequence[str]) -> List[int]:
+    return createGetStringsAPDU(datapoints)
+
+
+def create_get_parameters_apdu(datapoints: Sequence[str]) -> List[int]:
+    return createGetParametersAPDU(datapoints)
+
+
+def create_set_parameters_apdu(datapoints: Sequence[DatapointValue]) -> List[int]:
+    return createSetParametersAPDU(datapoints)
+
+
+def create_get_protocol_data_apdu(datapoints: Sequence[str]) -> List[int]:
+    return createGetProtocolDataAPDU(datapoints)
+
+
+def create_get_values_pdu(
+    klass: int,
+    header: Header,
+    protocol_data: Optional[Sequence[str]] = None,
+    measurements: Optional[Sequence[str]] = None,
+    parameter: Optional[Sequence[str]] = None,
+    references: Optional[Sequence[str]] = None,
+    strings: Optional[Sequence[str]] = None,
+) -> bytearray:
+    return createGetValuesPDU(
+        klass,
+        header,
+        protocolData=protocol_data,
+        measurements=measurements,
+        parameter=parameter,
+        references=references,
+        strings=strings,
+    )
+
+
+def create_set_values_pdu(
+    header: Header,
+    parameter: Optional[Sequence[DatapointValue]] = None,
+    references: Optional[Sequence[DatapointValue]] = None,
+) -> bytearray:
+    return createSetValuesPDU(header, parameter=parameter, references=references)
+
+
+def create_get_info_pdu(
+    klass: int,
+    header: Header,
+    measurements: Optional[Sequence[str]] = None,
+    parameter: Optional[Sequence[str]] = None,
+    references: Optional[Sequence[str]] = None,
+) -> bytearray:
+    return createGetInfoPDU(
+        klass,
+        header,
+        measurements=measurements,
+        parameter=parameter,
+        references=references,
+    )
+
+
+def create_set_commands_pdu(header: Header, commands: Sequence[str]) -> bytearray:
+    return createSetCommandsPDU(header, commands)
+
+
+def create_connect_request_pdu(source_addr: int) -> bytearray:
+    return createConnectRequestPDU(source_addr)
+
+
+def create_set_remote_pdu(source_addr: int) -> bytearray:
+    return createSetRemotePDU(source_addr)
+
+
