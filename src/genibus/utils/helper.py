@@ -23,12 +23,18 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
-__author__  = 'Christoph Schueler'
-__version__ = '0.1.0'
+__author__ = "Christoph Schueler"
+__version__ = "0.1.0"
+
+from typing import Iterable
+
+
+def hex_dump(data: Iterable[int]) -> str:
+    return ", ".join(["0x{:02x}".format(value) for value in bytearray(data)])
+
 
 def hexDump(data):
-    return ', '.join(["0x{:02x}".format(x) for x in bytearray(data)])
+    return hex_dump(data)
 
 
-#flatten = lambda l: [item for sublist in l for item in sublist]
-
+# flatten = lambda l: [item for sublist in l for item in sublist]

@@ -23,12 +23,13 @@ You should have received a copy of the GNU General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 """
-__author__  = 'Christoph Schueler'
-__version__ = '0.1.0'
+__author__ = "Christoph Schueler"
+__version__ = "0.1.0"
 
 
 import threading
-import types
+from typing import List
+
 from genibus.utils import helper
 
 
@@ -37,10 +38,10 @@ class SingletonBase(object):
 
     def __new__(cls, *args, **kws):
         # Double-Checked Locking
-        if not hasattr(cls, '_instance'):
+        if not hasattr(cls, "_instance"):
             try:
                 cls._lock.acquire()
-                if not hasattr(cls, '_instance'):
+                if not hasattr(cls, "_instance"):
                     cls._instance = super(SingletonBase, cls).__new__(cls)
             finally:
                 cls._lock.release()
@@ -49,21 +50,23 @@ class SingletonBase(object):
 
 class RepresentationMixIn(object):
 
-    def __repr__(self):
-        keys = [k for k in self.__dict__ if not (k.startswith('__') and k.endswith('__'))]
+    def _repr_lines(self) -> List[str]:
+        keys = [k for k in self.__dict__ if not (k.startswith("__") and k.endswith("__"))]
         result = []
         result.append("%s {" % self.__class__.__name__)
         for key in keys:
             value = getattr(self, key)
-            if isinstance(value, (int, long)):
+            if isinstance(value, int):
                 line = "    %s = 0x%X" % (key, value)
-            elif isinstance(value, (float, types.NoneType)):
+            elif isinstance(value, (float, type(None))):
                 line = "    %s = %s" % (key, value)
             elif isinstance(value, bytearray):
-                line = "    %s = %s" % (key, helper.hexDump(value))
+                line = "    %s = %s" % (key, helper.hex_dump(value))
             else:
                 line = "    %s = '%s'" % (key, value)
             result.append(line)
         result.append("}")
-        return '\n'.join(result)
+        return result
 
+    def __repr__(self):
+        return "\n".join(self._repr_lines())
