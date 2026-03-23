@@ -28,7 +28,7 @@ __version__ = "0.1.0"
 
 
 import threading
-from typing import List
+from typing import Any, List
 
 from genibus.utils import helper
 
@@ -36,7 +36,7 @@ from genibus.utils import helper
 class SingletonBase(object):
     _lock = threading.Lock()
 
-    def __new__(cls, *args, **kws):
+    def __new__(cls, *args: Any, **kws: Any) -> Any:
         # Double-Checked Locking
         if not hasattr(cls, "_instance"):
             try:
@@ -68,5 +68,5 @@ class RepresentationMixIn(object):
         result.append("}")
         return result
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "\n".join(self._repr_lines())

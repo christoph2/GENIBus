@@ -28,8 +28,12 @@ __version__ = '0.1.0'
 
 import itertools
 import os
+from typing import Any, Dict, List, Optional, Sequence, Type, TypeVar
 
-def slicer(iterable, sliceLength, converter = None):
+T = TypeVar("T")
+
+
+def slicer(iterable: Sequence[T], sliceLength: int, converter: Optional[Type[Any]] = None) -> List[Any]:
     if converter is None:
         converter = type(iterable)
     length = len(iterable)
@@ -38,7 +42,7 @@ def slicer(iterable, sliceLength, converter = None):
 
 CYG_PREFIX = "/cygdrive/"
 
-def cygpathToWin(path):
+def cygpathToWin(path: str) -> str:
     if path.startswith(CYG_PREFIX):
         path = path[len(CYG_PREFIX) : ]
         driveLetter = "{0}:\\".format(path[0])
@@ -51,9 +55,9 @@ import ctypes
 class StructureWithEnums(ctypes.Structure):
     """Add missing enum feature to ctypes Structures.
     """
-    _map = {}
+    _map: Dict[str, Any] = {}
 
-    def __getattribute__(self, name):
+    def __getattribute__(self, name: str) -> Any:
         _map = ctypes.Structure.__getattribute__(self, '_map')
         value = ctypes.Structure.__getattribute__(self, name)
         if name in _map:
@@ -65,7 +69,7 @@ class StructureWithEnums(ctypes.Structure):
         else:
             return value
 
-    def __str__(self):
+    def __str__(self) -> str:
         result = []
         result.append("struct {0} {{".format(self.__class__.__name__))
         for field in self._fields_:
@@ -85,7 +89,8 @@ import subprocess
 class CommandError(Exception):
     pass
 
-def runCommand(cmd):
+
+def runCommand(cmd: str) -> bytes:
     proc = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     result = proc.communicate()
     proc.wait()

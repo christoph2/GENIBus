@@ -70,6 +70,7 @@ Crc_Table16 = (
 
 class Crc(object):
     logger = logging.getLogger("GeniControl")
+    _accum: int
 
     def __init__(self, data: int):
         self.init(data)
@@ -125,10 +126,10 @@ def calculate_frame_crc(frame: Iterable[int]) -> int:
     return calculate_crc(bytearray(frame)[1:])
 
 
-def checkCrc(frame):
+def checkCrc(frame: Iterable[int]) -> int:
     return check_crc(frame)
 
 
-def calcuteCrc(frame):
+def calcuteCrc(frame: Iterable[int]) -> int:
     return calculate_frame_crc(frame)
 

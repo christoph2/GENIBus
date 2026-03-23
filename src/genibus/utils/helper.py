@@ -33,7 +33,7 @@ def hex_dump(data: Iterable[int]) -> str:
     return ", ".join(["0x{:02x}".format(value) for value in bytearray(data)])
 
 
-def hexDump(data):
+def hexDump(data: Iterable[int]) -> str:
     return hex_dump(data)
 
 
