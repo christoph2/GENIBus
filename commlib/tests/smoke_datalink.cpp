@@ -142,12 +142,21 @@ int main() {
     if (!expect_true(g_write_calls == 2, "LinkLayer_ConnectRequest should trigger a second writeFrame call")) {
         return EXIT_FAILURE;
     }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "state should return to DL_IDLE after connect request")) {
+        return EXIT_FAILURE;
+    }
     if (!expect_true(g_last_tx[0] == GB_SD_REQUEST, "connect request should use request delimiter")) {
         return EXIT_FAILURE;
     }
     if (!expect_true(
-        g_last_tx[2] == 0xFE && g_last_tx[3] == datalink_smoke_vectors::kConnectRequestSa,
+        g_last_tx[2] == datalink_smoke_vectors::kConnectRequestDa && g_last_tx[3] == datalink_smoke_vectors::kConnectRequestSa,
         "connect request should target DA=0xFE, SA=0x01"
+    )) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(
+        g_last_tx_len == datalink_smoke_vectors::kConnectRequestPayloadLen,
+        "connect request write length should match payload length"
     )) {
         return EXIT_FAILURE;
     }

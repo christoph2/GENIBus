@@ -10,6 +10,8 @@ extern "C" {
 namespace datalink_smoke_vectors {
 
 constexpr uint8 kConnectRequestSa = 0x01;
+constexpr uint8 kConnectRequestDa = 0xFE;
+constexpr uint16 kConnectRequestPayloadLen = 12;
 
 constexpr std::array<uint8, 3> kSendPduPayload = {
     0xAA, 0xBB, 0xCC,
