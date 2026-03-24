@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+"""GENIBus-Frameparser fuer den Linklayer.
+
+Das Modul validiert Telegramm-CRC, zerlegt APDUs aus Rohframes und bietet
+Hilfsfunktionen zur Dekodierung einzelner Pumpenstatus-Bitfelder.
+"""
 
 __version__ = "0.1.0"
 
@@ -47,6 +52,8 @@ StatusEntry = tuple[str, StatusValue]
 
 
 class APDUClassNotSupportedError(Exception):
+    """Fehler fuer unbekannte APDU-Klassenwerte."""
+
     pass
 
 
@@ -55,9 +62,24 @@ ADPUClassNotSupportedError = APDUClassNotSupportedError
 
 
 class FramingError(Exception):
+    """Fehler fuer ungueltige oder inkonsistente Frame-Strukturen."""
+
     pass
 
 def parse_frame(frame: Sequence[int]) -> ParseResult:
+    """Parst ein GENIBus-Frame in strukturierte APDU-Komponenten.
+
+    Args:
+        frame: Telegramm als Sequenz von Bytes (0..255).
+
+    Returns:
+        ParseResult: Startdelimiter, Ziel-/Quelladresse und APDU-Liste.
+
+    Raises:
+        FramingError: Wenn Struktur oder Laengenfeld ungueltig ist.
+        crc.CrcError: Wenn die CRC-Pruefung fehlschlaegt.
+        APDUClassNotSupportedError: Bei unbekannter APDU-Klasse.
+    """
 #    arr = tuple([ord(x) for x in frame])
     arr = tuple(frame)
 
@@ -111,11 +133,22 @@ def parse_frame(frame: Sequence[int]) -> ParseResult:
 
 
 def parse(frame: Sequence[int]) -> ParseResult:
+    """Legacy-Alias fuer `parse_frame()`."""
+
     return parse_frame(frame)
 
 
 
 def dissect_pump_status(dp: str, value: int) -> list[StatusEntry]:
+    """Dekodiert bekannte Pumpenstatus-Bitfelder in lesbare Key-Value-Eintraege.
+
+    Args:
+        dp: Name des Datapoints, z. B. ``act_mode1``.
+        value: Rohwert des Datapoints.
+
+    Returns:
+        list[StatusEntry]: Liste aus benannten, dekodierten Statuswerten.
+    """
     result: list[StatusEntry] = []
     if dp == 'act_mode1':
         operationMode = (value & 0x7)
@@ -185,9 +218,13 @@ def dissect_pump_status(dp: str, value: int) -> list[StatusEntry]:
 
 
 def dissectPumpStatus(dp: str, value: int) -> list[StatusEntry]:
+    """Legacy-Alias fuer `dissect_pump_status()`."""
+
     return dissect_pump_status(dp, value)
 
 def main() -> None:
+    """No-op Einstiegspunkt fuer Legacy-Ausfuehrung."""
+
     pass
 
 
