@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __version__ = "0.1.0"
 
@@ -28,9 +27,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 
 import logging
-from typing import Iterable
+from collections.abc import Iterable
 
-class CrcError(Exception): pass
+
+class CrcError(Exception):
+    pass
 
 Crc_Table16 = (
     0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
@@ -68,7 +69,7 @@ Crc_Table16 = (
 )
 
 
-class Crc(object):
+class Crc:
     logger = logging.getLogger("GeniControl")
     _accum: int
 
@@ -77,7 +78,8 @@ class Crc(object):
 
     def update(self, data: int) -> None:
         data &= 0xff
-        self._accum = (((self._accum << 8) & 0xffff) ^ Crc_Table16[((self._accum >> 8) ^ data) & 0xff]) & 0xffff
+        table_index = ((self._accum >> 8) ^ data) & 0xff
+        self._accum = (((self._accum << 8) & 0xffff) ^ Crc_Table16[table_index]) & 0xffff
 
     def init(self, data: int) -> None:
         self._accum = data
