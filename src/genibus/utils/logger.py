@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __copyright__ = """
 Grundfos GENIBus Library.
@@ -27,16 +26,15 @@ __author__ = "Christoph Schueler"
 __version__ = "0.1.0"
 
 import logging
-from typing import Optional, Tuple, Union
 
 
-class Logger(object):
+class Logger:
 
     LOGGER_BASE_NAME = "genibus"
     FORMAT = "[%(levelname)s (%(name)s)]: %(message)s"
 
     def __init__(self, level: int = logging.WARN) -> None:
-        self.logger = logging.getLogger("{0}".format(self.LOGGER_BASE_NAME))
+        self.logger = logging.getLogger(f"{self.LOGGER_BASE_NAME}")
         self.logger.setLevel(level)
 
         if not self.logger.handlers:
@@ -46,22 +44,22 @@ class Logger(object):
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
 
-        self.lastMessage: Optional[str] = None
-        self.lastSeverity: Optional[int] = None
+        self.lastMessage: str | None = None
+        self.lastSeverity: int | None = None
 
-    def get_last_error(self) -> Tuple[Optional[int], Optional[str]]:
+    def get_last_error(self) -> tuple[int | None, str | None]:
         result = (self.lastSeverity, self.lastMessage)
         self.lastSeverity = None
         self.lastMessage = None
         return result
 
-    def getLastError(self) -> Tuple[Optional[int], Optional[str]]:
+    def getLastError(self) -> tuple[int | None, str | None]:
         return self.get_last_error()
 
     def log(self, message: str, level: int) -> None:
         self.lastSeverity = level
         self.lastMessage = message
-        self.logger.log(level, "{0}".format(message))
+        self.logger.log(level, f"{message}")
 
     def info(self, message: str) -> None:
         self.log(message, logging.INFO)
@@ -84,7 +82,7 @@ class Logger(object):
     def silent(self) -> None:
         self.logger.setLevel(logging.CRITICAL)
 
-    def set_level(self, level: Union[str, int]) -> None:
+    def set_level(self, level: str | int) -> None:
         level_map = {
             "INFO": logging.INFO,
             "WARN": logging.WARN,
@@ -97,5 +95,5 @@ class Logger(object):
             normalized = level_map.get(level.upper(), logging.WARN)
         self.logger.setLevel(int(normalized))
 
-    def setLevel(self, level: Union[str, int]) -> None:
+    def setLevel(self, level: str | int) -> None:
         self.set_level(level)
