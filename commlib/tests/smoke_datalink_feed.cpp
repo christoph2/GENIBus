@@ -264,6 +264,54 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // Receiving only SD byte must not enter DL_RECEIVING yet; completing later should still work.
+    constexpr std::array<uint8, 1> sd_only_frame = {
+        datalink_smoke_vectors::kFeedValidFrame[0],
+    };
+    constexpr std::array<uint8, 5> sd_tail_frame = {
+        datalink_smoke_vectors::kFeedValidFrame[1],
+        datalink_smoke_vectors::kFeedValidFrame[2],
+        datalink_smoke_vectors::kFeedValidFrame[3],
+        datalink_smoke_vectors::kFeedValidFrame[4],
+        datalink_smoke_vectors::kFeedValidFrame[5],
+    };
+
+    reset_callout_capture();
+    load_rx_frame(sd_only_frame, static_cast<uint16>(sd_only_frame.size()));
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 0, "SD-only feed should not call dataLinkCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "SD-only feed should not call errorCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "SD-only feed should keep DL_IDLE state")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == 1, "SD-only feed should advance frameIdx to 1")) {
+        return EXIT_FAILURE;
+    }
+
+    load_rx_frame(sd_tail_frame, static_cast<uint16>(sd_tail_frame.size()));
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 1, "SD-tail feed should complete frame and call dataLinkCallout once")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "SD-tail feed should not call errorCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "SD-tail completion should return DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == 0, "SD-tail completion should reset frameIdx")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_callback_matches_frame(valid_frame)) {
+        return EXIT_FAILURE;
+    }
+
     // Reassembly should also work when the same frame arrives in three segments.
     constexpr std::array<uint8, 2> segment_1 = {
         datalink_smoke_vectors::kFeedValidFrame[0],
