@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __copyright__ = """
 Grundfos GENIBus Library.
@@ -210,8 +209,8 @@ LOCALS = LOCALES
 def get_locale_code(locale: int) -> str:
     result = LOCALES.get(locale, ('?', '?', '?', ))[2]
     if '-' in result:
-        l, r = result.split('-')
-        return "%s-%s" % (l.lower(), r.upper())
+        lang, region = result.split('-')
+        return f"{lang.lower()}-{region.upper()}"
     else:
         return result
 
