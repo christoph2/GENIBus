@@ -135,7 +135,7 @@ int main() {
 
     g_write_calls = 0;
     g_last_tx_len = 0;
-    g_last_tx.fill(0);
+    g_last_tx.fill(0xCC);
     LinkLayer_SendPDU(
         &link,
         GB_SD_REQUEST,
@@ -170,12 +170,19 @@ int main() {
         return EXIT_FAILURE;
     }
     if (!expect_true(
-        g_last_tx[3] == 0x00,
-        "current implementation writes only the first payload_len bytes (SA/payload not transmitted)"
+        g_last_tx[3] == 0xCC,
+        "current implementation writes only the first payload_len bytes (bytes beyond len stay untouched)"
+    )) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(
+        g_last_tx[4] == 0xCC,
+        "send path must not modify bytes beyond transmitted length"
     )) {
         return EXIT_FAILURE;
     }
 
+    g_last_tx.fill(0xCC);
     LinkLayer_ConnectRequest(&link, datalink_smoke_vectors::kConnectRequestSa);
     if (!expect_true(g_write_calls == 2, "LinkLayer_ConnectRequest should trigger a second writeFrame call")) {
         return EXIT_FAILURE;
@@ -216,6 +223,12 @@ int main() {
         )) {
             return EXIT_FAILURE;
         }
+    }
+    if (!expect_true(
+        g_last_tx[g_last_tx_len] == 0xCC,
+        "connect path must not modify bytes beyond transmitted length"
+    )) {
+        return EXIT_FAILURE;
     }
 
     std::cout << "Datalink smoke test passed.\n";
