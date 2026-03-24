@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Zentrale GENIBus-Konstanten, Enums und Metadatenstrukturen."""
 
 __version__ = "0.1.0"
 
@@ -62,6 +63,7 @@ broadcast_addr = BROADCAST_ADDR
 
 
 class FrameType(enum.IntEnum):
+    """Startdelimiter fuer GENIBus-Rahmentypen."""
 
     SD_DATA_REQUEST     = 0x27
     SD_DATA_REPLY       = 0x24
@@ -69,6 +71,7 @@ class FrameType(enum.IntEnum):
 
 
 class Access(enum.IntEnum):
+    """Zugriffsarten fuer Datapoints."""
 
     RO  = 0x01
     WO  = 0x02
@@ -76,6 +79,7 @@ class Access(enum.IntEnum):
 
 
 class APDUClass(enum.IntEnum):
+    """APDU-Klassen gemaess GENIBus-Spezifikation."""
 
     PROTOCOL_DATA                       = 0
     BUS_DATA                            = 1
@@ -115,6 +119,7 @@ nice_class_names = NICE_CLASS_NAMES
 
 
 class Operation(enum.IntEnum):
+    """Operationen im APDU-Header (GET/SET/INFO)."""
 
     GET  = 0
     SET  = 2
@@ -122,6 +127,7 @@ class Operation(enum.IntEnum):
 
 
 class Acknowledge(enum.IntEnum):
+    """Acknowledge-Codes fuer Antworten auf APDU-Operationen."""
 
     OK                  = 0
     CLASS_UNKNOWN       = 1
@@ -150,11 +156,15 @@ CLASS_CAPABILITIES: dict[APDUClass, tuple[Operation, ...]] = {
 class_capabilities = CLASS_CAPABILITIES
 
 class IllegalOperationError(Exception):
+    """Fehler fuer nicht erlaubte Klassen-/Operationskombinationen."""
+
     pass
 
 
 @dataclass(frozen=True)
 class Info:
+    """Metadaten zu einem Datapoint."""
+
     head: str
     unit: str
     zero: float
@@ -163,6 +173,8 @@ class Info:
 
 @dataclass(frozen=True)
 class Item:
+    """Datapoint-Eintrag aus Name, Wert und `Info`-Metadaten."""
+
     name: str
     value: int
     info: Info
