@@ -24,6 +24,7 @@ ctest --test-dir commlib/build-cmake -C Debug --output-on-failure
 - Include root is set to `commlib/`, so headers like `genibus/types.h` resolve.
 - `tests/smoke_crc.cpp` validates the CRC core function against a known vector.
 - `tests/smoke_datalink.cpp` validates key datalink state and CRC checks.
+- `tests/smoke_datalink_feed.cpp` validates `LinkLayer_Feed` callback paths for valid/invalid CRC frames.
 
 ## Roadmap
 
