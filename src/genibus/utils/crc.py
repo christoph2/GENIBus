@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""CRC-Hilfsfunktionen fuer GENIBus-Telegramme."""
 
 __version__ = "0.1.0"
 
@@ -31,6 +32,8 @@ from collections.abc import Iterable
 
 
 class CrcError(Exception):
+    """Fehler bei CRC-Pruefung eines Telegramms."""
+
     pass
 
 Crc_Table16 = (
@@ -70,25 +73,47 @@ Crc_Table16 = (
 
 
 class Crc:
+    """Inkrementeller CRC-16 Rechner mit GENIBus-Parametern."""
+
     logger = logging.getLogger("GeniControl")
     _accum: int
 
     def __init__(self, data: int):
+        """Initialisiert den CRC-Akkumulator.
+
+        Args:
+            data: Initialwert des Akkumulators.
+        """
         self.init(data)
 
     def update(self, data: int) -> None:
+        """Verarbeitet ein weiteres Byte.
+
+        Args:
+            data: Naechstes Eingabebyte.
+        """
         data &= 0xff
         table_index = ((self._accum >> 8) ^ data) & 0xff
         self._accum = (((self._accum << 8) & 0xffff) ^ Crc_Table16[table_index]) & 0xffff
 
     def init(self, data: int) -> None:
+        """Setzt den Akkumulator auf den angegebenen Startwert."""
         self._accum = data
 
     def get(self) -> int:
+        """Gibt den finalisierten CRC-Wert zurueck."""
         return (self._accum ^ (0xffff)) & 0xffff
 
 
 def calculate_crc(data: Iterable[int]) -> int:
+    """Berechnet die GENIBus-CRC ueber die gegebenen Bytes.
+
+    Args:
+        data: Eingabebytes.
+
+    Returns:
+        int: 16-Bit-CRC-Wert.
+    """
     crc = Crc(0xffff)
     for byte in bytearray(data):
         crc.update(byte)
@@ -96,11 +121,31 @@ def calculate_crc(data: Iterable[int]) -> int:
 
 
 def append_telegram(telegram: Iterable[int]) -> bytearray:
+    """Haengt CRC-High/Low an ein Telegramm an.
+
+    Args:
+        telegram: Telegramm ohne CRC.
+
+    Returns:
+        bytearray: Telegramm inklusive angehaengter CRC-Bytes.
+    """
     crc_value = calculate_crc(bytearray(telegram)[1:])
     return bytearray(telegram) + bytearray([crc_value >> 8, crc_value & 0xff])
 
 
 def check_telegram(telegram: Iterable[int], silent: bool = False) -> bool:
+    """Prueft die CRC eines vollstaendigen Telegramms.
+
+    Args:
+        telegram: Telegramm inklusive CRC.
+        silent: Wenn `True`, wird bei Fehlern kein `CrcError` geworfen.
+
+    Returns:
+        bool: `True` bei gueltiger CRC, sonst `False`.
+
+    Raises:
+        CrcError: Wenn CRC ungueltig ist und `silent=False`.
+    """
     telegram = bytearray(telegram)
     match = calculate_crc(telegram[1:-2]) == ((telegram[-2] << 8) + telegram[-1])
     if not match and not silent:
@@ -109,29 +154,50 @@ def check_telegram(telegram: Iterable[int], silent: bool = False) -> bool:
 
 
 def calc_raw(_bytes: Iterable[int]) -> int:
+    """Legacy-kompatibler Alias fuer `calculate_crc()`."""
     return calculate_crc(_bytes)
 
 
 def append_tel(telegram: Iterable[int]) -> bytearray:
+    """Legacy-kompatibler Alias fuer `append_telegram()`."""
     return append_telegram(telegram)
 
 
 def check_tel(telegram: Iterable[int], silent: bool = False) -> bool:
+    """Legacy-kompatibler Alias fuer `check_telegram()`."""
     return check_telegram(telegram, silent=silent)
 
 
 def check_crc(frame: Iterable[int]) -> int:
+    """Berechnet die CRC ueber den Frame-Payload ohne CRC-Bytes.
+
+    Args:
+        frame: Vollstaendiger Frame inklusive Startdelimiter und CRC.
+
+    Returns:
+        int: Erwarteter CRC-Wert fuer den Frame-Inhalt.
+    """
     return calculate_crc(bytearray(frame)[1:-2])
 
 
 def calculate_frame_crc(frame: Iterable[int]) -> int:
+    """Berechnet die CRC ueber Frame-Inhalt ab Laengenbyte.
+
+    Args:
+        frame: Frame ohne angehaengte CRC oder bereits mit CRC.
+
+    Returns:
+        int: Berechneter CRC-Wert.
+    """
     return calculate_crc(bytearray(frame)[1:])
 
 
 def checkCrc(frame: Iterable[int]) -> int:
+    """Legacy-Alias fuer `check_crc()`."""
     return check_crc(frame)
 
 
 def calcuteCrc(frame: Iterable[int]) -> int:
+    """Legacy-Alias (inkl. historischer Schreibweise) fuer `calculate_frame_crc()`."""
     return calculate_frame_crc(frame)
 
