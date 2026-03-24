@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "datalink_smoke_vectors.h"
+
 extern "C" {
 #include "genibus/datalink.h"
 }
@@ -73,8 +75,14 @@ int main() {
 
     g_write_calls = 0;
     g_last_tx_len = 0;
-    constexpr std::array<uint8, 3> pdu_payload = {0xAA, 0xBB, 0xCC};
-    LinkLayer_SendPDU(&link, GB_SD_REQUEST, 0x20, 0x01, pdu_payload.data(), static_cast<uint8>(pdu_payload.size()));
+    LinkLayer_SendPDU(
+        &link,
+        GB_SD_REQUEST,
+        0x20,
+        datalink_smoke_vectors::kConnectRequestSa,
+        datalink_smoke_vectors::kSendPduPayload.data(),
+        static_cast<uint8>(datalink_smoke_vectors::kSendPduPayload.size())
+    );
 
     if (!expect_true(g_write_calls == 1, "LinkLayer_SendPDU should call writeFrame once")) {
         return EXIT_FAILURE;
@@ -85,24 +93,33 @@ int main() {
     if (!expect_true(g_last_tx[0] == GB_SD_REQUEST, "SD byte should be written")) {
         return EXIT_FAILURE;
     }
-    if (!expect_true(g_last_tx[1] == static_cast<uint8>(pdu_payload.size() + 2), "LEN byte should be payload+2")) {
+    if (!expect_true(
+        g_last_tx[1] == static_cast<uint8>(datalink_smoke_vectors::kSendPduPayload.size() + 2),
+        "LEN byte should be payload+2"
+    )) {
         return EXIT_FAILURE;
     }
-    if (!expect_true(g_last_tx_len == static_cast<uint16>(pdu_payload.size()), "writeFrame length should match current implementation")) {
+    if (!expect_true(
+        g_last_tx_len == static_cast<uint16>(datalink_smoke_vectors::kSendPduPayload.size()),
+        "writeFrame length should match current implementation"
+    )) {
         return EXIT_FAILURE;
     }
     if (!expect_true(g_last_tx[2] == 0x20, "DA byte should match input")) {
         return EXIT_FAILURE;
     }
 
-    LinkLayer_ConnectRequest(&link, 0x01);
+    LinkLayer_ConnectRequest(&link, datalink_smoke_vectors::kConnectRequestSa);
     if (!expect_true(g_write_calls == 2, "LinkLayer_ConnectRequest should trigger a second writeFrame call")) {
         return EXIT_FAILURE;
     }
     if (!expect_true(g_last_tx[0] == GB_SD_REQUEST, "connect request should use request delimiter")) {
         return EXIT_FAILURE;
     }
-    if (!expect_true(g_last_tx[2] == 0xFE && g_last_tx[3] == 0x01, "connect request should target DA=0xFE, SA=0x01")) {
+    if (!expect_true(
+        g_last_tx[2] == 0xFE && g_last_tx[3] == datalink_smoke_vectors::kConnectRequestSa,
+        "connect request should target DA=0xFE, SA=0x01"
+    )) {
         return EXIT_FAILURE;
     }
 

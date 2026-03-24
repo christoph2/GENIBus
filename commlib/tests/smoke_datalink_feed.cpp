@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "datalink_smoke_vectors.h"
+
 extern "C" {
 #include "genibus/datalink.h"
 }
@@ -86,11 +88,7 @@ int main() {
 
     LinkLayer_Init(&link);
 
-    // This frame is self-consistent for the current LinkLayer_VerifyCRC behavior
-    // (CRC is checked over LEN..CRC_HI, i.e. without CRC_LO).
-    constexpr std::array<uint8, 6> valid_frame = {
-        GB_SD_REPLY, 0x02, 0x00, 0x04, 0x7A, 0xB1,
-    };
+    constexpr std::array<uint8, 6> valid_frame = datalink_smoke_vectors::kFeedValidFrame;
     const uint16 valid_frame_len = static_cast<uint16>(valid_frame.size());
 
     reset_callout_capture();
@@ -136,6 +134,31 @@ int main() {
         return EXIT_FAILURE;
     }
     if (!expect_true(link.frameIdx == 0, "frameIdx should reset after CRC error")) {
+        return EXIT_FAILURE;
+    }
+
+    // Truncated frame must not fire callbacks and should stay in receive state.
+    constexpr std::array<uint8, 4> truncated_frame = {
+        datalink_smoke_vectors::kFeedValidFrame[0],
+        datalink_smoke_vectors::kFeedValidFrame[1],
+        datalink_smoke_vectors::kFeedValidFrame[2],
+        datalink_smoke_vectors::kFeedValidFrame[3],
+    };
+
+    reset_callout_capture();
+    load_rx_frame(truncated_frame, static_cast<uint16>(truncated_frame.size()));
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 0, "truncated frame should not call dataLinkCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "truncated frame should not call errorCallout yet")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_RECEIVING, "truncated frame should keep DL_RECEIVING state")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == static_cast<uint8>(truncated_frame.size()), "frameIdx should reflect buffered bytes")) {
         return EXIT_FAILURE;
     }
 
