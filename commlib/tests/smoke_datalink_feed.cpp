@@ -162,6 +162,35 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // Feeding the remaining bytes afterwards should complete the frame.
+    constexpr std::array<uint8, 2> trailing_frame = {
+        datalink_smoke_vectors::kFeedValidFrame[4],
+        datalink_smoke_vectors::kFeedValidFrame[5],
+    };
+
+    reset_callout_capture();
+    load_rx_frame(trailing_frame, static_cast<uint16>(trailing_frame.size()));
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 1, "trailing bytes should complete and call dataLinkCallout once")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "trailing bytes should not call errorCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_callback_len == static_cast<uint8>(valid_frame_len), "completed callback should report full frame length")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_callback_bytes[0] == GB_SD_REPLY, "completed callback should preserve SD byte")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "state should return to DL_IDLE after frame completion")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == 0, "frameIdx should reset after completed frame")) {
+        return EXIT_FAILURE;
+    }
+
     std::cout << "Datalink feed smoke test passed.\n";
     return EXIT_SUCCESS;
 }
