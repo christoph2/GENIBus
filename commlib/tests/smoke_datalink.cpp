@@ -181,6 +181,14 @@ int main() {
     )) {
         return EXIT_FAILURE;
     }
+    for (uint16 idx = 0; idx < static_cast<uint16>(datalink_smoke_vectors::kConnectRequestPayloadPrefix.size()); ++idx) {
+        if (!expect_true(
+            g_last_tx[4 + idx] == datalink_smoke_vectors::kConnectRequestPayloadPrefix[idx],
+            "connect request payload prefix should match expected bytes"
+        )) {
+            return EXIT_FAILURE;
+        }
+    }
 
     std::cout << "Datalink smoke test passed.\n";
     return EXIT_SUCCESS;
