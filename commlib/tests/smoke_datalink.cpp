@@ -70,6 +70,24 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // Send must be ignored when not idle.
+    g_write_calls = 0;
+    LinkLayer_SetState(&link, DL_RECEIVING);
+    LinkLayer_SendPDU(
+        &link,
+        GB_SD_REQUEST,
+        0x20,
+        datalink_smoke_vectors::kConnectRequestSa,
+        datalink_smoke_vectors::kSendPduPayload.data(),
+        static_cast<uint8>(datalink_smoke_vectors::kSendPduPayload.size())
+    );
+    if (!expect_true(g_write_calls == 0, "LinkLayer_SendPDU should not write when state is not DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_RECEIVING, "state should remain unchanged when send is rejected")) {
+        return EXIT_FAILURE;
+    }
+
     // Sending API requires idle state.
     LinkLayer_SetState(&link, DL_IDLE);
 
