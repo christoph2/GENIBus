@@ -17,5 +17,6 @@ api/utils
 tutorial/connect_pump
 tutorial/set_reference
 contributing
+wp8_arduino_staging_report
 ```
 
