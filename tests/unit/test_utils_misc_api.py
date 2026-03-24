@@ -2,7 +2,7 @@ import logging
 
 from genibus.utils import bytes as byte_utils
 from genibus.utils import locales
-from genibus.utils.locales import getLocalCode, get_locale_code
+from genibus.utils.locales import get_locale_code, getLocalCode
 from genibus.utils.logger import Logger
 
 
