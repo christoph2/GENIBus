@@ -92,3 +92,11 @@ ENV/
 
 #OS X
 *.DS_Store
+
+# Local workspace files and generated folders
+/.idea/
+/.junie/
+/WORKPACKAGES.md
+/tools/Pmt/
+/tools/pump_sim/
+/.github/FUNDING.yml
