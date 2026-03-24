@@ -242,6 +242,65 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // Reassembly should also work when the same frame arrives in three segments.
+    constexpr std::array<uint8, 2> segment_1 = {
+        datalink_smoke_vectors::kFeedValidFrame[0],
+        datalink_smoke_vectors::kFeedValidFrame[1],
+    };
+    constexpr std::array<uint8, 2> segment_2 = {
+        datalink_smoke_vectors::kFeedValidFrame[2],
+        datalink_smoke_vectors::kFeedValidFrame[3],
+    };
+    constexpr std::array<uint8, 2> segment_3 = {
+        datalink_smoke_vectors::kFeedValidFrame[4],
+        datalink_smoke_vectors::kFeedValidFrame[5],
+    };
+
+    reset_callout_capture();
+    load_rx_frame(segment_1, static_cast<uint16>(segment_1.size()));
+    LinkLayer_Feed(&link);
+    if (!expect_true(g_data_calls == 0 && g_error_calls == 0, "segment 1 should not trigger callbacks")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_RECEIVING, "segment 1 should keep DL_RECEIVING state")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == static_cast<uint8>(segment_1.size()), "segment 1 should advance frameIdx")) {
+        return EXIT_FAILURE;
+    }
+
+    load_rx_frame(segment_2, static_cast<uint16>(segment_2.size()));
+    LinkLayer_Feed(&link);
+    if (!expect_true(g_data_calls == 0 && g_error_calls == 0, "segment 2 should not trigger callbacks")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_RECEIVING, "segment 2 should keep DL_RECEIVING state")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == static_cast<uint8>(segment_1.size() + segment_2.size()), "segment 2 should advance frameIdx")) {
+        return EXIT_FAILURE;
+    }
+
+    load_rx_frame(segment_3, static_cast<uint16>(segment_3.size()));
+    LinkLayer_Feed(&link);
+    if (!expect_true(g_data_calls == 1, "segment 3 should complete frame and call dataLinkCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "three-segment valid frame should not call errorCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "three-segment completion should return to DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == 0, "three-segment completion should reset frameIdx")) {
+        return EXIT_FAILURE;
+    }
+    for (uint16 idx = 0; idx < valid_frame_len; ++idx) {
+        if (!expect_true(g_callback_bytes[idx] == valid_frame[idx], "three-segment callback should match full frame content")) {
+            return EXIT_FAILURE;
+        }
+    }
+
     std::cout << "Datalink feed smoke test passed.\n";
     return EXIT_SUCCESS;
 }
