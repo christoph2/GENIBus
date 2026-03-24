@@ -468,6 +468,44 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // Valid frame with disabled data callback must still complete without errors.
+    link.dataLinkCallout = NULL;
+    reset_callout_capture();
+    load_rx_frame(valid_frame, valid_frame_len);
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 0, "valid frame with NULL data callback should not increment data calls")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "valid frame with NULL data callback should not increment error calls")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "valid frame with NULL data callback should return DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == 0, "valid frame with NULL data callback should reset frameIdx")) {
+        return EXIT_FAILURE;
+    }
+
+    // Invalid frame with disabled error callback must still reset the state.
+    link.errorCallout = NULL;
+    reset_callout_capture();
+    load_rx_frame(invalid_frame, valid_frame_len);
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 0, "invalid frame with NULL error callback should not increment data calls")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "invalid frame with NULL error callback should not increment error calls")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "invalid frame with NULL error callback should return DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == 0, "invalid frame with NULL error callback should reset frameIdx")) {
+        return EXIT_FAILURE;
+    }
+
     std::cout << "Datalink feed smoke test passed.\n";
     return EXIT_SUCCESS;
 }
