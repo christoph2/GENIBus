@@ -301,6 +301,54 @@ int main() {
         }
     }
 
+    // If two valid frames are buffered, one feed call handles only one frame.
+    constexpr std::array<uint8, 12> two_frame_stream = {
+        datalink_smoke_vectors::kFeedValidFrame[0],
+        datalink_smoke_vectors::kFeedValidFrame[1],
+        datalink_smoke_vectors::kFeedValidFrame[2],
+        datalink_smoke_vectors::kFeedValidFrame[3],
+        datalink_smoke_vectors::kFeedValidFrame[4],
+        datalink_smoke_vectors::kFeedValidFrame[5],
+        datalink_smoke_vectors::kFeedValidFrame[0],
+        datalink_smoke_vectors::kFeedValidFrame[1],
+        datalink_smoke_vectors::kFeedValidFrame[2],
+        datalink_smoke_vectors::kFeedValidFrame[3],
+        datalink_smoke_vectors::kFeedValidFrame[4],
+        datalink_smoke_vectors::kFeedValidFrame[5],
+    };
+
+    reset_callout_capture();
+    load_rx_frame(two_frame_stream, static_cast<uint16>(two_frame_stream.size()));
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 1, "first feed on two-frame stream should process one frame")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "first feed on two-frame stream should not call errorCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_rx_index == valid_frame_len, "first feed should consume exactly one frame")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "state should be DL_IDLE after first frame completion")) {
+        return EXIT_FAILURE;
+    }
+
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 2, "second feed on two-frame stream should process remaining frame")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "second feed on two-frame stream should not call errorCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_rx_index == static_cast<uint16>(two_frame_stream.size()), "second feed should consume the full stream")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "state should stay DL_IDLE after second frame completion")) {
+        return EXIT_FAILURE;
+    }
+
     std::cout << "Datalink feed smoke test passed.\n";
     return EXIT_SUCCESS;
 }
