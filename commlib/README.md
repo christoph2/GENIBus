@@ -23,6 +23,7 @@ ctest --test-dir commlib/build-cmake -C Debug --output-on-failure
 - On non-UNIX hosts, the core CRC + datalink objects still build.
 - Include root is set to `commlib/`, so headers like `genibus/types.h` resolve.
 - `tests/smoke_crc.cpp` validates the CRC core function against a known vector.
+- `tests/smoke_datalink.cpp` validates key datalink state and CRC checks.
 
 ## Roadmap
 

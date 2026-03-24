@@ -58,6 +58,10 @@ if(GENIBUS_BUILD_TESTS)
         add_executable(genibus_crc_smoke_test tests/smoke_crc.cpp)
         target_link_libraries(genibus_crc_smoke_test PRIVATE genibus_commlib)
         add_test(NAME genibus_crc_smoke_test COMMAND genibus_crc_smoke_test)
+
+        add_executable(genibus_datalink_smoke_test tests/smoke_datalink.cpp)
+        target_link_libraries(genibus_datalink_smoke_test PRIVATE genibus_commlib)
+        add_test(NAME genibus_datalink_smoke_test COMMAND genibus_datalink_smoke_test)
     endif()
 endif()
 
