@@ -1,61 +1,74 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-##
-import asyncore
+"""Simple TCP logging server for GENIBus example traffic."""
+
+from __future__ import annotations
+
+import argparse
+import logging
 import socket
-import sys
-##import pdb
+import socketserver
+from pathlib import Path
+
 PORT = 6734
-##pdb.set_trace()
-
-##ADDR = (socket.gethostname(), PORT)
-ADDR = (socket.gethostbyname(socket.gethostname()), PORT)  ##display the numeric IP address
-
-class EchoHandler(asyncore.dispatcher_with_send):
-
-    def handle_read(self):
-        data = self.recv(1024)
-        if data:
-            #print(data)
-            with file('genibus.log', 'a') as outf:
-                outf.write("%s\n" % data)
+BUFFER_SIZE = 1024
 
 
-class EchoServer(asyncore.dispatcher):
+def build_parser() -> argparse.ArgumentParser:
+    """Create command-line parser.
 
-    def __init__(self, host, port):
-        asyncore.dispatcher.__init__(self)
-        self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.set_reuse_addr()
-        self.bind(ADDR)
-        self.listen(5)
-        print("TCP-Server [%s:%u] up and running." % ADDR)
+    Returns:
+        argparse.ArgumentParser: Configured parser instance.
+    """
+    parser = argparse.ArgumentParser(description="Run a TCP logging server for GENIBus traffic.")
+    parser.add_argument("--host", default=socket.gethostbyname(socket.gethostname()))
+    parser.add_argument("--port", type=int, default=PORT)
+    parser.add_argument("--log-file", type=Path, default=Path("genibus.log"))
+    return parser
 
-    def handle_accept(self):
-        pair = self.accept()
-        if pair is None:
-            pass
-        else:
-            sock, addr = pair
-            print('...connected from: %s' % repr(addr))
-            handler = EchoHandler(sock)
 
-    def handle_close(self):
-        print("handle close")
-        self.close()
+def configure_logging() -> None:
+    """Configure console logging for server diagnostics."""
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    )
 
-##
-##    def handle_error(self):
-##        print("handle error")
-##
 
-    def handle_expt(self):
-        print("handle expt")
+class LoggingRequestHandler(socketserver.BaseRequestHandler):
+    """Handle a single TCP client and append received frames to a file."""
 
-    def handle_expt_event(self):
-        print("handle expt event")
+    def handle(self) -> None:
+        logger = logging.getLogger("TestServer")
+        peer = self.client_address
+        logger.info("Connected: %s", peer)
+        log_file: Path = self.server.log_file  # type: ignore[attr-defined]
+        while True:
+            data = self.request.recv(BUFFER_SIZE)
+            if not data:
+                break
+            with log_file.open("a", encoding="utf-8") as output:
+                output.write(f"{data.hex()}\n")
+        logger.info("Disconnected: %s", peer)
 
-server = EchoServer(socket.gethostname(), PORT)
-asyncore.loop()
+
+class ThreadedTcpServer(socketserver.ThreadingTCPServer):
+    """Threading TCP server with address reuse enabled."""
+
+    allow_reuse_address = True
+
+
+def main() -> None:
+    """Run the TCP logging server until interrupted."""
+    args = build_parser().parse_args()
+    configure_logging()
+    server_address = (args.host, args.port)
+    with ThreadedTcpServer(server_address, LoggingRequestHandler) as server:
+        server.log_file = args.log_file  # type: ignore[attr-defined]
+        logging.getLogger("TestServer").info("TCP server listening on %s:%d", args.host, args.port)
+        server.serve_forever()
+
+
+if __name__ == "__main__":
+    main()
 
 

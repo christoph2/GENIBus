@@ -1,71 +1,92 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+"""TCP test client for the pass-through server example."""
 
+from __future__ import annotations
+
+import argparse
+import logging
 import socket
-import struct
-import sys
 import time
 
-SERVER = '192.168.1.2'  # TODO: Adjust to the IP-address of your Arduino board!
-
-#SERVER = 'localhost'
-#SERVER = socket.gethostname()
+SERVER = "192.168.1.2"
 PORT = 6734
+TIMEOUT_SECONDS = 0.5
+POLL_INTERVAL_SECONDS = 1.0
+BUFFER_SIZE = 1024
 
-CONNECT_REQ = (
-    0x27,   ##  Start Delimiter
-    0x0e,   ##  Length
-    0xfe,   ##  Destination Address
-    0x01,   ##  Source Address
-            ##
-    0x00,   ##  Class 0: Protocol Data
-    0x02,   ##  OS=0 (GET), Length=2
-    0x02,   ##  df_buf_len
-    0x03,   ##  unit_bus_mode
-    0x04,   ##  Class 4: Configuration Data
-    0x02,   ##  OS=0 (GET), Length=2
-    0x2e,   ##  unit_addr
-    0x2f,   ##  group_addr
-    0x02,   ##  Class 2: Measured Data
-    0x02,   ##  OS=0 (GET), Length=2
-    0x94,   ##  unit_family
-    0x95,   ##  unit_type
-            ##
-    0xa2,   ##  CRC high
-    0xaa    ##  CRC low
+CONNECT_REQ = bytes(
+    (
+        0x27,
+        0x0E,
+        0xFE,
+        0x01,
+        0x00,
+        0x02,
+        0x02,
+        0x03,
+        0x04,
+        0x02,
+        0x2E,
+        0x2F,
+        0x02,
+        0x02,
+        0x94,
+        0x95,
+        0xA2,
+        0xAA,
+    )
 )
 
-socket.setdefaulttimeout(0.5)
 
-def hexDump(data):
-    return [hex(x) for x in data]
+def build_parser() -> argparse.ArgumentParser:
+    """Create command-line parser.
 
-try:
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.settimeout(0.5)
+    Returns:
+        argparse.ArgumentParser: Configured parser instance.
+    """
+    parser = argparse.ArgumentParser(description="GENIBus pass-through TCP test client")
+    parser.add_argument("--server", default=SERVER)
+    parser.add_argument("--port", type=int, default=PORT)
+    return parser
 
-    conn = s.connect((SERVER, PORT))
-except Exception as e:
-    print(e.message)
-    msg = "%s: %s -- Press Return to exit." % (e.errno, e.message)
-    raw_input(msg)
-    sys.exit(1)
-print("TCP-client up and running.")
 
-while True:
-    print("Connect request...")
-    try:
-        s.send(bytearray(CONNECT_REQ))
-    except socket.error as e:
-         #print(str(e))
-         if e.errno != 32: # 'Broken pipe' error isn't that dramatic.
-              raise
-    try:
-      data = s.recv(1024)
-      print("Response: ", hexDump(bytearray(data)))
-    except Exception as e:
-        print("Response: ", str(e))
-    time.sleep(1.0)
-s.close()
+def configure_logging() -> None:
+    """Configure console logging output."""
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    )
+
+
+def run_client(server: str, port: int) -> None:
+    """Run the polling loop and print responses.
+
+    Args:
+        server: Target server host or IP.
+        port: Target TCP port.
+    """
+    logger = logging.getLogger("TestClient")
+    with socket.create_connection((server, port), timeout=TIMEOUT_SECONDS) as sock:
+        sock.settimeout(TIMEOUT_SECONDS)
+        logger.info("TCP client connected to %s:%d", server, port)
+        while True:
+            logger.info("Sending connect request")
+            sock.sendall(CONNECT_REQ)
+            try:
+                response = sock.recv(BUFFER_SIZE)
+                logger.info("Response: %s", [hex(value) for value in response])
+            except TimeoutError:
+                logger.warning("No response within %.1fs", TIMEOUT_SECONDS)
+            time.sleep(POLL_INTERVAL_SECONDS)
+
+
+def main() -> None:
+    """Parse args and start the TCP test client."""
+    args = build_parser().parse_args()
+    configure_logging()
+    run_client(server=args.server, port=args.port)
+
+
+if __name__ == "__main__":
+    main()
 
