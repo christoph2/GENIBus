@@ -87,6 +87,8 @@ int main() {
 
     // Send must be ignored when not idle.
     g_write_calls = 0;
+    g_last_tx_len = 0xFFFF;
+    g_last_tx.fill(0xEE);
     LinkLayer_SetState(&link, DL_RECEIVING);
     LinkLayer_SendPDU(
         &link,
@@ -102,15 +104,29 @@ int main() {
     if (!expect_true(LinkLayer_GetState(&link) == DL_RECEIVING, "state should remain unchanged when send is rejected")) {
         return EXIT_FAILURE;
     }
+    if (!expect_true(g_last_tx_len == 0xFFFF, "rejected send should not change last TX length")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_last_tx[0] == 0xEE, "rejected send should not change TX buffer")) {
+        return EXIT_FAILURE;
+    }
 
     // Connect request also goes through send path and must be ignored when not idle.
     g_write_calls = 0;
+    g_last_tx_len = 0xFFFF;
+    g_last_tx.fill(0xEE);
     LinkLayer_SetState(&link, DL_SENDING);
     LinkLayer_ConnectRequest(&link, datalink_smoke_vectors::kConnectRequestSa);
     if (!expect_true(g_write_calls == 0, "LinkLayer_ConnectRequest should not write when state is not DL_IDLE")) {
         return EXIT_FAILURE;
     }
     if (!expect_true(LinkLayer_GetState(&link) == DL_SENDING, "state should remain unchanged when connect request is rejected")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_last_tx_len == 0xFFFF, "rejected connect request should not change last TX length")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_last_tx[0] == 0xEE, "rejected connect request should not change TX buffer")) {
         return EXIT_FAILURE;
     }
 
