@@ -169,6 +169,31 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // LEN=0 short frame should still terminate and report CRC error.
+    constexpr std::array<uint8, 4> len_zero_invalid_frame = {
+        GB_SD_REPLY, 0x00, 0x00, 0x00,
+    };
+
+    reset_callout_capture();
+    load_rx_frame(len_zero_invalid_frame, static_cast<uint16>(len_zero_invalid_frame.size()));
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 0, "LEN=0 invalid frame should not call dataLinkCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 1, "LEN=0 invalid frame should call errorCallout once")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_last_error == ERR_INVALID_CRC, "LEN=0 invalid frame should report ERR_INVALID_CRC")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "LEN=0 invalid frame should return DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == 0, "LEN=0 invalid frame should reset frameIdx")) {
+        return EXIT_FAILURE;
+    }
+
     // Truncated frame must not fire callbacks and should stay in receive state.
     constexpr std::array<uint8, 4> truncated_frame = {
         datalink_smoke_vectors::kFeedValidFrame[0],
@@ -203,6 +228,44 @@ int main() {
         return EXIT_FAILURE;
     }
     if (!expect_true(link.frameIdx == static_cast<uint8>(truncated_frame.size()), "no-data feed should not modify frameIdx")) {
+        return EXIT_FAILURE;
+    }
+
+    // Reset while receiving must discard partial state and allow clean restart.
+    LinkLayer_Reset(&link);
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "LinkLayer_Reset should set DL_IDLE during partial receive")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == 0, "LinkLayer_Reset should clear frameIdx during partial receive")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameLength == 0, "LinkLayer_Reset should clear frameLength during partial receive")) {
+        return EXIT_FAILURE;
+    }
+
+    reset_callout_capture();
+    load_rx_frame(valid_frame, valid_frame_len);
+    LinkLayer_Feed(&link);
+    if (!expect_true(g_data_calls == 1, "after reset, valid frame should call dataLinkCallout once")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "after reset, valid frame should not call errorCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_callback_matches_frame(valid_frame)) {
+        return EXIT_FAILURE;
+    }
+
+    reset_callout_capture();
+    load_rx_frame(truncated_frame, static_cast<uint16>(truncated_frame.size()));
+    LinkLayer_Feed(&link);
+    if (!expect_true(g_data_calls == 0 && g_error_calls == 0, "reseeded truncated frame should not trigger callbacks")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_RECEIVING, "reseeded truncated frame should enter DL_RECEIVING")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == static_cast<uint8>(truncated_frame.size()), "reseeded truncated frame should restore frameIdx")) {
         return EXIT_FAILURE;
     }
 
