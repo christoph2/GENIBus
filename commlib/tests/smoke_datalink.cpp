@@ -88,6 +88,17 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // Connect request also goes through send path and must be ignored when not idle.
+    g_write_calls = 0;
+    LinkLayer_SetState(&link, DL_SENDING);
+    LinkLayer_ConnectRequest(&link, datalink_smoke_vectors::kConnectRequestSa);
+    if (!expect_true(g_write_calls == 0, "LinkLayer_ConnectRequest should not write when state is not DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_SENDING, "state should remain unchanged when connect request is rejected")) {
+        return EXIT_FAILURE;
+    }
+
     // Sending API requires idle state.
     LinkLayer_SetState(&link, DL_IDLE);
 
