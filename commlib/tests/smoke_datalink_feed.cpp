@@ -73,6 +73,19 @@ bool expect_true(bool value, const char * message) {
     return true;
 }
 
+template <size_t N>
+bool expect_callback_matches_frame(const std::array<uint8, N> & frame) {
+    if (!expect_true(g_callback_len == static_cast<uint8>(frame.size()), "callback frame length should match expected frame")) {
+        return false;
+    }
+    for (uint16 idx = 0; idx < static_cast<uint16>(frame.size()); ++idx) {
+        if (!expect_true(g_callback_bytes[idx] == frame[idx], "callback bytes should match expected frame content")) {
+            return false;
+        }
+    }
+    return true;
+}
+
 } // namespace
 
 int main() {
@@ -88,6 +101,25 @@ int main() {
 
     LinkLayer_Init(&link);
 
+    // Feeding with no data in idle state must be a no-op.
+    reset_callout_capture();
+    g_rx_size = 0;
+    g_rx_index = 0;
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 0, "idle no-data feed should not call dataLinkCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "idle no-data feed should not call errorCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "idle no-data feed should keep DL_IDLE state")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == 0, "idle no-data feed should keep frameIdx at 0")) {
+        return EXIT_FAILURE;
+    }
+
     constexpr std::array<uint8, 6> valid_frame = datalink_smoke_vectors::kFeedValidFrame;
     const uint16 valid_frame_len = static_cast<uint16>(valid_frame.size());
 
@@ -101,16 +133,11 @@ int main() {
     if (!expect_true(g_error_calls == 0, "valid frame should not call errorCallout")) {
         return EXIT_FAILURE;
     }
-    if (!expect_true(g_callback_len == static_cast<uint8>(valid_frame_len), "callback frame length should match received frame")) {
-        return EXIT_FAILURE;
-    }
     if (!expect_true(g_callback_bytes[0] == GB_SD_REPLY, "callback should receive original SD byte")) {
         return EXIT_FAILURE;
     }
-    for (uint16 idx = 0; idx < valid_frame_len; ++idx) {
-        if (!expect_true(g_callback_bytes[idx] == valid_frame[idx], "callback should match full valid frame content")) {
-            return EXIT_FAILURE;
-        }
+    if (!expect_callback_matches_frame(valid_frame)) {
+        return EXIT_FAILURE;
     }
     if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "state should return to DL_IDLE after valid frame")) {
         return EXIT_FAILURE;
@@ -195,16 +222,11 @@ int main() {
     if (!expect_true(g_error_calls == 0, "trailing bytes should not call errorCallout")) {
         return EXIT_FAILURE;
     }
-    if (!expect_true(g_callback_len == static_cast<uint8>(valid_frame_len), "completed callback should report full frame length")) {
-        return EXIT_FAILURE;
-    }
     if (!expect_true(g_callback_bytes[0] == GB_SD_REPLY, "completed callback should preserve SD byte")) {
         return EXIT_FAILURE;
     }
-    for (uint16 idx = 0; idx < valid_frame_len; ++idx) {
-        if (!expect_true(g_callback_bytes[idx] == valid_frame[idx], "completed callback should match full frame content")) {
-            return EXIT_FAILURE;
-        }
+    if (!expect_callback_matches_frame(valid_frame)) {
+        return EXIT_FAILURE;
     }
     if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "state should return to DL_IDLE after frame completion")) {
         return EXIT_FAILURE;
@@ -295,10 +317,8 @@ int main() {
     if (!expect_true(link.frameIdx == 0, "three-segment completion should reset frameIdx")) {
         return EXIT_FAILURE;
     }
-    for (uint16 idx = 0; idx < valid_frame_len; ++idx) {
-        if (!expect_true(g_callback_bytes[idx] == valid_frame[idx], "three-segment callback should match full frame content")) {
-            return EXIT_FAILURE;
-        }
+    if (!expect_callback_matches_frame(valid_frame)) {
+        return EXIT_FAILURE;
     }
 
     // If two valid frames are buffered, one feed call handles only one frame.
@@ -444,10 +464,8 @@ int main() {
     if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "inverse mixed backlog second feed should return DL_IDLE")) {
         return EXIT_FAILURE;
     }
-    for (uint16 idx = 0; idx < valid_frame_len; ++idx) {
-        if (!expect_true(g_callback_bytes[idx] == valid_frame[idx], "inverse mixed backlog callback should match valid frame")) {
-            return EXIT_FAILURE;
-        }
+    if (!expect_callback_matches_frame(valid_frame)) {
+        return EXIT_FAILURE;
     }
 
     std::cout << "Datalink feed smoke test passed.\n";
