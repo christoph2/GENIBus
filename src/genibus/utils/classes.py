@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Allgemeine Klassen-Hilfen fuer Singleton- und Repr-Patterne."""
 
 __copyright__ = """
 Grundfos GENIBus Library.
@@ -33,9 +34,20 @@ from genibus.utils import helper
 
 
 class SingletonBase:
+    """Thread-sichere Singleton-Basisklasse per Double-Checked-Locking."""
+
     _lock = threading.Lock()
 
     def __new__(cls, *args: Any, **kws: Any) -> Any:
+        """Erzeugt genau eine Instanz pro abgeleiteter Klasse.
+
+        Args:
+            *args: Positionale Konstruktionsargumente.
+            **kws: Benannte Konstruktionsargumente.
+
+        Returns:
+            Any: Singleton-Instanz der abgeleiteten Klasse.
+        """
         # Double-Checked Locking
         if not hasattr(cls, "_instance"):
             try:
@@ -48,8 +60,14 @@ class SingletonBase:
 
 
 class RepresentationMixIn:
+    """Mix-in fuer konsistente, mehrzeilige Debug-`repr()`-Ausgabe."""
 
     def _repr_lines(self) -> list[str]:
+        """Erzeugt die einzelnen Zeilen der Textrepräsentation.
+
+        Returns:
+            list[str]: Zeilenweise Repräsentation inklusive Header/Footer.
+        """
         keys = [k for k in self.__dict__ if not (k.startswith("__") and k.endswith("__"))]
         result = []
         result.append(f"{self.__class__.__name__} {{")
@@ -68,4 +86,5 @@ class RepresentationMixIn:
         return result
 
     def __repr__(self) -> str:
+        """Liefert eine lesbare, mehrzeilige Repräsentation des Objekts."""
         return "\n".join(self._repr_lines())
