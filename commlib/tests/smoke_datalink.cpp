@@ -136,6 +136,7 @@ int main() {
     // Edge-case: minimal payload length (2) should still go through send path safely.
     g_write_calls = 0;
     g_last_tx_len = 0xFFFF;
+    g_last_tx.fill(0xEE);
     LinkLayer_SendPDU(
         &link,
         GB_SD_REQUEST,
@@ -148,6 +149,15 @@ int main() {
         return EXIT_FAILURE;
     }
     if (!expect_true(g_last_tx_len == 2, "minimal-length send should write two bytes")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_last_tx[0] == GB_SD_REQUEST, "minimal-length send should write SD byte")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_last_tx[1] == 0x04, "minimal-length send should write LEN=4")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_last_tx[2] == 0xEE, "minimal-length send should not touch bytes beyond transmitted length")) {
         return EXIT_FAILURE;
     }
     if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "minimal-length send should return to DL_IDLE")) {
