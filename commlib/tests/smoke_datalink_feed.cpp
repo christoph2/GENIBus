@@ -417,6 +417,21 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // With backlog consumed, another feed call without new bytes must be a no-op.
+    LinkLayer_Feed(&link);
+    if (!expect_true(g_data_calls == 2, "third feed on consumed stream should not add data callbacks")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "third feed on consumed stream should not add error callbacks")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_rx_index == static_cast<uint16>(two_frame_stream.size()), "third feed on consumed stream should not advance rx index")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "third feed on consumed stream should keep DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+
     // Mixed backlog: first frame valid, second frame CRC-invalid.
     constexpr std::array<uint8, 12> mixed_two_frame_stream = {
         datalink_smoke_vectors::kFeedValidFrame[0],
