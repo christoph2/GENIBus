@@ -26,9 +26,9 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 """
 
 
+import logging
 from collections import namedtuple
 from collections.abc import Sequence
-import logging
 
 import genibus.gbdefs as defs
 import genibus.utils.crc as crc
