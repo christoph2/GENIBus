@@ -81,30 +81,16 @@ void LinkLayer_SetState(DatalinkLayerType * linkLayer, Dl_State state);
 Dl_State LinkLayer_GetState(DatalinkLayerType * linkLayer);
 void LinkLayer_Feed(DatalinkLayerType * linkLayer);
 boolean LinkLayer_VerifyCRC(DatalinkLayerType * linkLayer);
-void LinkLayer_SendPDU(DatalinkLayerType * linkLayer, uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint8 len);
+void LinkLayer_SendPDU(
+    DatalinkLayerType * linkLayer,
+    uint8 sd,
+    uint8 da,
+    uint8 sa,
+    uint8 const * data,
+    uint8 len
+);
 void LinkLayer_ConnectRequest(DatalinkLayerType * linkLayer, uint8 sa);
 
-#if 0
-class GB_Datalink {
-public:
-/* TODO: rename 'callout', add errorCallout, add checked. */
-    inline uint8 const * const getBufferPointer(void) const { return (uint8 const * const )_scratchBuffer; };
-    void connectRequest(uint8 sa);
-    void sendPDU(uint8 sd, uint8 da, uint8 sa, uint8 const * data, uint8 len);
-    void sendRaw(uint8 const * data, uint8 len);
-    void write(uint8 ch);
-private:
-    genibus::Interface & _port;
-    Dl_Callout _dataLinkCallout;
-    Error_Callout _errorCallout;
-    uint8 _scratchBuffer[0xff];
-    Crc _crc;
-    Dl_State _state;
-    uint8 _frameLength;
-    boolean _checked;
-    uint8 _idx;
-};
-#endif
 
 #if defined(__cplusplus)
 }

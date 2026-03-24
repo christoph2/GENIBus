@@ -26,8 +26,16 @@
 #define __PORT_SERIAL_H
 
 #include <stdint.h>
+#include "genibus/types.h"
 
-typedef uint8_t boolean;
+/* Fallbacks keep header self-contained when KNX build config is absent. */
+#if !defined(KNX_TARGET_POSIX)
+#define KNX_TARGET_POSIX 1
+#endif
+
+#if !defined(KNX_TARGET_TYPE)
+#define KNX_TARGET_TYPE KNX_TARGET_POSIX
+#endif
 
 #if !defined(TRUE)
     #define TRUE	(1)
