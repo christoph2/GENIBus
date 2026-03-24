@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+"""Serielle Transportimplementierung fuer GENIBus.
+
+Das Modul kapselt `pyserial` und stellt die bestehende Sync-API der
+`ConnectionIF`-Basisklasse bereit.
+"""
 
 __version__ = "0.1.0"
 
@@ -54,6 +59,17 @@ else:
 
 
 class SerialPort(ConnectionIF):
+    """RS-485/Serial Connector mit pySerial-Backend.
+
+    Args:
+        portName: Name des seriellen Ports, z. B. ``COM3``.
+        baudrate: Baudrate der Verbindung.
+        bytesize: Datenbits pro Byte.
+        parity: Paritaet (z. B. ``"N"``).
+        stopbits: Anzahl Stopbits.
+        timeout: Lese-Timeout in Sekunden.
+    """
+
     DRIVER = "Serial port"
     _lock = threading.Lock()
     counter = 0
@@ -78,6 +94,15 @@ class SerialPort(ConnectionIF):
         self.connected = False
 
     def connect(self) -> bool:
+        """Oeffnet den konfigurierten Serial-Port.
+
+        Returns:
+            bool: `True`, wenn der Port geoeffnet wurde.
+
+        Raises:
+            RuntimeError: Wenn `pyserial` nicht verfuegbar ist.
+            serial.SerialException: Wenn der Port nicht geoeffnet werden kann.
+        """
         if not serial_available:
             raise RuntimeError("pySerial not installed.")
 
@@ -107,6 +132,11 @@ class SerialPort(ConnectionIF):
         return True
 
     def write(self, data: Iterable[int]) -> None:
+        """Sendet Daten auf den seriellen Bus.
+
+        Args:
+            data: Iterierbare Ganzzahlen im Bereich 0..255.
+        """
         if not self.connected or self._port is None:
             raise RuntimeError("Serial port is not connected.")
 
@@ -115,6 +145,7 @@ class SerialPort(ConnectionIF):
         self.flush_output()
 
     def read(self) -> bytearray:
+        """Liest aktuell verfuegbare Bytes vom seriellen Port."""
         if not self.connected or self._port is None:
             raise RuntimeError("Serial port is not connected.")
 
@@ -124,6 +155,11 @@ class SerialPort(ConnectionIF):
         return result
 
     def set_output(self, enable: bool) -> None:
+        """Schaltet die RS-485-Richtung ueber RTS/DTR um.
+
+        Args:
+            enable: `True` fuer Senden, `False` fuer Empfangen.
+        """
         if self._port is None:
             raise RuntimeError("Serial port is not connected.")
 
@@ -135,17 +171,21 @@ class SerialPort(ConnectionIF):
             self._port.dtr = True
 
     def output(self, enable: bool) -> None:
+        """Legacy-Alias fuer `set_output()`."""
         self.set_output(bool(enable))
 
     def flush_output(self) -> None:
+        """Leert den Ausgabepuffer des seriellen Treibers."""
         if self._port is None:
             raise RuntimeError("Serial port is not connected.")
         self._port.flush()
 
     def flush(self) -> None:
+        """Legacy-Alias fuer `flush_output()`."""
         self.flush_output()
 
     def disconnect(self) -> None:
+        """Schliesst den seriellen Port, falls geoeffnet."""
         if self.connected and self._port is not None:
             self._port.close()
         self.connected = False

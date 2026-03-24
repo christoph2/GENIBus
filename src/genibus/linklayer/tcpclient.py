@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+"""TCP-Client-Transport fuer GENIBus.
+
+Dieses Modul implementiert einen synchronen Socket-Connector fuer den
+Pass-Through-Server und kompatible TCP-Endpunkte.
+"""
 
 __version__ = "0.1.0"
 
@@ -39,6 +44,17 @@ socket.setdefaulttimeout(0.5)
 
 
 class Connector(ConnectionIF):
+    """Synchronous TCP connector.
+
+    Args:
+        server_ip: Ziel-IP-Adresse.
+        server_port: Ziel-Port.
+        serverIP: Legacy-Alias fuer `server_ip`.
+        serverPort: Legacy-Alias fuer `server_port`.
+        timeout: Socket-Timeout in Sekunden.
+        buffer_size: Maximale Anzahl Bytes pro `read()`.
+    """
+
     DRIVER = "TCP"
 
     def __init__(
@@ -63,6 +79,11 @@ class Connector(ConnectionIF):
         self.serverPort = self.server_port
 
     def connect(self) -> bool:
+        """Stellt eine TCP-Verbindung zum Zielendpunkt her.
+
+        Returns:
+            bool: `True` bei erfolgreicher Verbindung, sonst `False`.
+        """
         if self.server_ip is None or self.server_port is None:
             raise ValueError("server_ip and server_port must be set before connect().")
 
@@ -79,20 +100,33 @@ class Connector(ConnectionIF):
             return False
 
     def disconnect(self) -> None:
+        """Schliesst den Socket und setzt den Status zurueck."""
         if self.sock is not None:
             self.sock.close()
         self.sock = None
         self.connected = False
 
     def close(self) -> None:
+        """Alias auf `disconnect()` fuer einheitliches Treiberinterface."""
         self.disconnect()
 
     def write(self, data: Iterable[int]) -> None:
+        """Sendet Daten per TCP.
+
+        Args:
+            data: Iterierbare Ganzzahlen im Bereich 0..255.
+        """
         if not self.connected or self.sock is None:
             raise RuntimeError("TCP connector is not connected.")
         self.sock.sendall(bytearray(data))
 
     def read(self) -> bytearray | None:
+        """Empfaengt Daten vom Socket.
+
+        Returns:
+            bytearray | None: Empfangenes Datenpaket oder `None`, wenn nicht
+            verbunden.
+        """
         if not self.connected or self.sock is None:
             return None
         data = bytearray(self.sock.recv(self.buffer_size))
@@ -100,10 +134,19 @@ class Connector(ConnectionIF):
 
 
 def connection_factory(driver: str) -> str:
+    """Mappt Legacy-Treiberkennungen auf Anzeigenamen.
+
+    Args:
+        driver: Treiberkennung aus Altkonfigurationen.
+
+    Returns:
+        str: Anzeigename fuer UI/Logging.
+    """
     if driver == "0":
         return "Simulator"
     return "Arduino / TCP"
 
 
 def ConnectionFactory(driver: str) -> str:
+    """Legacy-Alias fuer `connection_factory()`."""
     return connection_factory(driver)
