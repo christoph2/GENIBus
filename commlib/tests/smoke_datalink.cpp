@@ -263,6 +263,7 @@ int main() {
     }
 
     constexpr uint8 alt_connect_sa = 0x7A;
+    g_last_tx.fill(0xCC);
     LinkLayer_ConnectRequest(&link, alt_connect_sa);
     if (!expect_true(g_write_calls == 3, "second LinkLayer_ConnectRequest should trigger a third writeFrame call")) {
         return EXIT_FAILURE;
@@ -273,6 +274,32 @@ int main() {
     if (!expect_true(
         g_last_tx[2] == datalink_smoke_vectors::kConnectRequestDa && g_last_tx[3] == alt_connect_sa,
         "second connect request should keep DA and update SA"
+    )) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(
+        g_last_tx[1] == static_cast<uint8>(datalink_smoke_vectors::kConnectRequestPayloadLen + 2),
+        "second connect request LEN byte should be payload+2"
+    )) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(
+        g_last_tx_len == datalink_smoke_vectors::kConnectRequestPayloadLen,
+        "second connect request write length should match payload length"
+    )) {
+        return EXIT_FAILURE;
+    }
+    for (uint16 idx = 0; idx < transmitted_payload_len; ++idx) {
+        if (!expect_true(
+            g_last_tx[4 + idx] == datalink_smoke_vectors::kConnectRequestPayload[idx],
+            "second connect request payload bytes should match expected prefix"
+        )) {
+            return EXIT_FAILURE;
+        }
+    }
+    if (!expect_true(
+        g_last_tx[g_last_tx_len] == 0xCC,
+        "second connect request should not modify bytes beyond transmitted length"
     )) {
         return EXIT_FAILURE;
     }
