@@ -12,8 +12,8 @@ namespace datalink_smoke_vectors {
 constexpr uint8 kConnectRequestSa = 0x01;
 constexpr uint8 kConnectRequestDa = 0xFE;
 constexpr uint16 kConnectRequestPayloadLen = 12;
-constexpr std::array<uint8, 8> kConnectRequestPayloadPrefix = {
-    0x00, 0x02, 0x02, 0x03, 0x04, 0x02, 0x2E, 0x2F,
+constexpr std::array<uint8, 12> kConnectRequestPayload = {
+    0x00, 0x02, 0x02, 0x03, 0x04, 0x02, 0x2E, 0x2F, 0x02, 0x02, 0x94, 0x95,
 };
 
 constexpr std::array<uint8, 3> kSendPduPayload = {

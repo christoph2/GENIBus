@@ -181,10 +181,15 @@ int main() {
     )) {
         return EXIT_FAILURE;
     }
-    for (uint16 idx = 0; idx < static_cast<uint16>(datalink_smoke_vectors::kConnectRequestPayloadPrefix.size()); ++idx) {
+    const uint16 transmitted_payload_len =
+        g_last_tx_len > 4 ? static_cast<uint16>(g_last_tx_len - 4) : static_cast<uint16>(0);
+    if (!expect_true(transmitted_payload_len == 8, "current implementation transmits 8 connect payload bytes")) {
+        return EXIT_FAILURE;
+    }
+    for (uint16 idx = 0; idx < transmitted_payload_len; ++idx) {
         if (!expect_true(
-            g_last_tx[4 + idx] == datalink_smoke_vectors::kConnectRequestPayloadPrefix[idx],
-            "connect request payload prefix should match expected bytes"
+            g_last_tx[4 + idx] == datalink_smoke_vectors::kConnectRequestPayload[idx],
+            "transmitted connect payload bytes should match expected prefix"
         )) {
             return EXIT_FAILURE;
         }
