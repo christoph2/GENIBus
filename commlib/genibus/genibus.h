@@ -30,9 +30,27 @@ extern "C"
 #endif  /* __cplusplus */
 
 
-#include "Crc.h"
-#include "Pdu.h"
-#include "GB_Datalink.h"
+#if defined(__has_include)
+	#if __has_include("genibus/crc.h")
+		#include "genibus/crc.h"
+	#elif __has_include("Crc.h")
+		#include "Crc.h"
+	#endif
+
+	#if __has_include("genibus/datalink.h")
+		#include "genibus/datalink.h"
+	#elif __has_include("GB_Datalink.h")
+		#include "GB_Datalink.h"
+	#endif
+
+	/* `Pdu.h` is legacy and optional in the current commlib layout. */
+	#if __has_include("Pdu.h")
+		#include "Pdu.h"
+	#endif
+#else
+	#include "genibus/crc.h"
+	#include "genibus/datalink.h"
+#endif
 
 
 #if defined(__cplusplus)
