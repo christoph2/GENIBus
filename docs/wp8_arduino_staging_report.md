@@ -70,9 +70,23 @@ Das Staging hat Include-Fehler fuer `Genibus.h`/`Types.h`/`Crc.h` reduziert, abe
 - `examples/example02`: Build erfolgreich.
 - `examples/example03`: Build erfolgreich.
 - `examples/passThruServer`: Build erfolgreich.
-- `examples/passThruServer328`: weiterhin blockiert durch fehlendes `EtherShield.h`.
+- `examples/passThruServer328`: nach Migration auf `UIPEthernet` buildbar.
+
+## Follow-up: EtherShield-Migration fuer 328
+
+### Umgesetzt
+
+1. `examples/passThruServer328/passThruServer328.ino` von `EtherShield` auf `UIPEthernet` migriert.
+2. Low-level ENC28J60-API (`ES_*`) durch `EthernetServer`/`EthernetClient`-Fluss ersetzt.
+3. `UIPEthernet` via `arduino-cli lib install UIPEthernet` installiert.
+4. Re-Compile fuer `examples/passThruServer328` erfolgreich.
+
+### Hinweise
+
+- Der UNO-Build ist funktional erfolgreich, liegt aber mit globalen Variablen bei ~97% RAM-Auslastung (42 Bytes frei). 
+- Fuer robusten Betrieb sollte perspektivisch RAM reduziert oder ein Board mit mehr SRAM genutzt werden.
 
 ### Schlussfolgerung
 
-Das lokale Staging deckt die Legacy-GENIBus-API fuer vier von fuenf Example-Sketches ab. Offener Restpunkt fuer den Vollabschluss ist die externe `EtherShield`-Abhaengigkeit des 328er-Sketches.
+Das lokale Staging deckt die Legacy-GENIBus-API nun fuer alle Example-Sketches ab (inklusive migriertem `passThruServer328`).
 
