@@ -11,7 +11,7 @@ IPAddress subnet(255, 255, 255, 0);
 /* TODO: The IP-configuration has to be adjusted to your needs!!! */
 IPAddress myIP(192, 168, 100, 20);
 IPAddress serverIP(192, 168, 100, 10);
-IPAddress gateway = (192, 168, 100, 1);
+IPAddress gateway(192, 168, 100, 1);
 
 #define LED_PIN  9  /* Pin 13 has an LED connected on most Arduino boards, otherwise this should be changed. */
                     /* Pin 9: led connected on Arduino Ethernet board*/
