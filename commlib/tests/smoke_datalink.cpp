@@ -133,6 +133,27 @@ int main() {
     // Sending API requires idle state.
     LinkLayer_SetState(&link, DL_IDLE);
 
+    // Edge-case: minimal payload length (2) should still go through send path safely.
+    g_write_calls = 0;
+    g_last_tx_len = 0xFFFF;
+    LinkLayer_SendPDU(
+        &link,
+        GB_SD_REQUEST,
+        0x20,
+        datalink_smoke_vectors::kConnectRequestSa,
+        datalink_smoke_vectors::kSendPduPayload.data(),
+        2
+    );
+    if (!expect_true(g_write_calls == 1, "minimal-length send should call writeFrame once")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_last_tx_len == 2, "minimal-length send should write two bytes")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "minimal-length send should return to DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+
     g_write_calls = 0;
     g_last_tx_len = 0;
     g_last_tx.fill(0xCC);
