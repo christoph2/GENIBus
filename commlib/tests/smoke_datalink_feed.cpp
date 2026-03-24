@@ -397,6 +397,59 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // Mixed backlog (inverse): first frame CRC-invalid, second frame valid.
+    constexpr std::array<uint8, 12> mixed_two_frame_stream_inverse = {
+        datalink_smoke_vectors::kFeedValidFrame[0],
+        datalink_smoke_vectors::kFeedValidFrame[1],
+        datalink_smoke_vectors::kFeedValidFrame[2],
+        datalink_smoke_vectors::kFeedValidFrame[3],
+        datalink_smoke_vectors::kFeedValidFrame[4],
+        static_cast<uint8>(datalink_smoke_vectors::kFeedValidFrame[5] ^ 0x01),
+        datalink_smoke_vectors::kFeedValidFrame[0],
+        datalink_smoke_vectors::kFeedValidFrame[1],
+        datalink_smoke_vectors::kFeedValidFrame[2],
+        datalink_smoke_vectors::kFeedValidFrame[3],
+        datalink_smoke_vectors::kFeedValidFrame[4],
+        datalink_smoke_vectors::kFeedValidFrame[5],
+    };
+
+    reset_callout_capture();
+    load_rx_frame(mixed_two_frame_stream_inverse, static_cast<uint16>(mixed_two_frame_stream_inverse.size()));
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 0, "inverse mixed backlog first feed should not call dataLinkCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 1, "inverse mixed backlog first feed should report one CRC error")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_last_error == ERR_INVALID_CRC, "inverse mixed backlog first feed should report ERR_INVALID_CRC")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_rx_index == valid_frame_len, "inverse mixed backlog first feed should consume first frame")) {
+        return EXIT_FAILURE;
+    }
+
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 1, "inverse mixed backlog second feed should process valid frame")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 1, "inverse mixed backlog second feed should not add errors")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_rx_index == static_cast<uint16>(mixed_two_frame_stream_inverse.size()), "inverse mixed backlog should consume full stream after second feed")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "inverse mixed backlog second feed should return DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+    for (uint16 idx = 0; idx < valid_frame_len; ++idx) {
+        if (!expect_true(g_callback_bytes[idx] == valid_frame[idx], "inverse mixed backlog callback should match valid frame")) {
+            return EXIT_FAILURE;
+        }
+    }
+
     std::cout << "Datalink feed smoke test passed.\n";
     return EXIT_SUCCESS;
 }
