@@ -262,6 +262,21 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    constexpr uint8 alt_connect_sa = 0x7A;
+    LinkLayer_ConnectRequest(&link, alt_connect_sa);
+    if (!expect_true(g_write_calls == 3, "second LinkLayer_ConnectRequest should trigger a third writeFrame call")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "second connect request should return to DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(
+        g_last_tx[2] == datalink_smoke_vectors::kConnectRequestDa && g_last_tx[3] == alt_connect_sa,
+        "second connect request should keep DA and update SA"
+    )) {
+        return EXIT_FAILURE;
+    }
+
     std::cout << "Datalink smoke test passed.\n";
     return EXIT_SUCCESS;
 }
