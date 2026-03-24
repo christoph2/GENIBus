@@ -554,6 +554,29 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // Re-enable callbacks and verify normal processing still works afterwards.
+    link.dataLinkCallout = on_data_callout;
+    link.errorCallout = on_error_callout;
+    reset_callout_capture();
+    load_rx_frame(valid_frame, valid_frame_len);
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 1, "re-enabled callbacks should process valid frame")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "re-enabled callbacks should not report error on valid frame")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "re-enabled callbacks should end in DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == 0, "re-enabled callbacks should reset frameIdx after valid frame")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_callback_matches_frame(valid_frame)) {
+        return EXIT_FAILURE;
+    }
+
     std::cout << "Datalink feed smoke test passed.\n";
     return EXIT_SUCCESS;
 }
