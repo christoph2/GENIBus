@@ -9,11 +9,20 @@ cmake -S commlib -B commlib/build-cmake
 cmake --build commlib/build-cmake
 ```
 
+## Run Smoke Tests
+
+```bash
+cmake -S commlib -B commlib/build-cmake -DGENIBUS_BUILD_TESTS=ON
+cmake --build commlib/build-cmake
+ctest --test-dir commlib/build-cmake -C Debug --output-on-failure
+```
+
 ## Notes
 
 - `src/posix_serial.c` is built only on UNIX when `GENIBUS_BUILD_POSIX_SERIAL=ON`.
 - On non-UNIX hosts, the core CRC + datalink objects still build.
 - Include root is set to `commlib/`, so headers like `genibus/types.h` resolve.
+- `tests/smoke_crc.cpp` validates the CRC core function against a known vector.
 
 ## Roadmap
 

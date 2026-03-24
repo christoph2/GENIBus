@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(GENIBUS_BUILD_POSIX_SERIAL "Build POSIX serial backend" ON)
+option(GENIBUS_BUILD_TESTS "Build commlib smoke tests" ON)
 
 set(GENIBUS_COMMLIB_SOURCES
     src/crc.c
@@ -49,5 +50,14 @@ if(MSVC)
     target_compile_options(genibus_commlib PRIVATE /W3)
 else()
     target_compile_options(genibus_commlib PRIVATE -Wall -Wextra)
+endif()
+
+if(GENIBUS_BUILD_TESTS)
+    include(CTest)
+    if(BUILD_TESTING)
+        add_executable(genibus_crc_smoke_test tests/smoke_crc.cpp)
+        target_link_libraries(genibus_crc_smoke_test PRIVATE genibus_commlib)
+        add_test(NAME genibus_crc_smoke_test COMMAND genibus_crc_smoke_test)
+    endif()
 endif()
 
