@@ -5,7 +5,7 @@
 #define GB_MASTER_ADDRESS  0x01
 
 byte macAddress[] = { 0xde, 0xad, 0xaf, 0xfe, 0xaa, 0x55  };
-IPAddress subnet = (255, 255, 255, 0);
+IPAddress subnet(255, 255, 255, 0);
 #define LOCAL_PORT  6734
 
 /* TODO: The IP-configuration has to be adjusted to your needs!!! */
@@ -62,6 +62,4 @@ void writeToServer(byte const * data, byte len)
     }
 }
 
-unsigned long time;
- time = millis();
 

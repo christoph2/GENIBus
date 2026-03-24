@@ -8,7 +8,7 @@
 #define GB_MASTER_ADDRESS  0x01
 
 byte macAddress[] = { 0x90, 0xA2, 0xDA, 0x00, 0x69, 0x4B  };//MAC address on my arduino ethernet
-IPAddress subnet = (255, 255, 255, 0);
+IPAddress subnet(255, 255, 255, 0);
 #define LOCAL_PORT  6734
 
 /* TODO: The IP-configuration has to be adjusted to your needs!!! */

@@ -6,7 +6,7 @@
 
 byte macAddress[] = { 0x90, 0xa2, 0xda, 0x00, 0x69, 0x4b  };
 
-IPAddress subnet = (255, 255, 255, 0);
+IPAddress subnet(255, 255, 255, 0);
 #define LOCAL_PORT  6734
 
 /* TODO: The IP-configuration has to be adjusted to your needs!!! */
