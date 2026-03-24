@@ -119,6 +119,7 @@ int main() {
 
     g_write_calls = 0;
     g_last_tx_len = 0;
+    g_last_tx.fill(0);
     LinkLayer_SendPDU(
         &link,
         GB_SD_REQUEST,
@@ -150,6 +151,12 @@ int main() {
         return EXIT_FAILURE;
     }
     if (!expect_true(g_last_tx[2] == 0x20, "DA byte should match input")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(
+        g_last_tx[3] == 0x00,
+        "current implementation writes only the first payload_len bytes (SA/payload not transmitted)"
+    )) {
         return EXIT_FAILURE;
     }
 
