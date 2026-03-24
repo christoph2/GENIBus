@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Kleiner Logger-Wrapper mit Legacy-kompatibler API."""
 
 __copyright__ = """
 Grundfos GENIBus Library.
@@ -29,11 +30,20 @@ import logging
 
 
 class Logger:
+    """Wrapper um `logging.Logger` mit einfacher Zustandsablage.
+
+    Die Klasse bietet moderne snake_case-Methoden plus Legacy-Aliase.
+    """
 
     LOGGER_BASE_NAME = "genibus"
     FORMAT = "[%(levelname)s (%(name)s)]: %(message)s"
 
     def __init__(self, level: int = logging.WARN) -> None:
+        """Initialisiert den Logger und konfiguriert bei Bedarf einen Handler.
+
+        Args:
+            level: Initiales Logging-Level.
+        """
         self.logger = logging.getLogger(f"{self.LOGGER_BASE_NAME}")
         self.logger.setLevel(level)
 
@@ -48,41 +58,66 @@ class Logger:
         self.lastSeverity: int | None = None
 
     def get_last_error(self) -> tuple[int | None, str | None]:
+        """Liefert zuletzt protokollierte Schwere und Nachricht.
+
+        Returns:
+            tuple[int | None, str | None]: `(level, message)`; danach wird
+            der interne Fehlerzustand zurueckgesetzt.
+        """
         result = (self.lastSeverity, self.lastMessage)
         self.lastSeverity = None
         self.lastMessage = None
         return result
 
     def getLastError(self) -> tuple[int | None, str | None]:
+        """Legacy-Alias fuer `get_last_error()`."""
         return self.get_last_error()
 
     def log(self, message: str, level: int) -> None:
+        """Protokolliert eine Nachricht und speichert sie als letzten Fehler.
+
+        Args:
+            message: Log-Nachricht.
+            level: Logging-Level.
+        """
         self.lastSeverity = level
         self.lastMessage = message
         self.logger.log(level, f"{message}")
 
     def info(self, message: str) -> None:
+        """Loggt auf INFO-Level."""
         self.log(message, logging.INFO)
 
     def warn(self, message: str) -> None:
+        """Loggt auf WARN-Level."""
         self.log(message, logging.WARN)
 
     def error(self, message: str) -> None:
+        """Loggt auf ERROR-Level."""
         self.log(message, logging.ERROR)
 
     def debug(self, message: str) -> None:
+        """Loggt auf DEBUG-Level."""
         self.log(message, logging.DEBUG)
 
     def critical(self, message: str) -> None:
+        """Loggt auf CRITICAL-Level."""
         self.log(message, logging.CRITICAL)
 
     def verbose(self) -> None:
+        """Setzt das Logger-Level auf DEBUG."""
         self.logger.setLevel(logging.DEBUG)
 
     def silent(self) -> None:
+        """Setzt das Logger-Level auf CRITICAL."""
         self.logger.setLevel(logging.CRITICAL)
 
     def set_level(self, level: str | int) -> None:
+        """Setzt das Logger-Level per Zahl oder Textlabel.
+
+        Args:
+            level: Entweder numerisches Level oder String wie ``"INFO"``.
+        """
         level_map = {
             "INFO": logging.INFO,
             "WARN": logging.WARN,
@@ -96,4 +131,5 @@ class Logger:
         self.logger.setLevel(int(normalized))
 
     def setLevel(self, level: str | int) -> None:
+        """Legacy-Alias fuer `set_level()`."""
         self.set_level(level)

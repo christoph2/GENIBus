@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Allgemeine Byte-/Hex-Hilfsfunktionen fuer GENIBus."""
 
 __copyright__ = """
 Grundfos GENIBus Library.
@@ -29,10 +30,26 @@ from collections.abc import Iterable
 
 
 def hex_dump(data: Iterable[int]) -> str:
+    """Formatiert Bytes als kommagetrennte Hex-Darstellung.
+
+    Args:
+        data: Iterierbare Bytewerte.
+
+    Returns:
+        str: Darstellung wie ``0x01, 0x02``.
+    """
     return ", ".join([f"0x{value:02x}" for value in bytearray(data)])
 
 
 def hexDump(data: Iterable[int]) -> str:
+    """Legacy-Alias fuer `hex_dump()`.
+
+    Args:
+        data: Iterierbare Bytewerte.
+
+    Returns:
+        str: Hex-Darstellung der Eingabedaten.
+    """
     return hex_dump(data)
 
 

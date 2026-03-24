@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Locale-Mapping und Hilfsfunktionen fuer Sprachcodes."""
 
 __copyright__ = """
 Grundfos GENIBus Library.
@@ -207,6 +208,14 @@ LOCALS = LOCALES
 
 
 def get_locale_code(locale: int) -> str:
+    """Ermittelt den normalisierten Sprachcode fuer eine Locale-ID.
+
+    Args:
+        locale: Numerische Locale-ID.
+
+    Returns:
+        str: Sprachcode im Format ``ll-RR`` oder ``?`` bei unbekannter ID.
+    """
     result = LOCALES.get(locale, ('?', '?', '?', ))[2]
     if '-' in result:
         lang, region = result.split('-')
@@ -216,6 +225,14 @@ def get_locale_code(locale: int) -> str:
 
 
 def getLocalCode(locale: int) -> str:
+    """Legacy-Alias fuer `get_locale_code()`.
+
+    Args:
+        locale: Numerische Locale-ID.
+
+    Returns:
+        str: Normalisierter Sprachcode.
+    """
     return get_locale_code(locale)
 
 

@@ -13,6 +13,7 @@ api/apdu
 api/parser
 api/db
 api/linklayer
+api/utils
 tutorial/connect_pump
 tutorial/set_reference
 contributing
