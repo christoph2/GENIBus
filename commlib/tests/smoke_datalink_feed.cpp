@@ -107,6 +107,11 @@ int main() {
     if (!expect_true(g_callback_bytes[0] == GB_SD_REPLY, "callback should receive original SD byte")) {
         return EXIT_FAILURE;
     }
+    for (uint16 idx = 0; idx < valid_frame_len; ++idx) {
+        if (!expect_true(g_callback_bytes[idx] == valid_frame[idx], "callback should match full valid frame content")) {
+            return EXIT_FAILURE;
+        }
+    }
     if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "state should return to DL_IDLE after valid frame")) {
         return EXIT_FAILURE;
     }
@@ -162,6 +167,18 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // A no-data feed call must keep current receive progress unchanged.
+    g_rx_size = 0;
+    g_rx_index = 0;
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(LinkLayer_GetState(&link) == DL_RECEIVING, "no-data feed should keep DL_RECEIVING state")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == static_cast<uint8>(truncated_frame.size()), "no-data feed should not modify frameIdx")) {
+        return EXIT_FAILURE;
+    }
+
     // Feeding the remaining bytes afterwards should complete the frame.
     constexpr std::array<uint8, 2> trailing_frame = {
         datalink_smoke_vectors::kFeedValidFrame[4],
@@ -183,6 +200,11 @@ int main() {
     }
     if (!expect_true(g_callback_bytes[0] == GB_SD_REPLY, "completed callback should preserve SD byte")) {
         return EXIT_FAILURE;
+    }
+    for (uint16 idx = 0; idx < valid_frame_len; ++idx) {
+        if (!expect_true(g_callback_bytes[idx] == valid_frame[idx], "completed callback should match full frame content")) {
+            return EXIT_FAILURE;
+        }
     }
     if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "state should return to DL_IDLE after frame completion")) {
         return EXIT_FAILURE;
