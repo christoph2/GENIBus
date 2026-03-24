@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+"""APDU/PDU-Builder fuer GENIBus-Telegramme.
+
+Dieses Modul stellt Builder fuer Lese-/Schreib- und Info-Telegramme bereit.
+Die snake_case-Funktionen bilden die bevorzugte API; camelCase-Funktionen
+bleiben als Legacy-Aliase erhalten.
+"""
 
 __version__ = "0.1.0"
 
@@ -107,6 +113,8 @@ def createGetProtocolDataAPDU(datapoints: Sequence[str]) -> list[int]:
 
 @dataclass(frozen=True)
 class Header:
+    """Telegramm-Header fuer GENIBus-PDUs."""
+
     startDelimiter: int
     destAddr: int
     sourceAddr: int
@@ -301,50 +309,152 @@ def createSetRemotePDU(sourceAddr: int) -> bytearray:
 
 
 def create_apdu_header(apdu: list[int], klass: int, operation_specifier: int, length: int) -> None:
+    """Schreibt den zweibyten APDU-Header in den Zielpuffer.
+
+    Args:
+        apdu: Zielpuffer.
+        klass: APDU-Klasse.
+        operation_specifier: OP/ACK-Feld (2 Bit).
+        length: Datenlaenge (6 Bit).
+    """
     createAPDUHeader(apdu, klass, operation_specifier, length)
 
 
 def create_apdu(klass: int, op: int, datapoints: Sequence[DatapointValue]) -> list[int]:
+    """Erzeugt eine APDU mit Datapoint-ID/Wert-Paaren.
+
+    Args:
+        klass: APDU-Klasse.
+        op: Operation (`defs.Operation`).
+        datapoints: Sequenz aus `(name, value)`-Tupeln.
+
+    Returns:
+        list[int]: Encodierte APDU-Bytes.
+    """
     return createAPDU(klass, op, datapoints)
 
 
 def create_apdu_no_data(klass: int, op: int, datapoints: Sequence[str]) -> list[int]:
+    """Erzeugt eine APDU ohne Datenteil (nur Datapoint-IDs).
+
+    Args:
+        klass: APDU-Klasse.
+        op: Operation (`defs.Operation`).
+        datapoints: Datapoint-Namen.
+
+    Returns:
+        list[int]: Encodierte APDU-Bytes.
+    """
     return createAPDUNoData(klass, op, datapoints)
 
 
 def create_get_info_apdu(klass: int, datapoints: Sequence[str]) -> list[int]:
+    """Erzeugt eine INFO-APDU fuer die angegebene Klasse.
+
+    Args:
+        klass: APDU-Klasse.
+        datapoints: Datapoint-Namen.
+
+    Returns:
+        list[int]: Encodierte APDU-Bytes.
+    """
     return createGetInfoAPDU(klass, datapoints)
 
 
 def create_get_measured_data_apdu(klass: int, datapoints: Sequence[str]) -> list[int]:
+    """Erzeugt eine GET-APDU fuer Messdaten.
+
+    Args:
+        klass: Messdatenklasse (8/16 Bit).
+        datapoints: Datapoint-Namen.
+
+    Returns:
+        list[int]: Encodierte APDU-Bytes.
+    """
     return createGetMeasuredDataAPDU(klass, datapoints)
 
 
 def create_set_commands_apdu(datapoints: Sequence[str]) -> list[int]:
+    """Erzeugt eine SET-APDU fuer Kommando-Datapoints.
+
+    Args:
+        datapoints: Kommando-Namen.
+
+    Returns:
+        list[int]: Encodierte APDU-Bytes.
+    """
     return createSetCommandsAPDU(datapoints)
 
 
 def create_get_references_apdu(datapoints: Sequence[str]) -> list[int]:
+    """Erzeugt eine GET-APDU fuer Referenzwerte.
+
+    Args:
+        datapoints: Referenz-Datapoint-Namen.
+
+    Returns:
+        list[int]: Encodierte APDU-Bytes.
+    """
     return createGetReferencesAPDU(datapoints)
 
 
 def create_set_references_apdu(datapoints: Sequence[DatapointValue]) -> list[int]:
+    """Erzeugt eine SET-APDU fuer Referenzwerte.
+
+    Args:
+        datapoints: Sequenz aus `(name, value)`.
+
+    Returns:
+        list[int]: Encodierte APDU-Bytes.
+    """
     return createSetReferencesAPDU(datapoints)
 
 
 def create_get_strings_apdu(datapoints: Sequence[str]) -> list[int]:
+    """Erzeugt eine GET-APDU fuer ASCII-String-Datapoints.
+
+    Args:
+        datapoints: Datapoint-Namen.
+
+    Returns:
+        list[int]: Encodierte APDU-Bytes.
+    """
     return createGetStringsAPDU(datapoints)
 
 
 def create_get_parameters_apdu(datapoints: Sequence[str]) -> list[int]:
+    """Erzeugt eine GET-APDU fuer Konfigurationsparameter.
+
+    Args:
+        datapoints: Parameter-Namen.
+
+    Returns:
+        list[int]: Encodierte APDU-Bytes.
+    """
     return createGetParametersAPDU(datapoints)
 
 
 def create_set_parameters_apdu(datapoints: Sequence[DatapointValue]) -> list[int]:
+    """Erzeugt eine SET-APDU fuer Konfigurationsparameter.
+
+    Args:
+        datapoints: Sequenz aus `(name, value)`.
+
+    Returns:
+        list[int]: Encodierte APDU-Bytes.
+    """
     return createSetParametersAPDU(datapoints)
 
 
 def create_get_protocol_data_apdu(datapoints: Sequence[str]) -> list[int]:
+    """Erzeugt eine GET-APDU fuer Protokoll-Datapoints.
+
+    Args:
+        datapoints: Datapoint-Namen.
+
+    Returns:
+        list[int]: Encodierte APDU-Bytes.
+    """
     return createGetProtocolDataAPDU(datapoints)
 
 
@@ -357,6 +467,20 @@ def create_get_values_pdu(
     references: Sequence[str] | None = None,
     strings: Sequence[str] | None = None,
 ) -> bytearray:
+    """Erzeugt ein kombiniertes GET-PDU mit mehreren APDU-Segmenten.
+
+    Args:
+        klass: Messdatenklasse fuer `measurements`.
+        header: Telegramm-Header.
+        protocol_data: Optionale Protokoll-Datapoints.
+        measurements: Optionale Messdaten-Datapoints.
+        parameter: Optionale Parameter-Datapoints.
+        references: Optionale Referenz-Datapoints.
+        strings: Optionale ASCII-String-Datapoints.
+
+    Returns:
+        bytearray: Vollstaendiges GENIBus-Telegramm inklusive CRC.
+    """
     return createGetValuesPDU(
         klass,
         header,
@@ -373,6 +497,16 @@ def create_set_values_pdu(
     parameter: Sequence[DatapointValue] | None = None,
     references: Sequence[DatapointValue] | None = None,
 ) -> bytearray:
+    """Erzeugt ein kombiniertes SET-PDU fuer Parameter/Referenzen.
+
+    Args:
+        header: Telegramm-Header.
+        parameter: Optionale Parameterwerte.
+        references: Optionale Referenzwerte.
+
+    Returns:
+        bytearray: Vollstaendiges GENIBus-Telegramm inklusive CRC.
+    """
     return createSetValuesPDU(header, parameter=parameter, references=references)
 
 
@@ -383,6 +517,18 @@ def create_get_info_pdu(
     parameter: Sequence[str] | None = None,
     references: Sequence[str] | None = None,
 ) -> bytearray:
+    """Erzeugt ein INFO-PDU fuer Messdaten, Parameter und Referenzen.
+
+    Args:
+        klass: Messdatenklasse fuer `measurements`.
+        header: Telegramm-Header.
+        measurements: Optionale Messdaten-Datapoints.
+        parameter: Optionale Parameter-Datapoints.
+        references: Optionale Referenz-Datapoints.
+
+    Returns:
+        bytearray: Vollstaendiges GENIBus-Telegramm inklusive CRC.
+    """
     return createGetInfoPDU(
         klass,
         header,
@@ -393,14 +539,39 @@ def create_get_info_pdu(
 
 
 def create_set_commands_pdu(header: Header, commands: Sequence[str]) -> bytearray:
+    """Erzeugt ein SET-Kommando-PDU.
+
+    Args:
+        header: Telegramm-Header.
+        commands: Kommando-Namen.
+
+    Returns:
+        bytearray: Vollstaendiges GENIBus-Telegramm inklusive CRC.
+    """
     return createSetCommandsPDU(header, commands)
 
 
 def create_connect_request_pdu(source_addr: int) -> bytearray:
+    """Erzeugt ein Connect-Request-Telegramm fuer Bus-Initialisierung.
+
+    Args:
+        source_addr: Lokale Quelladresse.
+
+    Returns:
+        bytearray: Vollstaendiges Connect-Request-Telegramm.
+    """
     return createConnectRequestPDU(source_addr)
 
 
 def create_set_remote_pdu(source_addr: int) -> bytearray:
+    """Erzeugt ein Kommando-Telegramm zum Umschalten auf Remote-Modus.
+
+    Args:
+        source_addr: Lokale Quelladresse.
+
+    Returns:
+        bytearray: Vollstaendiges Kommando-Telegramm.
+    """
     return createSetRemotePDU(source_addr)
 
 
