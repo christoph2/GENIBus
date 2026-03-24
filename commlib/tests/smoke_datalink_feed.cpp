@@ -213,6 +213,35 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // Segmentierter Frame mit fehlerhaftem Rest muss als CRC-Fehler enden.
+    reset_callout_capture();
+    load_rx_frame(truncated_frame, static_cast<uint16>(truncated_frame.size()));
+    LinkLayer_Feed(&link);
+
+    constexpr std::array<uint8, 2> invalid_trailing_frame = {
+        datalink_smoke_vectors::kFeedValidFrame[4],
+        static_cast<uint8>(datalink_smoke_vectors::kFeedValidFrame[5] ^ 0x01),
+    };
+
+    load_rx_frame(invalid_trailing_frame, static_cast<uint16>(invalid_trailing_frame.size()));
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 0, "invalid segmented frame should not call dataLinkCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 1, "invalid segmented frame should call errorCallout once")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_last_error == ERR_INVALID_CRC, "invalid segmented frame should report ERR_INVALID_CRC")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "state should return to DL_IDLE after segmented CRC error")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == 0, "frameIdx should reset after segmented CRC error")) {
+        return EXIT_FAILURE;
+    }
+
     std::cout << "Datalink feed smoke test passed.\n";
     return EXIT_SUCCESS;
 }
