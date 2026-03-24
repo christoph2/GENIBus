@@ -65,6 +65,21 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // Reset should recover from an arbitrary in-progress state.
+    LinkLayer_SetState(&link, DL_RECEIVING);
+    link.frameLength = 0x55;
+    link.frameIdx = 0x44;
+    LinkLayer_Reset(&link);
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "LinkLayer_Reset should set DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameLength == 0, "LinkLayer_Reset should clear frameLength")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(link.frameIdx == 0, "LinkLayer_Reset should clear frameIdx")) {
+        return EXIT_FAILURE;
+    }
+
     LinkLayer_SetState(&link, DL_SENDING);
     if (!expect_true(LinkLayer_GetState(&link) == DL_SENDING, "state transition DL_SENDING failed")) {
         return EXIT_FAILURE;
@@ -146,6 +161,12 @@ int main() {
         return EXIT_FAILURE;
     }
     if (!expect_true(g_last_tx[0] == GB_SD_REQUEST, "connect request should use request delimiter")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(
+        g_last_tx[1] == static_cast<uint8>(datalink_smoke_vectors::kConnectRequestPayloadLen + 2),
+        "connect request LEN byte should be payload+2"
+    )) {
         return EXIT_FAILURE;
     }
     if (!expect_true(
