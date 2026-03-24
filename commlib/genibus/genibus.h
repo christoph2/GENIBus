@@ -22,7 +22,7 @@
  *
  */
 #if !defined(__GENIBUS_H)
-#define __GENIBUS_H_
+#define __GENIBUS_H
 
 #if defined(__cplusplus)
 extern "C"
