@@ -349,6 +349,54 @@ int main() {
         return EXIT_FAILURE;
     }
 
+    // Mixed backlog: first frame valid, second frame CRC-invalid.
+    constexpr std::array<uint8, 12> mixed_two_frame_stream = {
+        datalink_smoke_vectors::kFeedValidFrame[0],
+        datalink_smoke_vectors::kFeedValidFrame[1],
+        datalink_smoke_vectors::kFeedValidFrame[2],
+        datalink_smoke_vectors::kFeedValidFrame[3],
+        datalink_smoke_vectors::kFeedValidFrame[4],
+        datalink_smoke_vectors::kFeedValidFrame[5],
+        datalink_smoke_vectors::kFeedValidFrame[0],
+        datalink_smoke_vectors::kFeedValidFrame[1],
+        datalink_smoke_vectors::kFeedValidFrame[2],
+        datalink_smoke_vectors::kFeedValidFrame[3],
+        datalink_smoke_vectors::kFeedValidFrame[4],
+        static_cast<uint8>(datalink_smoke_vectors::kFeedValidFrame[5] ^ 0x01),
+    };
+
+    reset_callout_capture();
+    load_rx_frame(mixed_two_frame_stream, static_cast<uint16>(mixed_two_frame_stream.size()));
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 1, "mixed backlog first feed should process valid frame")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 0, "mixed backlog first feed should not call errorCallout")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_rx_index == valid_frame_len, "mixed backlog first feed should consume first frame")) {
+        return EXIT_FAILURE;
+    }
+
+    LinkLayer_Feed(&link);
+
+    if (!expect_true(g_data_calls == 1, "mixed backlog second feed should not increment data callbacks")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_error_calls == 1, "mixed backlog second feed should report one CRC error")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_last_error == ERR_INVALID_CRC, "mixed backlog second feed should report ERR_INVALID_CRC")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(g_rx_index == static_cast<uint16>(mixed_two_frame_stream.size()), "mixed backlog should consume full stream after second feed")) {
+        return EXIT_FAILURE;
+    }
+    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "mixed backlog second feed should return DL_IDLE")) {
+        return EXIT_FAILURE;
+    }
+
     std::cout << "Datalink feed smoke test passed.\n";
     return EXIT_SUCCESS;
 }
