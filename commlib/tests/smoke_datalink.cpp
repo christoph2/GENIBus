@@ -43,6 +43,57 @@ bool expect_true(bool value, const char *message) {
     return true;
 }
 
+bool expect_connect_request_frame(DatalinkLayerType * link, uint16 expected_write_calls, uint8 expected_sa) {
+    if (!expect_true(g_write_calls == expected_write_calls, "connect request writeFrame call count mismatch")) {
+        return false;
+    }
+    if (!expect_true(LinkLayer_GetState(link) == DL_IDLE, "connect request should return to DL_IDLE")) {
+        return false;
+    }
+    if (!expect_true(g_last_tx[0] == GB_SD_REQUEST, "connect request should use request delimiter")) {
+        return false;
+    }
+    if (!expect_true(
+        g_last_tx[1] == static_cast<uint8>(datalink_smoke_vectors::kConnectRequestPayloadLen + 2),
+        "connect request LEN byte should be payload+2"
+    )) {
+        return false;
+    }
+    if (!expect_true(
+        g_last_tx[2] == datalink_smoke_vectors::kConnectRequestDa && g_last_tx[3] == expected_sa,
+        "connect request should keep DA and update SA"
+    )) {
+        return false;
+    }
+    if (!expect_true(
+        g_last_tx_len == datalink_smoke_vectors::kConnectRequestPayloadLen,
+        "connect request write length should match payload length"
+    )) {
+        return false;
+    }
+
+    const uint16 transmitted_payload_len =
+        g_last_tx_len > 4 ? static_cast<uint16>(g_last_tx_len - 4) : static_cast<uint16>(0);
+    if (!expect_true(transmitted_payload_len == 8, "current implementation transmits 8 connect payload bytes")) {
+        return false;
+    }
+    for (uint16 idx = 0; idx < transmitted_payload_len; ++idx) {
+        if (!expect_true(
+            g_last_tx[4 + idx] == datalink_smoke_vectors::kConnectRequestPayload[idx],
+            "transmitted connect payload bytes should match expected prefix"
+        )) {
+            return false;
+        }
+    }
+    if (!expect_true(
+        g_last_tx[g_last_tx_len] == 0xCC,
+        "connect request should not modify bytes beyond transmitted length"
+    )) {
+        return false;
+    }
+    return true;
+}
+
 } // namespace
 
 int main() {
@@ -215,134 +266,21 @@ int main() {
 
     g_last_tx.fill(0xCC);
     LinkLayer_ConnectRequest(&link, datalink_smoke_vectors::kConnectRequestSa);
-    if (!expect_true(g_write_calls == 2, "LinkLayer_ConnectRequest should trigger a second writeFrame call")) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "state should return to DL_IDLE after connect request")) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(g_last_tx[0] == GB_SD_REQUEST, "connect request should use request delimiter")) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(
-        g_last_tx[1] == static_cast<uint8>(datalink_smoke_vectors::kConnectRequestPayloadLen + 2),
-        "connect request LEN byte should be payload+2"
-    )) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(
-        g_last_tx[2] == datalink_smoke_vectors::kConnectRequestDa && g_last_tx[3] == datalink_smoke_vectors::kConnectRequestSa,
-        "connect request should target DA=0xFE, SA=0x01"
-    )) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(
-        g_last_tx_len == datalink_smoke_vectors::kConnectRequestPayloadLen,
-        "connect request write length should match payload length"
-    )) {
-        return EXIT_FAILURE;
-    }
-    const uint16 transmitted_payload_len =
-        g_last_tx_len > 4 ? static_cast<uint16>(g_last_tx_len - 4) : static_cast<uint16>(0);
-    if (!expect_true(transmitted_payload_len == 8, "current implementation transmits 8 connect payload bytes")) {
-        return EXIT_FAILURE;
-    }
-    for (uint16 idx = 0; idx < transmitted_payload_len; ++idx) {
-        if (!expect_true(
-            g_last_tx[4 + idx] == datalink_smoke_vectors::kConnectRequestPayload[idx],
-            "transmitted connect payload bytes should match expected prefix"
-        )) {
-            return EXIT_FAILURE;
-        }
-    }
-    if (!expect_true(
-        g_last_tx[g_last_tx_len] == 0xCC,
-        "connect path must not modify bytes beyond transmitted length"
-    )) {
+    if (!expect_connect_request_frame(&link, 2, datalink_smoke_vectors::kConnectRequestSa)) {
         return EXIT_FAILURE;
     }
 
     constexpr uint8 alt_connect_sa = 0x7A;
     g_last_tx.fill(0xCC);
     LinkLayer_ConnectRequest(&link, alt_connect_sa);
-    if (!expect_true(g_write_calls == 3, "second LinkLayer_ConnectRequest should trigger a third writeFrame call")) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "second connect request should return to DL_IDLE")) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(
-        g_last_tx[2] == datalink_smoke_vectors::kConnectRequestDa && g_last_tx[3] == alt_connect_sa,
-        "second connect request should keep DA and update SA"
-    )) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(
-        g_last_tx[1] == static_cast<uint8>(datalink_smoke_vectors::kConnectRequestPayloadLen + 2),
-        "second connect request LEN byte should be payload+2"
-    )) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(
-        g_last_tx_len == datalink_smoke_vectors::kConnectRequestPayloadLen,
-        "second connect request write length should match payload length"
-    )) {
-        return EXIT_FAILURE;
-    }
-    for (uint16 idx = 0; idx < transmitted_payload_len; ++idx) {
-        if (!expect_true(
-            g_last_tx[4 + idx] == datalink_smoke_vectors::kConnectRequestPayload[idx],
-            "second connect request payload bytes should match expected prefix"
-        )) {
-            return EXIT_FAILURE;
-        }
-    }
-    if (!expect_true(
-        g_last_tx[g_last_tx_len] == 0xCC,
-        "second connect request should not modify bytes beyond transmitted length"
-    )) {
+    if (!expect_connect_request_frame(&link, 3, alt_connect_sa)) {
         return EXIT_FAILURE;
     }
 
     constexpr uint8 zero_connect_sa = 0x00;
     g_last_tx.fill(0xCC);
     LinkLayer_ConnectRequest(&link, zero_connect_sa);
-    if (!expect_true(g_write_calls == 4, "third LinkLayer_ConnectRequest should trigger a fourth writeFrame call")) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(LinkLayer_GetState(&link) == DL_IDLE, "third connect request should return to DL_IDLE")) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(
-        g_last_tx[2] == datalink_smoke_vectors::kConnectRequestDa && g_last_tx[3] == zero_connect_sa,
-        "third connect request should keep DA and update SA"
-    )) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(
-        g_last_tx[1] == static_cast<uint8>(datalink_smoke_vectors::kConnectRequestPayloadLen + 2),
-        "third connect request LEN byte should be payload+2"
-    )) {
-        return EXIT_FAILURE;
-    }
-    if (!expect_true(
-        g_last_tx_len == datalink_smoke_vectors::kConnectRequestPayloadLen,
-        "third connect request write length should match payload length"
-    )) {
-        return EXIT_FAILURE;
-    }
-    for (uint16 idx = 0; idx < transmitted_payload_len; ++idx) {
-        if (!expect_true(
-            g_last_tx[4 + idx] == datalink_smoke_vectors::kConnectRequestPayload[idx],
-            "third connect request payload bytes should match expected prefix"
-        )) {
-            return EXIT_FAILURE;
-        }
-    }
-    if (!expect_true(
-        g_last_tx[g_last_tx_len] == 0xCC,
-        "third connect request should not modify bytes beyond transmitted length"
-    )) {
+    if (!expect_connect_request_frame(&link, 4, zero_connect_sa)) {
         return EXIT_FAILURE;
     }
 
