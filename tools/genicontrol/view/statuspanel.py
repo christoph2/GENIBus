@@ -76,7 +76,7 @@ class StatusPanel(wx.Panel):
             sizer.Add(ctrl, (idx, 0), wx.DefaultSpan, wx.ALL, 5)
 
             ctrl = wx.TextCtrl(self, controlIdValue, "n/a", style = wx.ALIGN_RIGHT)
-            ctrl.Enable(False)
+            ctrl.SetEditable(False)    # read-only, but not greyed out
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 1), wx.DefaultSpan, wx.ALL, 5)
 
@@ -93,7 +93,7 @@ class StatusPanel(wx.Panel):
             sizer.Add(ctrl, (idx, 3), wx.DefaultSpan, wx.ALL, 5)
         
             ctrl = wx.TextCtrl(self, controlIdValue, "n/a", style = wx.ALIGN_RIGHT)
-            ctrl.Enable(False)
+            ctrl.SetEditable(False)    # read-only, but not greyed out
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 4), wx.DefaultSpan, wx.ALL, 5)
         
@@ -134,7 +134,7 @@ class AlarmPanel(wx.Panel):
         st = wx.StaticText(self, wx.ID_ANY, label = "Actual Alarm")
         sizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         ctrl = wx.TextCtrl(self, controlids.ID_ALARM_ACTUAL, "n/a", style = wx.ALIGN_LEFT)
-        ctrl.Enable(False)
+        ctrl.SetEditable(False)    # read-only, but not greyed out
         sizer.Add(ctrl, 1, wx.ALL | wx.ALIGN_LEFT, 5)
 
         sizer.Add(wx.StaticText(self, label = ''), 1, wx.ALL | wx.ALIGN_LEFT, 5)
@@ -147,7 +147,7 @@ class AlarmPanel(wx.Panel):
             sizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
 
             ctrl = wx.TextCtrl(self, controlId, "n/a", style = wx.ALIGN_LEFT)
-            ctrl.Enable(False)
+            ctrl.SetEditable(False)    # read-only, but not greyed out
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, 1, wx.ALL | wx.ALIGN_LEFT, 5)
         sizer.Add(wx.StaticText(self, label = ''), 1, wx.ALL | wx.ALIGN_LEFT, 5)
@@ -162,14 +162,15 @@ class LEDPanel(wx.Panel):
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
 
         self.leds = {
-            'red': leds.ledRed.getBitmap(),
-            'green': leds.ledGreen.getBitmap(),
-            'grey': leds.ledGrey.getBitmap()
+            'red': leds.ledRed.GetBitmap(),
+            'green': leds.ledGreen.GetBitmap(),
+            'grey': leds.ledGrey.GetBitmap()
         }
 
         size = wx.Size(1, 0)
-        for led in self.leds.values():
-            size = max(size, led.GetSize())
+        for led in list(self.leds.values()):
+            ledSize = led.GetSize()
+            size = wx.Size(max(size.width, ledSize.width), max(size.height, ledSize.height))
 
         self.ledSize = size
         panelSize = wx.Size(((size.width * 2) + (3 * 5)), (size.height + (2 * 5)))
@@ -220,13 +221,16 @@ class PumpOperationPanel(wx.Panel):
             ("System Mode", "", controlids.ID_SYSTEM_MODE),
             ("Control Source", "", controlids.ID_CONTROL_SOURCE),
 
-            ("Ext. Analogue", "%", controlids.ID_EXT_ANALOGUE),
-            ("Total Influence", "%", controlids.ID_TOTAL_INFLUENCE),
+            # Originally "Ext. Analogue" / "Total Influence" -- these values are not
+            # available in the MAGNA data item list, so show control mode / night reduction instead.
+            ("Control Mode", "", controlids.ID_EXT_ANALOGUE),
+            ("Night Reduction", "", controlids.ID_TOTAL_INFLUENCE),
 
             ("Setpoint", "m", controlids.ID_SETPOINT),
-            ("Acual Setpoint", "m", controlids.ID_ACTUAL_SETPOINT),
+            ("Actual Setpoint", "m", controlids.ID_ACTUAL_SETPOINT),
         )
         self.itemDict = {}
+        self.unitLabels = {}
         for item in self.items:
             self.itemDict[item[0]] = item
         staticBox = wx.StaticBox(self, label = 'Pump operation')
@@ -242,9 +246,11 @@ class PumpOperationPanel(wx.Panel):
         return self.FindWindowById(ctrlId)
 
     def setValue(self, item ,value):
-        #print("setValue - Pump", self,item,value)
         ctrl = self.getControlByName(item)
-        ctrl.SetValue(value)
+        ctrl.SetValue(str(value))
+
+    def setUnit(self, item, unit):
+        self.unitLabels[item].SetLabel(unit)
 
     def addValues(self):
         sizer = wx.GridBagSizer(hgap=5, vgap=5)
@@ -255,12 +261,14 @@ class PumpOperationPanel(wx.Panel):
             #ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 0), wx.DefaultSpan, wx.ALL, 5)
 
-            ctrl = wx.TextCtrl(self, controlID, "n/a", style = wx.ALIGN_RIGHT)
-            ctrl.Enable(False)
+            ctrl = wx.TextCtrl(self, controlID, "n/a", style = wx.ALIGN_RIGHT, size = (160, -1))
+            ctrl.SetEditable(False)    # read-only, but not greyed out
             #ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 1), wx.DefaultSpan, wx.ALL, 5)
 
             ctrl = wx.StaticText(self, wx.ID_ANY, unit, style = wx.ALIGN_LEFT)
+            ctrl.SetMinSize((20, -1))
             sizer.Add(ctrl, (idx, 2), wx.DefaultSpan, wx.ALL | wx.ALIGN_LEFT, 5)
+            self.unitLabels[displayName] = ctrl
 
         return sizer

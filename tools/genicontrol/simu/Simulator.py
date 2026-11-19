@@ -69,103 +69,103 @@ commandSetValues = (
 
 DATA_POOL = { # This dictionary is used to 'simulate' communication.
     defs.APDUClass.PROTOCOL_DATA: {
-        Item(u"buf_len",            0x46, None),
-        Item(u"unit_bus_mode",      0x4e, None)
+        Item("buf_len",            0x46, None),
+        Item("unit_bus_mode",      0x4e, None)
     },
     defs.APDUClass.MEASURED_DATA: {
         #      Name   value                   factor unit zero range
-        Item(u"t_2hour_hi", 0x03,        Info(0x82, 0x27, 0x00, 0x7f)),
-        Item(u"t_2hour_lo", 0x47,        Info(0xb0, None, None, None)),
-        Item(u"f_act", 0x57,             Info(0x82, 0x26, 0x00, 0x6e)),
-        Item(u"speed_hi", 0x09,          Info(0x83, 0x62, 0x00, 0x00)),
-        Item(u"speed_lo", 0x70,          Info(0xb0, None, None, None)),
-        Item(u"h", 0x25,                 Info(0x82, 0x19, 0x00, 0x14)),
-        Item(u"q", 0x03,                 Info(0x82, 0x17, 0x00, 0x64)),
-        Item(u"p", 0x0a,                 Info(0x82, 0x09, 0x00, 0x03)),
-        Item(u"t_w", 0x25,               Info(0x82, 0x15, 0x00, 0xfe)),
-        Item(u"t_e", 0x80,               Info(0x83, 0x15, 0x00, 0x00)),
-        Item(u"t_m", 0x2c,               Info(0x83, 0x15, 0x00, 0x00)),
-        Item(u"i_mo", 0x7a,              Info(0x82, 0x01, 0x00, 0x78)),
-        Item(u"v_dc", 0x80,              Info(0x82, 0x68, 0x00, 0xfe)),
-        Item(u"energy_hi", 0x00,         Info(0x82, 0x28, 0x00, 0xfe)),
-        Item(u"energy_lo", 0x14,         Info(0xb0, None, None, None)),
-        Item(u"act_mode1", 0x08,         Info(0x81, None, None, None)),
-        Item(u"act_mode2", 0x00,         Info(0x81, None, None, None)),
-        Item(u"act_mode3", 0x10,         Info(0x81, None, None, None)),
-        Item(u"led_contr", 0x01,         Info(0x81, None, None, None)),
-        Item(u"ref_act", 0xa5,           Info(0x82, 0x1e, 0x00, 0x64)),
-        Item(u"sys_fb", 0x25,            Info(0x82, 0x19, 0x00, 0x14)),
-        Item(u"r_min", 0x0d,             Info(0x82, 0x1e, 0x00, 0x64)),
-        Item(u"r_max", 0x46,             Info(0x82, 0x1e, 0x00, 0x64)),
-        Item(u"ref_loc", 0x80,           Info(0x80, 0x19, 0x00, 0x64)),
-        Item(u"q_kn1", 0x80,             Info(0x82, 0x17, 0x00, 0x0c)),
-        Item(u"alarm_code_disp", 0x80,   Info(0xa0, None, None, None)),
-        Item(u"unit_version", 0x80,      Info(0x80, None, None, None)),
-        Item(u"loc_setup1", 0x80,        Info(0x81, None, None, None)),
-        Item(u"stop_alarm1", 0x80,       Info(0x81, None, None, None)),
-        Item(u"ind_alarm", 0x81,         Info(0x81, None, None, None)),
-        Item(u"contr_ref", 0x80,         Info(0x80, None, None, None)),
-        Item(u"surv_alarm1", 0x80,       Info(0x81, None, None, None)),
-        Item(u"start_alarm1", 0x80,      Info(0x81, None, None, None)),
-        Item(u"extern_inputs", 0x80,     Info(0x81, None, None, None)),
-        Item(u"qsd_alarm1", 0x80,        Info(0x81, None, None, None)),
-        Item(u"p_max",      0x80,        Info(0x82, 0x09, 0x00, 0x03)),
-        Item(u"contr_source", 0x16,      Info(0x81, None, None, None)),
-        Item(u"alarm_code", 0x00,        Info(0xa0, None, None, None)),
-        Item(u"alarm_log_1", 0x20,       Info(0xa0, None, None, None)),
-        Item(u"alarm_log_2", 0x39,       Info(0xa0, None, None, None)),
-        Item(u"alarm_log_3", 0x30,       Info(0xa0, None, None, None)),
-        Item(u"alarm_log_4", 0x40,       Info(0xa0, None, None, None)),
-        Item(u"alarm_log_5", 0x00,       Info(0xa0, None, None, None)),
-        Item(u"unit_family", 0x07,       Info(0x80, None, None, None)),
-        Item(u"unit_type", 0x01,         Info(0x80, None, None, None)),
+        Item("t_2hour_hi", 0x03,        Info(0x82, 0x27, 0x00, 0x7f)),
+        Item("t_2hour_lo", 0x47,        Info(0xb0, None, None, None)),
+        Item("f_act", 0x57,             Info(0x82, 0x26, 0x00, 0x6e)),
+        Item("speed_hi", 0x09,          Info(0x83, 0x62, 0x00, 0x00)),
+        Item("speed_lo", 0x70,          Info(0xb0, None, None, None)),
+        Item("h", 0x25,                 Info(0x82, 0x19, 0x00, 0x14)),
+        Item("q", 0x03,                 Info(0x82, 0x17, 0x00, 0x64)),
+        Item("p", 0x0a,                 Info(0x82, 0x09, 0x00, 0x03)),
+        Item("t_w", 0x25,               Info(0x82, 0x15, 0x00, 0xfe)),
+        Item("t_e", 0x80,               Info(0x83, 0x15, 0x00, 0x00)),
+        Item("t_m", 0x2c,               Info(0x83, 0x15, 0x00, 0x00)),
+        Item("i_mo", 0x7a,              Info(0x82, 0x01, 0x00, 0x78)),
+        Item("v_dc", 0x80,              Info(0x82, 0x68, 0x00, 0xfe)),
+        Item("energy_hi", 0x00,         Info(0x82, 0x28, 0x00, 0xfe)),
+        Item("energy_lo", 0x14,         Info(0xb0, None, None, None)),
+        Item("act_mode1", 0x08,         Info(0x81, None, None, None)),
+        Item("act_mode2", 0x00,         Info(0x81, None, None, None)),
+        Item("act_mode3", 0x10,         Info(0x81, None, None, None)),
+        Item("led_contr", 0x01,         Info(0x81, None, None, None)),
+        Item("ref_act", 0xa5,           Info(0x82, 0x1e, 0x00, 0x64)),
+        Item("sys_fb", 0x25,            Info(0x82, 0x19, 0x00, 0x14)),
+        Item("r_min", 0x0d,             Info(0x82, 0x1e, 0x00, 0x64)),
+        Item("r_max", 0x46,             Info(0x82, 0x1e, 0x00, 0x64)),
+        Item("ref_loc", 0x80,           Info(0x80, 0x19, 0x00, 0x64)),
+        Item("q_kn1", 0x80,             Info(0x82, 0x17, 0x00, 0x0c)),
+        Item("alarm_code_disp", 0x80,   Info(0xa0, None, None, None)),
+        Item("unit_version", 0x80,      Info(0x80, None, None, None)),
+        Item("loc_setup1", 0x80,        Info(0x81, None, None, None)),
+        Item("stop_alarm1", 0x80,       Info(0x81, None, None, None)),
+        Item("ind_alarm", 0x81,         Info(0x81, None, None, None)),
+        Item("contr_ref", 0x80,         Info(0x80, None, None, None)),
+        Item("surv_alarm1", 0x80,       Info(0x81, None, None, None)),
+        Item("start_alarm1", 0x80,      Info(0x81, None, None, None)),
+        Item("extern_inputs", 0x80,     Info(0x81, None, None, None)),
+        Item("qsd_alarm1", 0x80,        Info(0x81, None, None, None)),
+        Item("p_max",      0x80,        Info(0x82, 0x09, 0x00, 0x03)),
+        Item("contr_source", 0x16,      Info(0x81, None, None, None)),
+        Item("alarm_code", 0x00,        Info(0xa0, None, None, None)),
+        Item("alarm_log_1", 0x20,       Info(0xa0, None, None, None)),
+        Item("alarm_log_2", 0x39,       Info(0xa0, None, None, None)),
+        Item("alarm_log_3", 0x30,       Info(0xa0, None, None, None)),
+        Item("alarm_log_4", 0x40,       Info(0xa0, None, None, None)),
+        Item("alarm_log_5", 0x00,       Info(0xa0, None, None, None)),
+        Item("unit_family", 0x07,       Info(0x80, None, None, None)),
+        Item("unit_type", 0x01,         Info(0x80, None, None, None)),
     },
 
     defs.APDUClass.SIXTEENBIT_MEASURED_DATA: {
-        Item(u"t_w_16", 0x77,            Info(0x83, 0x54, 0x00, 0xfe)),
-        Item(u"flow_16", 0x01,           Info(0x83, 0x16, 0x00, 0x01)),
-        Item(u"diff_press_16", 0x06,     Info(0x83, 0x33, 0x00, 0x00)),
-        Item(u"power_16", 0x01,          Info(0x83, 0x07, 0x00, 0x01)),
+        Item("t_w_16", 0x77,            Info(0x83, 0x54, 0x00, 0xfe)),
+        Item("flow_16", 0x01,           Info(0x83, 0x16, 0x00, 0x01)),
+        Item("diff_press_16", 0x06,     Info(0x83, 0x33, 0x00, 0x00)),
+        Item("power_16", 0x01,          Info(0x83, 0x07, 0x00, 0x01)),
     },
 
     defs.APDUClass.COMMANDS: {
-        Item(u"RESET",           None,   Info(None, None, None, None)),
-        Item(u"RESET_ALARM",     None,   Info(None, None, None, None)),
-        Item(u"USER_BOOT",       None,   Info(None, None, None, None)),
-        Item(u"STOP",            None,   Info(None, None, None, None)),
-        Item(u"START",           None,   Info(None, None, None, None)),
-        Item(u"REMOTE",          None,   Info(None, None, None, None)),
-        Item(u"LOCAL",           None,   Info(None, None, None, None)),
-        Item(u"RUN",             None,   Info(None, None, None, None)),
-        Item(u"PROGRAM",         None,   Info(None, None, None, None)),
-        Item(u"CONST_FREQ",      None,   Info(None, None, None, None)),
-        Item(u"PROP_PRESS",      None,   Info(None, None, None, None)),
-        Item(u"CONST_PRESS",     None,   Info(None, None, None, None)),
-        Item(u"MIN",             None,   Info(None, None, None, None)),
-        Item(u"MAX",             None,   Info(None, None, None, None)),
-        Item(u"LOCK_KEYS",       None,   Info(None, None, None, None)),
-        Item(u"UNLOCK_KEYS",     None,   Info(None, None, None, None)),
-        Item(u"REF_UP",          None,   Info(None, None, None, None)),
-        Item(u"REF_DOWN",        None,   Info(None, None, None, None)),
-        Item(u"RESET_HIST",      None,   Info(None, None, None, None)),
-        Item(u"RESET_ALARM_LOG", None,   Info(None, None, None, None)),
-        Item(u"AUTOADAPT",       None,   Info(None, None, None, None)),
-        Item(u"NIGHT_REDUCT_E+", None,   Info(None, None, None, None)),
-        Item(u"NIGHT_REDUCT_D+", None,   Info(None, None, None, None)),
+        Item("RESET",           None,   Info(None, None, None, None)),
+        Item("RESET_ALARM",     None,   Info(None, None, None, None)),
+        Item("USER_BOOT",       None,   Info(None, None, None, None)),
+        Item("STOP",            None,   Info(None, None, None, None)),
+        Item("START",           None,   Info(None, None, None, None)),
+        Item("REMOTE",          None,   Info(None, None, None, None)),
+        Item("LOCAL",           None,   Info(None, None, None, None)),
+        Item("RUN",             None,   Info(None, None, None, None)),
+        Item("PROGRAM",         None,   Info(None, None, None, None)),
+        Item("CONST_FREQ",      None,   Info(None, None, None, None)),
+        Item("PROP_PRESS",      None,   Info(None, None, None, None)),
+        Item("CONST_PRESS",     None,   Info(None, None, None, None)),
+        Item("MIN",             None,   Info(None, None, None, None)),
+        Item("MAX",             None,   Info(None, None, None, None)),
+        Item("LOCK_KEYS",       None,   Info(None, None, None, None)),
+        Item("UNLOCK_KEYS",     None,   Info(None, None, None, None)),
+        Item("REF_UP",          None,   Info(None, None, None, None)),
+        Item("REF_DOWN",        None,   Info(None, None, None, None)),
+        Item("RESET_HIST",      None,   Info(None, None, None, None)),
+        Item("RESET_ALARM_LOG", None,   Info(None, None, None, None)),
+        Item("AUTOADAPT",       None,   Info(None, None, None, None)),
+        Item("NIGHT_REDUCT_E+", None,   Info(None, None, None, None)),
+        Item("NIGHT_REDUCT_D+", None,   Info(None, None, None, None)),
     },
     defs.APDUClass.CONFIGURATION_PARAMETERS: {
-        Item(u"unit_addr",         0xe7, Info(0xa0, None, None, None)),
-        Item(u"group_addr",        0xf7, Info(0xa0, None, None, None)),
+        Item("unit_addr",         0xe7, Info(0xa0, None, None, None)),
+        Item("group_addr",        0xf7, Info(0xa0, None, None, None)),
 
-        Item(u"h_const_ref_min",   0x0d, Info(0x82, 0x1e, 0x00, 0x64)),
-        Item(u"h_const_ref_max",   0x46, Info(0x82, 0x1e, 0x00, 0x64)),
-        Item(u"h_prop_ref_min",    0x17, Info(0x82, 0x1e, 0x00, 0x64)),
-        Item(u"h_prop_ref_max",    0xd0, Info(0x82, 0x1e, 0x00, 0x64))
+        Item("h_const_ref_min",   0x0d, Info(0x82, 0x1e, 0x00, 0x64)),
+        Item("h_const_ref_max",   0x46, Info(0x82, 0x1e, 0x00, 0x64)),
+        Item("h_prop_ref_min",    0x17, Info(0x82, 0x1e, 0x00, 0x64)),
+        Item("h_prop_ref_max",    0xd0, Info(0x82, 0x1e, 0x00, 0x64))
     },
 
     defs.APDUClass.REFERENCE_VALUES: {
-        Item(u"ref_rem",        0x10,    Info(0x82, 0x1e, 0x00, 0x64)),
-        Item(u"ref_ir",         0x20,    Info(0x82, 0x1e, 0x00, 0x64)),
+        Item("ref_rem",        0x10,    Info(0x82, 0x1e, 0x00, 0x64)),
+        Item("ref_ir",         0x20,    Info(0x82, 0x1e, 0x00, 0x64)),
     },
     defs.APDUClass.ASCII_STRINGS: {},
 }
@@ -190,7 +190,7 @@ def createResponse(request):
 
         if ack not in defs.CLASS_CAPABILITIES[klass]:
             raise defs.IllegalOperationError("%s-Operation not supported." % defs.operationToString(ack))
-        dataItemsById = dict([(v[2], (k, v[3], v[4])) for k, v in dataitems.DATAITEMS_FOR_CLASS[klass].items()])
+        dataItemsById = dict([(v[2], (k, v[3], v[4])) for k, v in list(dataitems.DATAITEMS_FOR_CLASS[klass].items())])
         apduLength = 0
         length += 2
         pdu = []
@@ -264,7 +264,7 @@ class SimulationServer(ConnectionIF):
              self._response = resp
 
     def read(self, numBytes):
-        if self.connected:
+        if self.connected and self._response is not None:
              resp = array.array('B', self._response)
              self._response = None
              return resp
@@ -276,12 +276,12 @@ class SimulationServer(ConnectionIF):
 def testResponse(telegram, datapoints, valueInterpretation):
     res = createResponse(dissectResponse(telegram))
     dr = dissectResponse(res)
-    print(rawInterpreteResponse(dr, datapoints, valueInterpretation))
+    print((rawInterpreteResponse(dr, datapoints, valueInterpretation)))
 
 def printTuple(data, name):
-    print ("%s = (" % name)
+    print(("%s = (" % name))
     for d in data:
-        print("     0x%02x," % d)
+        print(("     0x%02x," % d))
 
     print(")")
 
@@ -291,17 +291,17 @@ def createStaticTelegrams(destAddr):
     """
     # First transform dictionary.
     dd= dict.fromkeys(set([x.klass for x in dataitems.DATAITEMS if not (x.klass in (0, 3, 7))]))
-    for key in dd.keys():
+    for key in list(dd.keys()):
         dd[key] = dict()
     for item in dataitems.DATAITEMS:
         name, klass, _id, _, _ = item
         if klass in (0, 3, 7):
             continue
         dd[klass][name] = _id
-    for klass, items in dd.items():
+    for klass, items in list(dd.items()):
         print(klass)
         # [it[i:i+n] for i in range(0, len(it), n)]
-        items = items.items()
+        items = list(items.items())
         if len(items) > 15:
             slices = [items [i : i + 15] for i in range(0, len(items), 15)]
         else:

@@ -38,7 +38,7 @@ import sys
 if sys.version_info.major > 2:
     import queue
 else:
-    import Queue as queue
+    import queue as queue
 
 import genicontrol.apdu as apdu
 import genicontrol.defs as defs
@@ -53,6 +53,8 @@ class RequestTimeoutError(Exception): pass
 MAX_RETRIES             = 10
 CYCLE_TIME_STARTUP      = 0.5
 CYCLE_TIME_OPERATIONAL  = 2
+REFRESH_REFERENCES_CYCLES = 10      # i.e. about every 20 s.
+MAX_MISSING_REPLIES     = 3         # Pump is considered offline after this many missing replies.
 
 class WorkerThread(threading.Thread):
     logger = logging.getLogger("GeniControl")
@@ -105,8 +107,10 @@ class RequestorThread(threading.Thread):
         self._currentRetry = 0
         self._model = model
         self._requestedDatapoints = []
-        self._lastCalled = time.clock()
+        self._lastCalled = time.perf_counter()
         self._cycleTime = CYCLE_TIME_STARTUP
+        self._missingReplies = 0
+        self._online = False
 
     def run(self):
         self._model.waitForController()
@@ -114,69 +118,87 @@ class RequestorThread(threading.Thread):
         self.logger.info("Starting %s." % name)
         while True:
             self._model._concurrentAccess.acquire()
+            try:
 
-            if self.getState() == RequestorThread.STATE_IDLE:
-                self.logger.info('Trying to connect to %s.' % self._model._connection.displayName)
-                self._currentRetry += 1
-                self._model.connect(toDriver = True)
-                if self._model.connected:
-                    self.setState(RequestorThread.STATE_CONNECT_HL)
-            elif self.getState() == RequestorThread.STATE_CONNECT_HL:
-                    self._model.connect(toDriver = False)
-            elif self.getState() == RequestorThread.STATE_REQ_INFO:
-                if self._infoRequests:
-                    req, self._requestedDatapoints = self._infoRequests.pop()
-                    self._model.requestInfo(req)
+                if self.getState() == RequestorThread.STATE_IDLE:
+                    self.logger.info('Trying to connect to %s.' % self._model._connection.displayName)
+                    self._currentRetry += 1
+                    self._model.connect(toDriver = True)
+                    if self._model.connected:
+                        self.setState(RequestorThread.STATE_CONNECT_HL)
+                elif self.getState() == RequestorThread.STATE_CONNECT_HL:
+                        self._model.connect(toDriver = False)
+                elif self.getState() == RequestorThread.STATE_REQ_INFO:
+                    if self._infoRequests:
+                        req, self._requestedDatapoints = self._infoRequests.pop()
+                        self._model.requestInfo(req)
+                    else:
+                         self.setState(RequestorThread.STATE_REQ_PARAM)
+                elif self.getState() == RequestorThread.STATE_REQ_PARAM:
+                    self._requestedDatapoints = ('ref_rem', 'ref_ir')
+                    req = apdu.createGetValuesPDU(defs.APDUClass.REFERENCE_VALUES,
+                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                        references = self._requestedDatapoints
+                    )
+                    self.request(req)
+                    self._requestedDatapoints = ('ref_act', 'sys_fb', 'r_min', 'r_max'
+                    )
+                    req = apdu.createGetValuesPDU(defs.APDUClass.MEASURED_DATA,
+                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                        measurements = self._requestedDatapoints
+                    )
+                    self.request(req)
+                    self._requestedDatapoints = ('unit_addr', 'group_addr', 'h_const_ref_min', 'h_const_ref_max',
+                        'h_prop_ref_min', 'h_prop_ref_max'
+                    )
+                    req = apdu.createGetValuesPDU(defs.APDUClass.CONFIGURATION_PARAMETERS,
+                        apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                        parameter = self._requestedDatapoints
+                    )
+                    self.request(req)
+                elif self.getState() == RequestorThread.STATE_OPERATIONAL:
+                    # Re-read references / parameters from time to time (they can be changed at the pump, too).
+                    self._refreshCounter = getattr(self, '_refreshCounter', 0) + 1
+                    if self._refreshCounter >= REFRESH_REFERENCES_CYCLES:
+                        self._refreshCounter = 0
+                        self.setState(RequestorThread.STATE_REQ_PARAM)   # Executed in the next cycle.
+                    else:
+                        self._requestedDatapoints = ('speed_hi', 'speed_lo', 'h', 'f_act',
+                             'act_mode1', 'act_mode2', 'act_mode3',
+                             'led_contr', 'contr_source', 'energy_hi', 'energy_lo', 't_2hour_hi', 't_2hour_lo'
+                        )
+                        req = apdu.createGetValuesPDU(defs.APDUClass.MEASURED_DATA,
+                            apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                            measurements = self._requestedDatapoints
+                        )
+                        self.request(req)
+                        self._requestedDatapoints = ('power_16', 't_w_16', 'diff_press_16', 'flow_16'
+                        )
+                        req = apdu.createGetValuesPDU(defs.APDUClass.SIXTEENBIT_MEASURED_DATA,
+                            apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
+                            measurements = self._requestedDatapoints
+                        )
+                        self.request(req)
                 else:
-                     self.setState(RequestorThread.STATE_REQ_PARAM)
-            elif self.getState() == RequestorThread.STATE_REQ_PARAM:
-                self._requestedDatapoints = ('ref_rem', 'ref_ir')
-                req = apdu.createGetValuesPDU(defs.APDUClass.REFERENCE_VALUES,
-                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
-                    references = self._requestedDatapoints
-                )
-                self.request(req)
-                self._requestedDatapoints = ('ref_act', 'sys_fb', 'r_min', 'r_max'
-                )
-                req = apdu.createGetValuesPDU(defs.APDUClass.MEASURED_DATA, 
-                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
-                    measurements = self._requestedDatapoints
-                )
-                self.request(req)
-                self._requestedDatapoints = ('unit_addr', 'group_addr', 'h_const_ref_min', 'h_const_ref_max',
-                    'h_prop_ref_min', 'h_prop_ref_max'
-                )
-                req = apdu.createGetValuesPDU(defs.APDUClass.CONFIGURATION_PARAMETERS,
-                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
-                    parameter = self._requestedDatapoints
-                )
-                self.request(req)
-            elif self.getState() == RequestorThread.STATE_OPERATIONAL:
-                self._requestedDatapoints = ('speed_hi', 'speed_lo', 'h', 'f_act', 
-                     'act_mode1', 'act_mode2', 'act_mode3',
-                     'led_contr', 'contr_source', 'energy_hi', 'energy_lo', 't_2hour_hi', 't_2hour_lo'
-                )
-                req = apdu.createGetValuesPDU(defs.APDUClass.MEASURED_DATA, 
-                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
-                    measurements = self._requestedDatapoints
-                )
-                self.request(req)
-                self._requestedDatapoints = ('power_16', 't_w_16', 'diff_press_16', 'flow_16'
-                )
-                req = apdu.createGetValuesPDU(defs.APDUClass.SIXTEENBIT_MEASURED_DATA, 
-                    apdu.Header(defs.SD_DATA_REQUEST, self._model.getUnitAddress(), 0x01),
-                    measurements = self._requestedDatapoints
-                )
-                self.request(req)
-            else:
-                pass
+                    pass
+            except Exception:
+                # Never let the polling thread die (the application could not be closed anymore).
+                self.logger.exception("Error while communicating with the pump.")
+            finally:
+                # Release the bus while waiting, so the GUI can send commands in between.
+                self._model._concurrentAccess.release()
             res = self._model._quitEvent.wait(self._cycleTime)
             if res:
                 self.logger.info("Exiting %s." % name)
                 break
-            self._model._concurrentAccess.release()
 
     def request(self, req):
+        # Discard late replies to earlier (timed out) requests.
+        while True:
+            try:
+                RequestorThread._respQueue.get_nowait()
+            except queue.Empty:
+                break
         RequestorThread._currentRequest = req
         self.writeToServer(req)
         self.worker = WorkerThread(req, self)
@@ -188,12 +210,15 @@ class RequestorThread(threading.Thread):
             success = False
         if not success:
             self.logger.info("Timed out.")
+            self.replyMissing()
         else:
             try:
                 response = dissectResponse(data)
             except Exception as e:
-                print(str(e), data)
+                self.logger.warning("Invalid reply: %s" % e)
+                self.replyMissing()
             else:
+                self.replyReceived()
                 if self._model._commandRequested:
                     self._model._commandRequested = False
                     return
@@ -220,20 +245,40 @@ class RequestorThread(threading.Thread):
                             result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.APDUClass.MEASURED_DATA]
                             self._model.updateReferences(result)
                             self.setState(RequestorThread.STATE_REQ_PARAM)
-                        else:
+                        elif apdu.klass == defs.APDUClass.CONFIGURATION_PARAMETERS:
                             result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.APDUClass.CONFIGURATION_PARAMETERS]
                             self._model.updateParameter(result)
                             self.setState(RequestorThread.STATE_OPERATIONAL)
                             self._cycleTime = CYCLE_TIME_OPERATIONAL
                 elif self.getState() == RequestorThread.STATE_OPERATIONAL:
+                    result = None
                     for apdu in response.APDUs:
                         if apdu.klass == defs.APDUClass.MEASURED_DATA:
                             result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.APDUClass.MEASURED_DATA]
                         elif apdu.klass == defs.APDUClass.SIXTEENBIT_MEASURED_DATA:
                             result = interpreteGetValueResponse(response, self._requestedDatapoints)[defs.APDUClass.SIXTEENBIT_MEASURED_DATA]
-                    self._model.updateMeasurements(result)
+                    if result:
+                        self._model.updateMeasurements(result)
                 else:
                     pass
+
+    def replyMissing(self):
+        self._missingReplies += 1
+        if self._online and self._missingReplies >= MAX_MISSING_REPLIES:
+            self._online = False
+            self.logger.warning("No reply from pump (%d telegrams) -- pump offline, trying to reconnect." % self._missingReplies)
+            self._model.setOnline(False)
+            # Start over with the connect request; the pump may have been power-cycled.
+            self.setState(RequestorThread.STATE_CONNECT_HL)
+            self._cycleTime = CYCLE_TIME_OPERATIONAL
+
+    def replyReceived(self):
+        self._missingReplies = 0
+        if not self._online:
+            self._online = True
+            if self.getState() != RequestorThread.STATE_OPERATIONAL:
+                self._cycleTime = CYCLE_TIME_STARTUP    # Fast (re-)initialization.
+            self._model.setOnline(True)
 
     def processConnectResp(self, response):
         unitAddress = response.sa
@@ -271,7 +316,7 @@ class RequestorThread(threading.Thread):
         return self._state
 
     def clockDiff(self):
-        return time.clock() - self._lastCalled
+        return time.perf_counter() - self._lastCalled
 
     requestQueue = property(_getRequestQueue)
 
@@ -291,15 +336,15 @@ def createInfoRequestTelegrams(destAddr):
     ##
     result = []
     dd = dict.fromkeys(set([x.klass for x in dataitems.DATAITEMS if not (x.klass in (0, 3, 7))]))
-    for key in dd.keys():
+    for key in list(dd.keys()):
         dd[key] = dict()
     for item in dataitems.DATAITEMS:
         name, klass, _id, _, _ = item
         if klass not in (defs.APDUClass.MEASURED_DATA, defs.APDUClass.REFERENCE_VALUES, defs.APDUClass.CONFIGURATION_PARAMETERS, defs.APDUClass.SIXTEENBIT_MEASURED_DATA):
             continue
         dd[klass][name] = _id
-    for klass, items in dd.items():
-        items = items.items()
+    for klass, items in list(dd.items()):
+        items = list(items.items())
         if len(items) > MAX_INFO_REQUESTS:
             slices = [items [i : i + MAX_INFO_REQUESTS] for i in range(0, len(items), MAX_INFO_REQUESTS)]
         else:

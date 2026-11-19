@@ -33,19 +33,19 @@ import genicontrol.controlids as controlids
 
 
 MEAS_VALUES = (
-    (u'speed_hi',       u'Speed',           u'rpm',     controlids.ID_MEAS_SPEED, controlids.ID_MEAS_SPEED_UNIT),
-    (u'h',              u'Head',            u'm',       controlids.ID_MEAS_HEAD, controlids.ID_MEAS_HEAD_UNIT),
-    (u'energy_hi',      u'Energy',          u'kWh',     controlids.ID_MEAS_ENERGY, controlids.ID_MEAS_ENERGY_UNIT),
-    (u't_2hour_hi',     u'Hours',           u'h',       controlids.ID_MEAS_HOURS, controlids.ID_MEAS_HOURS_UNIT),
-    (u'f_act',          u'Performance',     u'%',       controlids.ID_MEAS_PERFORMANCE, controlids.ID_MEAS_PERFORMANCE_UNIT),
-    (u'unit_family',    u'Unit family code', u'',       None, None),
-    (u'unit_type',      u'Unit type code',   u'',       None, None)
+    ('speed_hi',       'Speed',           'rpm',     controlids.ID_MEAS_SPEED, controlids.ID_MEAS_SPEED_UNIT),
+    ('h',              'Head',            'm',       controlids.ID_MEAS_HEAD, controlids.ID_MEAS_HEAD_UNIT),
+    ('energy_hi',      'Energy',          'kWh',     controlids.ID_MEAS_ENERGY, controlids.ID_MEAS_ENERGY_UNIT),
+    ('t_2hour_hi',     'Hours',           'h',       controlids.ID_MEAS_HOURS, controlids.ID_MEAS_HOURS_UNIT),
+    ('f_act',          'Performance',     '%',       controlids.ID_MEAS_PERFORMANCE, controlids.ID_MEAS_PERFORMANCE_UNIT),
+    ('unit_family',    'Unit family code', '',       None, None),
+    ('unit_type',      'Unit type code',   '',       None, None)
 )
 MEAS_VALUES_16BIT = (
-    (u'power_16',       u'Power',           u'W',       controlids.ID_MEAS_POWER, controlids.ID_MEAS_POWER_UNIT),
-    (u't_w_16',         u'Temperature',     u'\xb0C',   controlids.ID_MEAS_TEMPERATURE, controlids.ID_MEAS_TEMPERATURE_UNIT),
-    (u'diff_press_16',  u'Diff.pressure',   u'mbar',    controlids.ID_MEAS_DIFFPRESSURE, controlids.ID_MEAS_DIFFPRESSURE_UNIT),
-    (u'flow_16',        u'Flowrate',        u'm\u00b3/h',controlids.ID_MEAS_FLOW, controlids.ID_MEAS_FLOW_UNIT)
+    ('power_16',       'Power',           'W',       controlids.ID_MEAS_POWER, controlids.ID_MEAS_POWER_UNIT),
+    ('t_w_16',         'Temperature',     '\xb0C',   controlids.ID_MEAS_TEMPERATURE, controlids.ID_MEAS_TEMPERATURE_UNIT),
+    ('diff_press_16',  'Diff.pressure',   'mbar',    controlids.ID_MEAS_DIFFPRESSURE, controlids.ID_MEAS_DIFFPRESSURE_UNIT),
+    ('flow_16',        'Flowrate',        'm\u00b3/h',controlids.ID_MEAS_FLOW, controlids.ID_MEAS_FLOW_UNIT)
 )
 
 MEAS_VALUES_DICT = dict([(key, (desc, unit, a, b)) for key, desc, unit, a, b in MEAS_VALUES])
@@ -53,88 +53,88 @@ MEAS_VALUES_DICT = dict([(key, (desc, unit, a, b)) for key, desc, unit, a, b in 
 MEAS_VALUES_DICT_16BIT = dict([(key, (desc, unit, a, b)) for key, desc, unit, a, b in MEAS_VALUES_16BIT])
 
 REF_VALUES = (
-    (u'ref_rem', u'Remote reference (GENIbus setpoint)',               u'%',controlids.ID_REF_REM, controlids.ID_REF_REM_UNIT),
-    (u'ref_ir',  u'Infrared controller reference (GENIlink setpoint)', u'%',controlids.ID_REF_IR, controlids.ID_REF_IR_UNIT),
-    (u'ref_act', u'Actual reference',                                  u'%',controlids.ID_REF_ACT, controlids.ID_REF_ACT_UNIT),
-    (u'sys_fb',  u'System feedback',                                   u'm',controlids.ID_SYS_FB, controlids.ID_SYS_FB_UNIT),
-    (u'r_min',   u'Reference subinterval minimum',                     u'%',controlids.ID_R_MIN, controlids.ID_R_MIN_UNIT),
-    (u'r_max',   u'Reference subinterval maximum',                     u'%',controlids.ID_R_MAX, controlids.ID_R_MAX_UNIT)
+    ('ref_rem', 'Remote reference (GENIbus setpoint)',               '%',controlids.ID_REF_REM, controlids.ID_REF_REM_UNIT),
+    ('ref_ir',  'Infrared controller reference (GENIlink setpoint)', '%',controlids.ID_REF_IR, controlids.ID_REF_IR_UNIT),
+    ('ref_act', 'Actual reference',                                  '%',controlids.ID_REF_ACT, controlids.ID_REF_ACT_UNIT),
+    ('sys_fb',  'System feedback',                                   'm',controlids.ID_SYS_FB, controlids.ID_SYS_FB_UNIT),
+    ('r_min',   'Reference subinterval minimum',                     '%',controlids.ID_R_MIN, controlids.ID_R_MIN_UNIT),
+    ('r_max',   'Reference subinterval maximum',                     '%',controlids.ID_R_MAX, controlids.ID_R_MAX_UNIT)
 )
 
 REFERENCES_DICT = dict([(key, (desc, unit, a, b)) for key, desc, unit, a, b in REF_VALUES])
 
 PARAMETERS = (
-    (u'unit_addr',          u'Busunit address', u'No', controlids.ID_PARAM_UNIT_ADDR, controlids.ID_PARAM_UNIT_ADDR_UNIT),
-    (u'group_addr',         u'Group address',   u'No', controlids.ID_PARAM_GROUP_ADDR, controlids.ID_PARAM_GROUP_ADDR_UNIT),
-    (u'h_const_ref_min',    u'Const. pressure min. reference', u'%', controlids.ID_PARAM_H_CONST_REF_MIN, controlids.ID_PARAM_H_CONST_REF_MIN_UNIT),
-    (u'h_const_ref_max',    u'Const. pressure max. reference', u'%', controlids.ID_PARAM_H_CONST_REF_MAX, controlids.ID_PARAM_H_CONST_REF_MAX_UNIT),
-    (u'h_prop_ref_min',     u'Prop. pressure min. reference', u'%', controlids.ID_PARAM_H_PROP_REF_MIN, controlids.ID_PARAM_H_PROP_REF_MIN_UNIT),
-    (u'h_prop_ref_max',     u'Prop. pressure max. reference', u'%', controlids.ID_PARAM_H_PROP_REF_MAX, controlids.ID_PARAM_H_PROP_REF_MAX_UNIT)
+    ('unit_addr',          'Busunit address', 'No', controlids.ID_PARAM_UNIT_ADDR, controlids.ID_PARAM_UNIT_ADDR_UNIT),
+    ('group_addr',         'Group address',   'No', controlids.ID_PARAM_GROUP_ADDR, controlids.ID_PARAM_GROUP_ADDR_UNIT),
+    ('h_const_ref_min',    'Const. pressure min. reference', '%', controlids.ID_PARAM_H_CONST_REF_MIN, controlids.ID_PARAM_H_CONST_REF_MIN_UNIT),
+    ('h_const_ref_max',    'Const. pressure max. reference', '%', controlids.ID_PARAM_H_CONST_REF_MAX, controlids.ID_PARAM_H_CONST_REF_MAX_UNIT),
+    ('h_prop_ref_min',     'Prop. pressure min. reference', '%', controlids.ID_PARAM_H_PROP_REF_MIN, controlids.ID_PARAM_H_PROP_REF_MIN_UNIT),
+    ('h_prop_ref_max',     'Prop. pressure max. reference', '%', controlids.ID_PARAM_H_PROP_REF_MAX, controlids.ID_PARAM_H_PROP_REF_MAX_UNIT)
 )
 
 PARAMETERS_DICT = dict([(key, (desc, unit, a, b)) for key, desc, unit, a, b in PARAMETERS])
 
 STRING_VALUES = (
-    (u"product_name",    u"Product name"      , controlids.ID_STR_PRODUCT_NAME),
-    (u"software_name1",  u"Software name"     , controlids.ID_STR_SOFTWARE_NAME1),
-    (u"compile_date1",   u"Compilation date"  , controlids.ID_STR_COMPILE_DATE1),
-    (u"protocol_code",   u"Protocol code"     , controlids.ID_STR_PROTOCOL_CODE),
-    (u"developers",      u"Developers"        , controlids.ID_STR_DEVELOPERS),
-    (u"serial_no",       u"Serial No."        , controlids.ID_STR_SERIAL_NO)
+    ("product_name",    "Product name"      , controlids.ID_STR_PRODUCT_NAME),
+    ("software_name1",  "Software name"     , controlids.ID_STR_SOFTWARE_NAME1),
+    ("compile_date1",   "Compilation date"  , controlids.ID_STR_COMPILE_DATE1),
+    ("protocol_code",   "Protocol code"     , controlids.ID_STR_PROTOCOL_CODE),
+    ("developers",      "Developers"        , controlids.ID_STR_DEVELOPERS),
+    ("serial_no",       "Serial No."        , controlids.ID_STR_SERIAL_NO)
 )
 
 INFO_VALUES = (
-    u"t_2hour_hi",
-    u"t_2hour_lo",
-    u"f_act",
-    u"speed_hi",
-    u"speed_lo",
-    u"h",
-    u"q",
-    u"p",
-    u"t_w",
-    u"t_m",
-    u"t_e",
-    u"i_mo",
-    u"v_dc",
-    u"power_16",
-    u"energy_hi",
-    u"energy_lo",
-    u"diff_press_16",
-    u"flow_16",
-    u"t_w_16",
-    u"ref_rem",
-    u"ref_ir",
-    u"ref_act",
-    u"h_prop_ref_min",
-    u"h_prop_ref_max",
-    u"h_const_ref_max",
-    u"h_const_ref_min",
-    u"sys_fb",
-    u"r_min",
-    u"r_max",
-    u"group_addr",
-    u"unit_addr",
-    u"led_contr",
-    u"start_alarm1",
-    u"qsd_alarm1",
-    u"stop_alarm1",
-    u"surv_alarm1",
-    u"ind_alarm",
-    u"act_mode1",
-    u"act_mode2",
-    u"act_mode3",
-    u"contr_source",
-    u"unit_family",
-    u"unit_type",
-    u"unit_version",
-    u"alarm_code",
-    u"alarm_code_disp",
-    u"alarm_log_1",
-    u"alarm_log_2",
-    u"alarm_log_3",
-    u"alarm_log_4",
-    u"alarm_log_5"
+    "t_2hour_hi",
+    "t_2hour_lo",
+    "f_act",
+    "speed_hi",
+    "speed_lo",
+    "h",
+    "q",
+    "p",
+    "t_w",
+    "t_m",
+    "t_e",
+    "i_mo",
+    "v_dc",
+    "power_16",
+    "energy_hi",
+    "energy_lo",
+    "diff_press_16",
+    "flow_16",
+    "t_w_16",
+    "ref_rem",
+    "ref_ir",
+    "ref_act",
+    "h_prop_ref_min",
+    "h_prop_ref_max",
+    "h_const_ref_max",
+    "h_const_ref_min",
+    "sys_fb",
+    "r_min",
+    "r_max",
+    "group_addr",
+    "unit_addr",
+    "led_contr",
+    "start_alarm1",
+    "qsd_alarm1",
+    "stop_alarm1",
+    "surv_alarm1",
+    "ind_alarm",
+    "act_mode1",
+    "act_mode2",
+    "act_mode3",
+    "contr_source",
+    "unit_family",
+    "unit_type",
+    "unit_version",
+    "alarm_code",
+    "alarm_code_disp",
+    "alarm_log_1",
+    "alarm_log_2",
+    "alarm_log_3",
+    "alarm_log_4",
+    "alarm_log_5"
 )
 
 DataitemConfiguration = {

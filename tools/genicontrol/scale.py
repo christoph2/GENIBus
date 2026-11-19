@@ -66,7 +66,7 @@ u44 = UnitTable[44]
 
 
 def argumentsToLower():
-    return map(lambda x: string.lower(x), sys.argv[1 :])
+    return [string.lower(x) for x in sys.argv[1 :]]
 
 
 def main():
@@ -74,9 +74,9 @@ def main():
         scaling = getScalingInfo(info)
         print(scaling)
         if value > 0xff:
-            print(convertForward16(value, info.zero, info.range, scaling.factor))
+            print((convertForward16(value, info.zero, info.range, scaling.factor)))
         else:
-            print(convertForward8(value, info.zero, info.range, scaling.factor))
+            print((convertForward8(value, info.zero, info.range, scaling.factor)))
 
 if __name__ == '__main__':
     main()

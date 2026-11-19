@@ -64,7 +64,7 @@ class ParamPanel(ScrolledPanel):
             sizer.Add(ctrl, (idx, 0), wx.DefaultSpan, wx.ALL, 5)
 
             ctrl = wx.TextCtrl(self, controlIdValue, "n/a", style = wx.ALIGN_RIGHT)
-            ctrl.Enable(False)
+            ctrl.SetEditable(False)    # read-only, but not greyed out
             ctrl.SetToolTip(wx.ToolTip(ditem.note))
             sizer.Add(ctrl, (idx, 1), wx.DefaultSpan, wx.ALL, 5)
 

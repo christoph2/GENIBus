@@ -12,7 +12,7 @@ def change_intensity(color, fac):
     for i, intensity in enumerate(rgb):
         rgb[i] = min(int(round(intensity*fac, 0)), 255)
 
-    return wx.Color(*rgb)
+    return wx.Colour(*rgb)
 
 class LED(wx.Control):
     def __init__(self, parent, id = -1, colors = [wx.Colour(220, 10, 10), wx.Colour(250, 200, 0), wx.Colour(10, 220, 10)],
@@ -28,9 +28,9 @@ class LED(wx.Control):
 
     def SetState(self, i):
         if i < 0:
-            raise ValueError, 'Cannot have a negative state value.'
+            raise ValueError('Cannot have a negative state value.')
         elif i >= len(self._colors):
-            raise IndexError, 'There is no state with an index of %d.' % i
+            raise IndexError('There is no state with an index of %d.' % i)
         elif i == self._state:
             return
 
@@ -90,7 +90,7 @@ class LcdTest(wx.Frame):
 
         self._p = wx.Panel(self)
 
-        colors = [wx.Color(128, 128, 128), wx.Color(192, 0, 0), wx.Color(0, 192, 0), wx.Color(0, 0, 192), ]
+        colors = [wx.Colour(128, 128, 128), wx.Colour(192, 0, 0), wx.Colour(0, 192, 0), wx.Colour(0, 0, 192), ]
         l1 = LED(self._p, colors = colors)
         l2 = LED(self._p, colors = colors)
         l3 = LED(self._p, colors = colors)
@@ -115,7 +115,7 @@ class LcdTest(wx.Frame):
         wx.FutureCall(500, self._time_passed)
 
 def main():
-    app = wx.PySimpleApp()
+    app = wx.App(False)
     f = LcdTest()
     app.MainLoop()
 
@@ -131,25 +131,25 @@ if __name__ == "__main__":
         H = img.GetHeight()
         if W > H:
             NewW = self.PhotoMaxSize
-            NewH = self.PhotoMaxSize * H / W
+            NewH = self.PhotoMaxSize * H // W
         else:
             NewH = self.PhotoMaxSize
-            NewW = self.PhotoMaxSize * W / H
+            NewW = self.PhotoMaxSize * W // H
         img = img.Scale(NewW,NewH)
 
-        self.imageCtrl.SetBitmap(wx.BitmapFromImage(img))
+        self.imageCtrl.SetBitmap(wx.Bitmap(img))
         self.panel.Refresh()
 
 def bitmap1_onSize(self, e=None):
     W, H = self.bitmap1.Size
     if W > H:
         NewW = W
-        NewH = W * H / W
+        NewH = W * H // W
     else:
         NewH = H
-        NewW = H * W / H
+        NewW = H * W // H
     img = wx.Image(self.frame_file_picker.Path, wx.BITMAP_TYPE_ANY)
     img = img.Scale(NewW,NewH)
-    self.bitmap1.SetBitmap(wx.BitmapFromImage(img))
+    self.bitmap1.SetBitmap(wx.Bitmap(img))
     e.Skip()
     """

@@ -87,7 +87,7 @@ def createItem(window, menu, item):
         newID = wx.NewId()
         menuItem = wx.MenuItem(menu, newID, item.name, item.helpString, item.kind)
         item.id = newID
-        menu.AppendItem(menuItem)
+        menu.Append(menuItem)
         actionHandler = getattr(window, item.action.strip())
         window.Bind(wx.EVT_MENU, actionHandler, menuItem)
 

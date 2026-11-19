@@ -77,9 +77,9 @@ class ConfigProcessor(object):
                     self._logger.error("Malformed Configuration Entry '%s' Check file: '%s'" % (line, fp.name))
 
     def write(self, fp):
-        for section, items in self._sections.items():
+        for section, items in list(self._sections.items()):
             fp.write("[%s]\n" % section)
-            for key, value in items.items():
+            for key, value in list(items.items()):
                 fp.write("%s = %s\n" % (key, value))
             fp.write("\n")
 
@@ -89,11 +89,11 @@ class ConfigProcessor(object):
 
     def items(self, section):
         items = self._sections.get(section)
-        return items.items() if items else []
+        return list(items.items()) if items else []
 
     def options(self, section):
         items = self._sections.get(section)
-        return items.keys() if items else []
+        return list(items.keys()) if items else []
 
     def set(self, section, option, value):
         type_ = self._getType(section, option)
@@ -101,10 +101,10 @@ class ConfigProcessor(object):
 
     def add(self, section, option, value):
         #print("Adding", section, option)
-        if not section in self._sections.keys():
+        if not section in list(self._sections.keys()):
             #print("Section '%s' does not exist!" % section)
             self._sections[section] = OrderedDict()
-        if not option in self._sections[section].keys():
+        if not option in list(self._sections[section].keys()):
             #print("Option '%s' does not exist!" % option)
             pass
         #print("Value", value)
@@ -115,13 +115,13 @@ class ConfigProcessor(object):
         if not section in self._sections:
             return False
         else:
-            return self._sections.get(section).has_key(option)
+            return option in self._sections.get(section)
 
     def has_section(self, section):
         return section in self._sections
 
     def _getType(self, section, option):
-        if self._sections[section].has_key(option):
+        if option in self._sections[section]:
             return type(self._sections[section][option])
         else:
             return
@@ -132,7 +132,7 @@ class ConfigProcessor(object):
     __repr__ = __str__
 
     def _getSections(self):
-        return self._sections.keys()
+        return list(self._sections.keys())
 
     sections = property(_getSections)
 

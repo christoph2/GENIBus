@@ -39,3 +39,20 @@ def calcuteCrc(frame):
 
 def checkCrc(frame):
     return calcuteCrc(frame[:-2])
+
+
+class Crc(object):
+    """Incremental CRC-16/CCITT calculator (GENIBus parameters), used by dissect.py.
+    """
+
+    def __init__(self, data = 0xffff):
+        self.init(data)
+
+    def init(self, data):
+        self._accum = data & 0xffff
+
+    def update(self, data):
+        self._accum = binascii.crc_hqx(bytes((data & 0xff, )), self._accum)
+
+    def get(self):
+        return (self._accum ^ 0xffff) & 0xffff
