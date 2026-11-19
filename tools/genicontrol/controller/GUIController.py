@@ -28,6 +28,7 @@
 
 import logging
 import threading
+import time
 import wx
 import yaml
 from genicontrol.model.config import DataitemConfiguration
@@ -35,14 +36,13 @@ import genicontrol.defs as defs
 from genicontrol.scaling import getScalingInfo
 from genicontrol.controller.ControllerIF import IController
 import genicontrol.dd as dd
-from wx.lib.pubsub import setuparg1
-from wx.lib.pubsub import pub as Publisher
+from genilib.pubsub import pub as Publisher
 from wx import CallAfter
 
 
 class InfoWriter(object):
     def __init__(self, fname):
-        self._file = file(fname, 'w')
+        self._file = open(fname, 'w')
 
     def __del__(self):
         self._file.close()
@@ -63,7 +63,9 @@ class ControllerThread(threading.Thread):
         self.setName(self.__class__.__name__)
         Publisher.subscribe(self.onInfoUpdate, 'INFO')
         Publisher.subscribe(self.onPumpStatus, 'PUMP_STATUS')
-        for klass in defs.APDUClass.nameDict.values():
+        Publisher.subscribe(self.onLink, 'LINK')
+        Publisher.subscribe(self.onStatusText, 'STATUS')
+        for klass in list(defs.APDUClass.nameDict.values()):
             Publisher.subscribe(self.onChange, klass)
 
         controls = self._view.notebook.mcPanel.controlsPanel
@@ -72,13 +74,16 @@ class ControllerThread(threading.Thread):
         controls.btnRefUp.Bind(wx.EVT_BUTTON, self.onRefUp)
         controls.btnRefDown.Bind(wx.EVT_BUTTON, self.onRefDown)
 
+        # The references panel needs the model to send 'set reference' telegrams.
+        self._view.notebook.refPanel._model = model
+
         controls = self._view.notebook.mcPanel.alarmPanel
         controls.btnResetAlarm.Bind(wx.EVT_BUTTON, self.onResetAlarm)
         controls.btnResetAlarmLog.Bind(wx.EVT_BUTTON, self.onResetAlarmLog)
 
     def run(self):
         name = self.getName()
-        print("Starting %s." % name)
+        print(("Starting %s." % name))
         while True:
             if self.quitEvent.wait(0.5):
                 break
@@ -90,16 +95,16 @@ class ControllerThread(threading.Thread):
             self.logger.debug("unitFamily and unitType not available.")
         #unitVersion = self._model.getValue(defs.APDUClass.MEASURED_DATA, 'unit_version') ## TODO: Fixme!
         else:
-            with file(dd.getDeviceFilePath(unitFamily, unitType, 1), 'w') as outf:
+            with open(dd.getDeviceFilePath(unitFamily, unitType, 1), 'w') as outf:
                 #outf.write(str(self.infoRecords))
                 yaml.dump(self.infoRecords, outf)
 
-        print("Exiting %s." % name)
+        print(("Exiting %s." % name))
 
     def onInfoUpdate(self, msg):
         #self._view.post('INFO_UPDATE', msg)
-        for values in msg.data.values():
-            for key, value in values.items():
+        for values in list(msg.data.values()):
+            for key, value in list(values.items()):
                 svalue = getScalingInfo(value)
                 CallAfter(self._view.notebook.infoPanel.setItem, key, svalue.physEntity, str(svalue.factor), svalue.unit, str(value.zero), str(value.range))
                 CallAfter(self._view.notebook.infoPanel.grid.Fit)
@@ -121,19 +126,31 @@ class ControllerThread(threading.Thread):
         if (group == 'REFERENCE_VALUES'):
             CallAfter(self._view.notebook.refPanel.setValue, item, msg.data)
 
+    def onStatusText(self, msg):
+        CallAfter(self._view.SetStatusText, "%s  [%s]" % (msg.data, time.strftime("%H:%M:%S")), 1)
+
+    def onLink(self, msg):
+        CallAfter(self._view.setPumpOnline, msg.data)
+
     def onPumpStatus(self, msg):
         group, item = msg.topic
         data = msg.data
         CallAfter(self._view.notebook.mcPanel.setPumpStatus, item, data)
+        if item in ('controlMode', 'sourceMode'):
+            CallAfter(self._view.notebook.refPanel.setPumpStatus, item, data)
         #self._view.notebook.mcPanel.setPumpStatus(item, data)
 
     def onRemoteLocalChanged(self, event):
-        print("Remote?: %s\n" % (event.getState(), ))
-        cmd = 'REMOTE' if event.getState() else 'LOCAL'
-        self.sendCommand(cmd)
+        print(("Remote?: %s\n" % (event.getState(), )))
+        if event.getState():
+            # Re-send the stored bus setpoint, otherwise the pump keeps the local setpoint.
+            self._model.switchToRemote(self._view.notebook.refPanel._raw.get('ref_rem'))
+        else:
+            # The active setpoint changes (ref_rem -> ref_ir), so re-read the references right away.
+            self._model.sendCommand('LOCAL', refreshReferences = True)
 
     def onOperationModeChanged(self, event):
-        print("Operation-Mode changed: '%s'" % event.getState())
+        print(("Operation-Mode changed: '%s'" % event.getState()))
         self.sendCommand(event.getState().upper())
 
     def onRefUp(self, event):

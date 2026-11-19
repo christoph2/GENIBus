@@ -70,6 +70,7 @@ class Connector(ConnectionIF):
         self.serverIP = serverIP
         self.serverPort = serverPort
         self.connected = False
+        self.sock = None
 
     def connect(self):
         try:
@@ -80,7 +81,7 @@ class Connector(ConnectionIF):
              self.connected = True
              return True
         except Exception as e:
-             print(str(e))
+             print((str(e)))
              return False
 
     def disconnect(self):
@@ -88,7 +89,9 @@ class Connector(ConnectionIF):
 
     def close(self):
         self.connected = False
-        self.sock.close()
+        if self.sock is not None:
+            self.sock.close()
+            self.sock = None
 
     def __del__(self):
         self.close()
@@ -97,10 +100,17 @@ class Connector(ConnectionIF):
         if self.connected:
              self.sock.send(bytearray(data))
 
-    def read(self):
+    def read(self, length = BUF_SIZE):
         if self.connected:
-             data = bytearray(self.sock.recv(BUF_SIZE))
-             return data
+            try:
+                data = bytearray(self.sock.recv(length))
+            except socket.timeout:
+                return None
+            return data
+
+    @property
+    def displayName(self):
+        return "Arduino / TCP (%s:%s)" % (self.serverIP, self.serverPort)
 
 """
 

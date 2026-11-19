@@ -32,8 +32,7 @@ import logging
 
 logger = logging.getLogger("GeniControl")
 
-class ConnectionIF(object):
-    __metaclass__ = abc.ABCMeta
+class ConnectionIF(object, metaclass=abc.ABCMeta):
     logger = logging.getLogger("GeniControl")
 
     @abc.abstractmethod

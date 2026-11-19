@@ -41,8 +41,7 @@ def createAPDUHeader(apdu, klass, operationSpecifier, length):
     apdu.append((operationSpecifier << 6) | (length & 0x3F))
 
 def createAPDU(klass, op, datapoints):
-    #di = dataitems.DATAITEMS_FOR_CLASS[klass]
-    di = db.dataitemsByClass("magna", klass)
+    di = dataitems.DATAITEMS_FOR_CLASS[klass]
     result = []
     createAPDUHeader(result, klass, op, len(datapoints) * 2)
     for dp, value in datapoints:
@@ -52,8 +51,7 @@ def createAPDU(klass, op, datapoints):
     return result
 
 def createAPDUNoData(klass, op, datapoints):
-    #di = dataitems.DATAITEMS_FOR_CLASS[klass]
-    di = db.dataitemsByClass("magna", klass)
+    di = dataitems.DATAITEMS_FOR_CLASS[klass]
     result = []
     createAPDUHeader(result, klass, op, len(datapoints))
     for dp in datapoints:
@@ -157,12 +155,16 @@ def createGetValuesPDU(klass, header, protocolData = [], measurements = [], para
     return arr
 
 
-def createSetValuesPDU(header, parameter = [], references = []):
+def createSetValuesPDU(header, parameter = [], references = [], commands = []):
     if not isinstance(header, Header):
         raise TypeError('Parameter "header" must be of type "Header".')
 
     length = 2
     pdu = []
+
+    if commands:
+        commandsAPDU = createSetCommandsAPDU(commands)
+        length += len(commandsAPDU)
 
     if parameter:
         parameterAPDU = createSetParametersAPDU(parameter)
@@ -173,6 +175,9 @@ def createSetValuesPDU(header, parameter = [], references = []):
         length += len(referencesAPDU)
 
     pdu.extend([header.startDelimiter, length, header.destAddr, header.sourceAddr])
+
+    if commands:
+        pdu.extend(commandsAPDU)
 
     if parameter:
         pdu.extend(parameterAPDU)
@@ -268,14 +273,14 @@ def createSetRemotePDU(sourceAddr):
     )
 
 if __name__ == '__main__':
-    print(dumpHex(createConnectRequestPDU(0x01)))
+    print((dumpHex(createConnectRequestPDU(0x01))))
 
-    print(dumpHex(createSetCommandsPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x01), ['REMOTE', 'START'])))
+    print((dumpHex(createSetCommandsPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x01), ['REMOTE', 'START']))))
 
-    print(dumpHex(createSetValuesPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x01), references = [('ref_rem', 0xa5, )])))
+    print((dumpHex(createSetValuesPDU(Header(defs.SD_DATA_REQUEST, 0x20, 0x01), references = [('ref_rem', 0xa5, )]))))
 
-    print(dumpHex(createGetInfoPDU(
+    print((dumpHex(createGetInfoPDU(
         Header(defs.SD_DATA_REQUEST, 0x20, 0x01),
         measurements = ['h', 'q', 'p', 't_w', 'speed_hi', 'energy_hi'])
-    ))
+    )))
 

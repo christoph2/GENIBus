@@ -50,7 +50,7 @@ def fixIP(addr):
 
 class OptionsView(wx.Dialog):
     def __init__(self, parent, controller, model):
-        wx.Dialog.__init__(self, parent, wx.ID_ANY, u'Options')
+        wx.Dialog.__init__(self, parent, wx.ID_ANY, 'Options')
         self.tcpControls = []
         self.serialControls = []
         self.simControls = []
@@ -63,12 +63,12 @@ class OptionsView(wx.Dialog):
 
         staticBox = wx.StaticBoxSizer(wx.StaticBox(self, -1, " Driver " ), wx.VERTICAL )
 
-        gridsizer = wx.FlexGridSizer(3 ,2)
+        gridsizer = wx.FlexGridSizer(3, 2, 0, 0)
 
         self.radioTcp = wx.RadioButton(self, ID_RB_TCPIP, " Arduino / TCP ", style = wx.RB_GROUP)
         gridsizer.Add(self.radioTcp, 1, wx.ALL, 5)
 
-        gridsizer2 = wx.FlexGridSizer(3 ,2)
+        gridsizer2 = wx.FlexGridSizer(3, 2, 0, 0)
         self.addr = createLabeledControl(self, 'Server IP-address', ipaddrctrl.IpAddrCtrl(self, id = ID_IPADDR), gridsizer2, self.tcpControls)
         self.mask = createLabeledControl(self, 'Subnet-mask', ipaddrctrl.IpAddrCtrl(self, id = ID_SUBNET),gridsizer2, self.tcpControls )
         self.port = createLabeledControl(self, 'Server-port', TextCtrl(self, id = ID_PORT, mask = '#####'), gridsizer2, self.tcpControls)
@@ -78,7 +78,7 @@ class OptionsView(wx.Dialog):
         gridsizer.Add(self.radioSerial, 1, wx.ALL, 5)
 
         boxSizer2 = wx.BoxSizer(wx.HORIZONTAL)
-        self.serialPort = createLabeledControl(self, 'Port', TextCtrl(self, id = ID_SERIAL_PORT), boxSizer2, self.serialControls)
+        self.serialPort = createLabeledControl(self, 'Port', wx.TextCtrl(self, id = ID_SERIAL_PORT, size = (180, -1)), boxSizer2, self.serialControls)
         gridsizer.Add(boxSizer2, 1, wx.ALL, 5)
 
         self.radioSim = wx.RadioButton(self, ID_RB_SIM, " Simulator ")
@@ -100,7 +100,7 @@ class OptionsView(wx.Dialog):
         self.Bind(wx.EVT_CHECKBOX, self.SetLogWrite, self.logfile)
 
         line = wx.StaticLine(self, style = wx.LI_HORIZONTAL)
-        sizer.Add(line, 0, wx.GROW | wx.ALIGN_CENTER_VERTICAL | wx.RIGHT | wx.TOP, 5)
+        sizer.Add(line, 0, wx.GROW | wx.RIGHT | wx.TOP, 5)
         btnsizer = wx.StdDialogButtonSizer()
         okButton = wx.Button(self, id = wx.ID_OK)
         okButton.SetDefault()
@@ -110,10 +110,10 @@ class OptionsView(wx.Dialog):
         btnsizer.AddButton(cancelButton)
 
         btnsizer.Realize()
-        sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL | wx.ALL, 5)
+        sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
 
         if not serialAvailable:
-            radioSerial.Enable(False)
+            self.radioSerial.Enable(False)
 
         self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, self.radioTcp)
         self.Bind(wx.EVT_RADIOBUTTON, self.onDriverSelected, self.radioSerial)
@@ -294,7 +294,7 @@ def testDialog():
 
 
 def main():
-    class TestApp(wx.PySimpleApp):
+    class TestApp(wx.App):
         def __init__(self):
             super(TestApp, self).__init__()
 

@@ -28,6 +28,7 @@
 
 
 import array
+import builtins
 import logging
 import os
 import sys
@@ -48,10 +49,12 @@ def bytes(w):
     return tuple((hiByte(w), loByte(w)))
 
 def makeBuffer(arr):
-    return buffer(array.array('B', arr))
+    return builtins.bytes(bytearray(arr))
 
 def makeArray(buf):
-    return tuple([ord(x) for x in str(buf)])
+    if isinstance(buf, str):
+        buf = buf.encode('latin-1')
+    return tuple(bytearray(buf))
 
 def absConfigurationFilename(fname):
     return os.path.join(CONFIGURATION_DIRECTORY, fname)
@@ -64,9 +67,9 @@ if sys.version_info.major == 3:
     from io import BytesIO as StringIO
 else:
     try:
-        from cStringIO import StringIO
+        from io import StringIO
     except ImportError:
-        from StringIO import StringIO
+        from io import StringIO
 
 
 def createStringBuffer(*args):
@@ -74,10 +77,28 @@ def createStringBuffer(*args):
     """
     return StringIO(*args)
 
+
+def loadYaml(stream):
+    """Load (trusted, local) YAML files which may contain python tags (e.g. !!python/tuple).
+    """
+    import yaml
+    base = getattr(yaml, 'UnsafeLoader', yaml.Loader)
+
+    class _Loader(base):
+
+        def set_python_instance_state(self, instance, state, *args, **kws):
+            # Files written by Python 2 store a state for namedtuples, which are
+            # immutable in Python 3 -- the values are already set via the constructor.
+            if isinstance(instance, tuple):
+                return
+            return super(_Loader, self).set_python_instance_state(instance, state, *args, **kws)
+
+    return yaml.load(stream, Loader = _Loader)
+
 def binExtractor(fname, offset, length):
     """Extract a junk of data from a file.
     """
-    fp = open(fname)
+    fp = open(fname, 'rb')
     fp.seek(offset)
     data = fp.read(length)
     return data

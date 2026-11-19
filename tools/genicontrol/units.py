@@ -28,7 +28,7 @@
 
 
 from collections import namedtuple
-from genilib.utils import createStringBuffer
+from genilib.utils import createStringBuffer, loadYaml
 
 import yaml
 
@@ -37,6 +37,6 @@ from genilib.configuration import readConfigFile
 ValueTuple = namedtuple('ValueTuple', 'header unit range zero value')
 Unit = namedtuple('Unit', 'physEntity factor unit')
 
-UnitTable = yaml.load(createStringBuffer(readConfigFile("genicontrol", "units.yaml")))
+UnitTable = loadYaml(createStringBuffer(readConfigFile("genicontrol", "units.yaml")))
 
 

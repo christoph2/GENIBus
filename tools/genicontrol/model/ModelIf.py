@@ -29,13 +29,11 @@
 
 import abc
 import logging
-from wx.lib.pubsub import setuparg1
-from wx.lib.pubsub import pub as Publisher
+from genilib.pubsub import pub as Publisher
 
 DATA_NOT_AVAILABLE = None
 
-class IModel(object):
-    __metaclass__ = abc.ABCMeta
+class IModel(object, metaclass=abc.ABCMeta):
     logger = logging.getLogger("GeniControl")
 
     def __init__(self, waitingPoint, connection):

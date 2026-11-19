@@ -29,8 +29,7 @@
 import abc
 import logging
 import threading
-from wx.lib.pubsub import setuparg1
-from wx.lib.pubsub import pub as Publisher
+from genilib.pubsub import pub as Publisher
 from genilib.configuration import Config
 from wx import CallAfter
 
@@ -39,8 +38,7 @@ logger = logging.getLogger("GeniControl")
 DATA_NOT_AVAILABLE = None
 config = Config("GeniControl")
 
-class IController(object):
-    __metaclass__ = abc.ABCMeta
+class IController(object, metaclass=abc.ABCMeta):
     logger = logging.getLogger("GeniControl")
     quitViewEvent = threading.Event()
     quitModelEvent = threading.Event()

@@ -16,13 +16,11 @@ class Subject(object):
         self.observers.discard(observer)
 
     def notifyObservers(self):
-        map(lambda observer: observer.update(self._obj),[o for o in self.observers])
+        list(map(lambda observer: observer.update(self._obj),[o for o in self.observers]))
 
 
 
-class IObserver(object):
-    __metaclass__ = abc.ABCMeta
-
+class IObserver(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def update(self, obj):
         pass
