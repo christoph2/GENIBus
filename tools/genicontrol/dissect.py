@@ -117,6 +117,7 @@ def dissectPumpStatus(dp, value):
             om = 'Max'
         else:
             logger.info('FIX-ME: operationMode "%u"' % operationMode)
+            om = 'Unknown (%u)' % operationMode
 
         result.append(('operationMode', om, ))
 
@@ -127,7 +128,9 @@ def dissectPumpStatus(dp, value):
         elif controlMode == 0x02:
             cm = 'Constant Frequency'
         elif controlMode == 0x05:
-            cm = 'AutoAdapt Setpoint'
+            cm = 'AutoAdapt'
+        else:
+            cm = 'Unknown (%u)' % controlMode
         result.append(('controlMode', cm, ))
     elif dp == 'act_mode2':
         temperatureInfluence = value & 0x01
@@ -153,7 +156,7 @@ def dissectPumpStatus(dp, value):
         sourceMode = 'Local' if sm == 1 else 'Remote'
         result.append(('sourceMode', sourceMode))
     elif dp == 'contr_source':
-        cs = (value & 0x0f) >> 4
+        cs = (value & 0xf0) >> 4      # Active source is in the upper nibble (was: '& 0x0f', always 0).
         if cs == 0b0001:
             contrSource = "Buttons"
         elif cs == 0b0010:
@@ -163,7 +166,7 @@ def dissectPumpStatus(dp, value):
         elif cs == 0b0100:
             contrSource = "External control"
         else:
-            contrSource = 'Buttons' # ???
+            contrSource = 'Unknown (%u)' % cs
         result.append(('activeSource', contrSource))
     return result
 

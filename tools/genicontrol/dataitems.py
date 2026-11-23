@@ -34,13 +34,19 @@ __all__ = [
 from collections import namedtuple
 import yaml
 
-from genilib.utils import createStringBuffer
+from genilib.utils import createStringBuffer, loadYaml
 import genicontrol.defs as defs
 from genilib.configuration import readConfigFile
 
-Dataitem = namedtuple('Dataitem', 'name klass id access note')
+class Dataitem(namedtuple('Dataitem', 'name klass id access note')):
+    __slots__ = ()
 
-DATAITEMS = yaml.load(createStringBuffer(readConfigFile("genicontrol", "dataitemsMAGNA.yaml")))
+    def __setstate__(self, state):
+        # The YAML files were written by Python 2, where namedtuples carried an
+        # (OrderedDict) state. All fields are already set via the constructor args.
+        pass
+
+DATAITEMS = loadYaml(createStringBuffer(readConfigFile("genicontrol", "dataitemsMAGNA.yaml")))
 
 def addToDict(d, k, v):
     d[k] = v
@@ -80,8 +86,8 @@ DATAITEMS_FOR_CLASS = {
     defs.APDUClass.SIXTEENBIT_MEASURED_DATA:    SIXTEENBIT_MEASUREMENT_VALUES
 }
 
-dataItemsById = lambda klass : dict([(v[2], (k, v[3], v[4])) for k, v in DATAITEMS_FOR_CLASS[klass].items()])
-dataItemsByName = lambda klass : dict([(k, (v[2], v[3], v[4])) for k, v in DATAITEMS_FOR_CLASS[klass].items()])
+dataItemsById = lambda klass : dict([(v[2], (k, v[3], v[4])) for k, v in list(DATAITEMS_FOR_CLASS[klass].items())])
+dataItemsByName = lambda klass : dict([(k, (v[2], v[3], v[4])) for k, v in list(DATAITEMS_FOR_CLASS[klass].items())])
 
 DATAITEMS_BY_ID = {
     defs.APDUClass.PROTOCOL_DATA:               dataItemsById(defs.APDUClass.PROTOCOL_DATA),

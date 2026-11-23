@@ -27,11 +27,11 @@
 ##
 
 try:
-    import ConfigParser as configparser
+    import configparser as configparser
 except ImportError:
     import configparser # Python 3.x
 
-from genilib.utils import createStringBuffer
+from genilib.utils import createStringBuffer, loadYaml
 import logging
 import os
 import pkgutil
@@ -60,7 +60,7 @@ class Config(object):
                 cls._lock.acquire()
                 if not hasattr(cls, '_instance'):
                     cls._instance = super(cls.__class__, cls).__new__(cls)
-                    baz = yaml.load(createStringBuffer(readConfigFile("genicontrol", "default_config.yaml")))
+                    baz = loadYaml(createStringBuffer(readConfigFile("genicontrol", "default_config.yaml")))
                     cls.cp = ConfigProcessor(baz)
             finally:
                 cls._lock.release()

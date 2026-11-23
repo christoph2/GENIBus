@@ -41,7 +41,9 @@ class InfoPanel(ScrolledPanel):
         sizer = self.addValues(DataitemConfiguration['StringValues'])
         self.grid = GridControl(self, DataitemConfiguration['InfoValues'], dataitems.DATAITEMS)
         sizer.Add(self.grid, 1, wx.ALL, 5)
-        self.SetSizerAndFit(sizer)
+        # A scrolled panel must not 'Fit' its full content size, otherwise it
+        # dictates a huge minimum size to the notebook (GTK3 then hides the tabs).
+        self.SetSizer(sizer)
         ctl = self.FindWindowById(controlids.ID_STR_PRODUCT_NAME)
         ctl.SetValue('GeniBus Simulation')
         ctl = self.FindWindowById(controlids.ID_STR_SOFTWARE_NAME1)
@@ -54,7 +56,9 @@ class InfoPanel(ScrolledPanel):
         ctl.SetValue('CS')
         ctl = self.FindWindowById(controlids.ID_STR_SERIAL_NO)
         ctl.SetValue('RT')
-        self.SetupScrolling()
+        # Don't jump to the grid when it gets the focus, keep the strings at the top visible.
+        self.SetupScrolling(scrollToTop = True, scrollIntoView = False)
+        self.SetMinSize(wx.Size(200, 200))
 
     def addValues(self, values):
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -63,13 +67,13 @@ class InfoPanel(ScrolledPanel):
             st = wx.StaticText(self, label = displayName)
             hsizer.Add(st, 1, wx.ALL, 5)
             tc = wx.TextCtrl(self, idCode, "n/a", style = wx.ALIGN_LEFT)
-            tc.Enable(False)
+            tc.SetEditable(False)    # read-only, but not greyed out
             hsizer.Add(tc, 1, wx.ALL, 5)
             sizer.Add(hsizer) # , 1, wx.ALL, 5)
         return sizer
 
     def setValue(self, controlID, value):
-        control = self.GetWindowById(controlID)
+        control = self.FindWindowById(controlID)
         control.SetValue(value)
 
 

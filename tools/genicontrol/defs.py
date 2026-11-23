@@ -35,7 +35,7 @@ import os
 HOME_DIRECTORY = os.path.abspath(os.path.expanduser('~/'))
 CONFIGURATION_DIRECTORY = os.path.join(HOME_DIRECTORY, 'GeniControl')
 if not os.access(CONFIGURATION_DIRECTORY, os.F_OK):
-    print("Configuration directory '{0}' doesn't exist. creating...".format(CONFIGURATION_DIRECTORY))
+    print(("Configuration directory '{0}' doesn't exist. creating...".format(CONFIGURATION_DIRECTORY)))
     os.mkdir(CONFIGURATION_DIRECTORY)
 
 ##

@@ -46,7 +46,9 @@ class Controls(wx.Panel):
         sizer1 = wx.BoxSizer(wx.VERTICAL)
         sizer2 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.btnRemoteLocal = buttons.ToggleButton(self, 'Remote', 'Local')
+        # The label shows the CURRENT control source: green 'Remote' (GENIbus) / grey 'Local' (pump).
+        self.btnRemoteLocal = buttons.ToggleButton(self, 'Local', 'Remote')
+        self.btnRemoteLocal.SetToolTip("Current control source of the pump. Click to switch Remote <-> Local.")
         sizer2.Add(self.btnRemoteLocal, 1, wx.ALL, 5)
 
         self.btnRefUp = wx.Button(self, label = '+', id = controlids.ID_CMD_REF_UP)
@@ -108,8 +110,19 @@ class MCPanel(ScrolledPanel):
         self.SetupScrolling()
         sizer.Layout()
 
+    def setOffline(self):
+        """Pump doesn't answer: LEDs off, values 'n/a' (instead of showing stale values)."""
+        self.setLEDState(0, False)
+        self.setLEDState(1, False)
+        for panel in (self.statusPanel, self.pumpOperationPanel, self.alarmPanel):
+            for child in panel.GetChildren():
+                if isinstance(child, wx.Gauge):
+                    child.SetValue(0)
+                elif isinstance(child, wx.TextCtrl):
+                    child.SetValue('n/a')
+
     def updateLED(self, ledState):
-        if not ledState:
+        if ledState is None:
             return
         self._ledState = ledState
         ledRed = (ledState & 0x0C) >> 2
@@ -137,7 +150,10 @@ class MCPanel(ScrolledPanel):
 
     def setValue(self, item, value):
         if item == 'led_contr': ## LED are special...
-            self.updateLED(int(value))
+            try:
+                self.updateLED(int(value))
+            except (TypeError, ValueError):
+                pass
         if item.endswith('_16'):
             entry = MEAS_VALUES_DICT_16BIT.get(item, None)
         else:
@@ -147,16 +163,28 @@ class MCPanel(ScrolledPanel):
             if controlID:
                 control = self.statusPanel.FindWindowById(controlID)
                 if control:
-                    if item == 'f_act':
-                        value = float(value)
+                    if isinstance(control, wx.Gauge):
+                        try:
+                            value = int(round(float(value)))
+                        except (TypeError, ValueError):
+                            value = 0
+                        value = max(0, min(value, control.GetRange()))
+                    elif value is None:
+                        value = ''
+                    else:
+                        value = str(value)
                     control.SetValue(value)
 
     def setPumpStatus(self, item, value):
         itemMap = {
             'activeSource': "Control Source",
             'operationMode': "Operation Mode",
-            'systemMode': "System Mode"
+            'systemMode': "System Mode",
+            'controlMode': "Control Mode",
         }
+        if item == 'nightReduction':
+            self.pumpOperationPanel.setValue("Night Reduction", "On" if str(value) == '1' else "Off")
+            return
 
         if item == 'operationMode':
             # Set buttons according to control-mode.
@@ -166,7 +194,7 @@ class MCPanel(ScrolledPanel):
             state = True if value == 'Remote' else False
             self.controlsPanel.btnRemoteLocal.setState(state)
         else:
-            if itemMap.has_key(item):
+            if item in itemMap:
                 self.pumpOperationPanel.setValue(itemMap[item], value)
 
 """

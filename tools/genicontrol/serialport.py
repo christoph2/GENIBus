@@ -46,8 +46,8 @@ class SerialPort(ConnectionIF):
     _logger = logger
     counter = 0
 
-    def __init__(self, portName, baudrate = 9600, bytesize = serial.EIGHTBITS,
-                 parity = serial.PARITY_NONE, stopbits = serial.STOPBITS_ONE, timeout = 0.5):
+    def __init__(self, portName, baudrate = 9600, bytesize = 8,
+                 parity = 'N', stopbits = 1, timeout = 0.5):
         self._portName = portName
         self._port = None
         self._baudrate = baudrate
@@ -55,6 +55,8 @@ class SerialPort(ConnectionIF):
         self._parity = parity
         self._stopbits = stopbits
         self._timeout = timeout
+        self._rtsSupported = True
+        self._lastWritten = None
         self.connected = False
 
     def connect(self):
@@ -66,40 +68,67 @@ class SerialPort(ConnectionIF):
             )
         except serial.SerialException as e:
             self._logger.error("%s", e)
-            raise
+            print("Cannot open serial port '%s': %s" % (self._portName, e))
+            return False
         self._logger.info("Serial port openend as '%s' @ %d Bits/Sec.", self._port.portstr, self._port.baudrate)
         self.connected = True
         return True
 
     def write(self, data):
+        data = bytearray(list(data))
+        self._port.reset_input_buffer()     # Drop stale / unsolicited bytes.
         self.output(True)
-        self._port.write(bytearray(list(data)))
+        self._port.write(data)
         self.flush()
+        self._lastWritten = bytes(data)
 
-    def read(self, length):
+    def _readFrame(self):
+        """Read one GENIbus frame: SD, LEN, DA, SA, APDUs..., CRC_H, CRC_L (LEN + 4 bytes)."""
+        head = self._port.read(2)
+        if len(head) < 2:
+            return bytes(head)
+        rest = self._port.read(head[1] + 2)
+        return bytes(head) + bytes(rest)
+
+    def read(self, length = 0x100):
         self.output(False)
-        result = array.array('B', self._port.read(length))
-        return result
+        data = self._readFrame()
+        if data and self._lastWritten and data == self._lastWritten:
+            # Some RS485 adapters echo the transmitted telegram -- skip it.
+            data = self._readFrame()
+        self._lastWritten = None
+        if not data:
+            return None
+        return array.array('B', bytearray(data))
 
     def output(self, enable):
-        if enable:
-            self._port.rts = False
-            self._port.dtr = False
-        else:
-            self._port.rts = True
-            self._port.dtr = True
+        # RS485 direction control via RTS/DTR (for adapters without automatic direction control).
+        # Not every adapter / driver supports this, so failures are ignored.
+        if not self._rtsSupported:
+            return
+        try:
+            if enable:
+                self._port.rts = False
+                self._port.dtr = False
+            else:
+                self._port.rts = True
+                self._port.dtr = True
+        except (IOError, OSError, ValueError) as e:
+            self._logger.info("RTS/DTR control not supported by '%s' (%s), ignored.", self._portName, e)
+            self._rtsSupported = False
 
     def flush(self):
         self._port.flush()
 
     def disconnect(self):
-        if self._port.isOpen() == True:
+        self.connected = False
+        if self._port is not None and self._port.is_open:
             self._port.close()
 
     close = disconnect
 
     @property
     def displayName(self):
-        return "Serial port"
+        return "Serial port %s" % self._portName
 
 

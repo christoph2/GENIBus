@@ -29,10 +29,17 @@
 import array
 import logging
 import os
-import Queue
+import sys
+
+# Allow starting the program directly ('python3 GeniControl.py' inside tools/genicontrol):
+# the packages 'genicontrol' and 'genilib' live in the parent directory.
+_TOOLS_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _TOOLS_DIR not in sys.path:
+    sys.path.insert(0, _TOOLS_DIR)
+
+import queue
 import wx
-from wx.lib.pubsub import setuparg1
-from wx.lib.pubsub import pub as Publisher
+from genilib.pubsub import pub as Publisher
 from wx import CallAfter
 import time
 import threading
@@ -58,14 +65,14 @@ class BusmonitorPanel(wx.Panel):
         self.logfilewanted = self.config.get('general', 'logfilewanted')
         wx.Panel.__init__(self, parent = parent, id = wx.ID_ANY)
         sizer = wx.BoxSizer()
-        font = wx.Font(10, wx.MODERN, wx.NORMAL, wx.NORMAL)
+        font = wx.Font(10, wx.FONTFAMILY_MODERN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
         self.tc = wx.TextCtrl(self, wx.NewId(), style = wx.TE_MULTILINE | wx.HSCROLL | wx.TE_RICH2 | wx.TE_NOHIDESEL | wx.TE_READONLY)
         self.tc.SetFont(font)
         sizer.Add(self.tc, 1, wx.EXPAND | wx.GROW)
         self.SetSizerAndFit(sizer)
         self.logFile =  None
         if self.logfilewanted == '1':
-            self.logFile =  file(os.path.join(defs.CONFIGURATION_DIRECTORY, 'busmonitor.log'), 'w')
+            self.logFile =  open(os.path.join(defs.CONFIGURATION_DIRECTORY, 'busmonitor.log'), 'w')
 
     def __del__(self):
         if self.logFile:
@@ -116,24 +123,49 @@ class GBFrame(wx.Frame):
 ##
 
         # Set the wxWindows log target to be this textctrl
-        #wx.Log_SetActiveTarget(wx.LogTextCtrl(self.log))
+        #wx.Log.SetActiveTarget(wx.LogTextCtrl(self.log))
 
         # for serious debugging
-        wx.Log_SetActiveTarget(wx.LogStderr())
+        wx.Log.SetActiveTarget(wx.LogStderr())
         #wx.Log_SetTraceMask(wx.TraceMessages
 
-        self.notebook = TestNB(self, wx.NewId())
+        self.notebook = TestNB(self, wx.ID_ANY)
+        # wxPython 4/GTK3: let a sizer manage the notebook, and make sure the
+        # window is at least as large as its content (otherwise the tabs are cut off).
+        frameSizer = wx.BoxSizer(wx.VERTICAL)
+        frameSizer.Add(self.notebook, 1, wx.EXPAND)
+        self.SetSizer(frameSizer)
+        # Size needed by the main page (the Info grid scrolls, so it is not considered).
+        nb = self.notebook
+        pages = [nb.GetPage(i).GetBestSize() for i in range(nb.GetPageCount())]
+        nbBest = nb.GetBestSize()
+        overhead = wx.Size(nbBest.width - max(p.width for p in pages), nbBest.height - max(p.height for p in pages))
+        pageSize = nb.mcPanel.GetBestSize()
+        needed = self.ClientToWindowSize(wx.Size(pageSize.width + overhead.width, pageSize.height + overhead.height))
+        area = wx.Display(0).GetClientArea()
+        width = min(max(size.width if size else 0, needed.width), area.width)
+        height = min(max(size.height if size else 0, needed.height), area.height)
+        self.SetSize(wx.Size(width, height))
+        self.Layout()
         if not pos:
             self.Center()
 
     def initialize(self, model, quitEvent):
         self._model = model
-        self.notebook.mcPanel.setLEDState(0, True)
+        self.setPumpOnline(False, initial = True)
         self._quitEvent = quitEvent
-        self._messageQueue = Queue.Queue()
+        self._messageQueue = queue.Queue()
 
     def quit(self):
         pass
+
+    def setPumpOnline(self, online, initial = False):
+        mc = self.notebook.mcPanel
+        if online:
+            self.SetStatusText("Pump connected", 0)
+        else:
+            self.SetStatusText("Waiting for pump..." if initial else "NO REPLY FROM PUMP", 0)
+            mc.setOffline()
 
     def post(self, category, message):
         self._messageQueue.put_nowait((category, message))
@@ -207,6 +239,9 @@ def main():
     size = wx.Size(config.get('window', 'sizex'), config.get('window', 'sizey'))
     pos = wx.Point(config.get('window', 'posx'), config.get('window', 'posy'))
     app = GeniControlApp()
+    # wxPython >= 4.1 turns some harmless legacy sizer-flag combinations into errors.
+    if hasattr(wx, 'SizerFlags') and hasattr(wx.SizerFlags, 'DisableConsistencyChecks'):
+        wx.SizerFlags.DisableConsistencyChecks()
     frame = GBFrame(None, MAIN_MENU, size, pos)
 
     controller = GUIController(NullModel, frame)

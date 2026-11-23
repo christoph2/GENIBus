@@ -34,10 +34,12 @@ def createLabeledControl(parent, label, control, sizer, group = None):
     sizer - sizer which control will be added to.
     group - a list collecting related controls, very useful to disable/enable a group of controls
     """
+    # wxPython >= 4.1 rejects horizontal alignment flags in horizontal box sizers.
+    horizontal = isinstance(sizer, wx.BoxSizer) and sizer.GetOrientation() == wx.HORIZONTAL
     st = wx.StaticText(parent, label = label)
-    sizer.Add(st, 1, wx.ALL | wx.ALIGN_LEFT, 5)
+    sizer.Add(st, 1, wx.ALL | (wx.ALIGN_CENTER_VERTICAL if horizontal else wx.ALIGN_LEFT), 5)
     if group is not None:
         group.append(control)
-    sizer.Add(control, 1, wx.ALL | wx.ALIGN_RIGHT, 5)
+    sizer.Add(control, 1, wx.ALL | (wx.ALIGN_CENTER_VERTICAL if horizontal else wx.ALIGN_RIGHT), 5)
     return control
 

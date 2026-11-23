@@ -47,7 +47,7 @@ def initialize(appName):
 
     gettext.bindtextdomain(appName, './locale')
     gettext.textdomain(appName)
-    gettext.install(appName, './locale', unicode = True)
+    gettext.install(appName, './locale')
 
     #self.presLan_en = gettext.translation(appName, "./locale", languages = ['en'])
     #self.presLan_de = gettext.translation(appName, "./locale", languages = ['de'])
